@@ -112,7 +112,7 @@ int simulate_param_set (int set_num, input_params& ip, sim_data& sd, rates& rs, 
 	// Prepare for the simulations
 	cout << term->blue << "Simulating set " << term->reset << set_num << " . . ." << endl;
 	int num_passed = 0;
-	int scores[NUM_SECTIONS * NUM_MUTANTS] = {0};
+	double scores[NUM_SECTIONS * NUM_MUTANTS] = {0};
 	if (!ip.reset_seed) { // Reset the seed for each set if specified by the user
 		init_seeds(ip, set_num, set_num > 0, true);
 	}
@@ -126,7 +126,7 @@ int simulate_param_set (int set_num, input_params& ip, sim_data& sd, rates& rs, 
 	}
 	
 	// Calculate the total score
-	int total_score = 0;
+	double total_score = 0;
 	for (int i = 0; i < NUM_SECTIONS * ip.num_active_mutants; i++) {
 		total_score += scores[i];
 	}
@@ -167,8 +167,8 @@ int simulate_section (int set_num, input_params& ip, sim_data& sd, rates& rs, co
 	// Simulate each mutant
 	for (int i = 0; i < ip.num_active_mutants; i++) {
 		mutant_sim_message(mds[i], i);
-		knockout(rs, mds[i], temp_rates);
-		int current_score = simulate_mutant(set_num, ip, sd, rs, cl, baby_cl, mds[i], mds[MUTANT_WILDTYPE].feat, dirnames_cons[i]);
+		store_original_rates(rs, mds[i], temp_rates); // will be used to revert original rates after current mutant
+		double current_score = simulate_mutant(set_num, ip, sd, rs, cl, baby_cl, mds[i], mds[MUTANT_WILDTYPE].feat, dirnames_cons[i], temp_rates);
 		scores[sd.section * ip.num_active_mutants + i] = current_score;
 		baby_cl.reset();
 		revert_knockout(rs, mds[i], temp_rates);
@@ -211,7 +211,9 @@ void determine_start_end (sim_data& sd) {
 void reset_mutant_scores (input_params& ip, mutant_data mds[]) {
 	for (int i = 0; i < ip.num_active_mutants; i++) {
 		for (int j = 0; j < NUM_SECTIONS; j++) {
-			mds[i].conds_passed[j].reset();
+            for (int k = 0; k < 1 + MAX_CONDS_ANY; k++) {
+                mds[i].conds_passed[j][k] = 0;
+            }
 			mds[i].secs_passed[j] = false;
 		}
 	}
@@ -235,6 +237,21 @@ inline void mutant_sim_message (mutant_data& md, int section) {
 	term->verbose() << " growth . . ." << endl;
 }
 
+/* store_original_rates stores the rates which might be knocked out later in the simulation
+    parameters:
+        rs: the current simulation's rates
+        md: the mutant being simulated
+        orig_rates: the array to store the original rates
+    returns: nothing
+    notes:
+    todo:
+*/
+inline void store_original_rates (rates& rs, mutant_data& md, double orig_rates[]) {
+    for (int i = 0; i < md.num_knockouts; i++) {
+        orig_rates[i] = rs.rates_base[md.knockouts[i]];
+    }
+}
+
 /* knockout knocks out the given mutant's rates and stores their originals in the given array
 	parameters:
 		rs: the current simulation's rates
@@ -244,9 +261,8 @@ inline void mutant_sim_message (mutant_data& md, int section) {
 	notes:
 	todo:
 */
-inline void knockout (rates& rs, mutant_data& md, double orig_rates[]) {
+inline void knockout (rates& rs, mutant_data& md) {
 	for (int i = 0; i < md.num_knockouts; i++) {
-		orig_rates[i] = rs.rates_base[md.knockouts[i]];
 		rs.rates_base[md.knockouts[i]] = 0;
 	}
 }
@@ -282,7 +298,7 @@ inline void revert_knockout (rates& rs, mutant_data& md, double orig_rates[]) {
 	todo:
 		TODO Break up this enormous function.
 */
-int simulate_mutant (int set_num, input_params& ip, sim_data& sd, rates& rs, con_levels& cl, con_levels& baby_cl, mutant_data& md, features& wtfeat, char* dirname_cons) {
+double simulate_mutant (int set_num, input_params& ip, sim_data& sd, rates& rs, con_levels& cl, con_levels& baby_cl, mutant_data& md, features& wtfeat, char* dirname_cons, double temp_rates[2]) {
 	reset_seed(ip, sd); // Reset the seed for each mutant
 	baby_cl.reset(); // Reset the concentrations levels used for simulating
     perturb_rates_all(rs); // Perturb the rates of all starting cells
@@ -301,13 +317,13 @@ int simulate_mutant (int set_num, input_params& ip, sim_data& sd, rates& rs, con
 	}
 	
 	// Simulate the mutant
-	bool passed = model(sd, rs, cl, baby_cl, md);
+	bool passed = model(sd, rs, cl, baby_cl, md, temp_rates);
 	
 	// Analyze the simulation's oscillation features
 	term->verbose() << term->blue << "    Analyzing " << term->reset << "oscillation features . . . ";
-	int score = 0;
+	double score = 0;
 	if (sd.section == SEC_POST) { // Posterior analysis
-		osc_features_post(sd, ip, cl, md.feat, wtfeat, dirname_cons, SEC_POST, sd.time_start / sd.big_gran, sd.time_end / sd.big_gran, set_num);
+		osc_features_post(sd, ip, cl, md.feat, wtfeat, dirname_cons, sd.time_start / sd.big_gran, sd.time_end / sd.big_gran, set_num);
 		term->verbose() << term->blue << "Done" << endl;
 	} else { // Anterior analysis
 		if (ip.ant_features) {
@@ -319,7 +335,7 @@ int simulate_mutant (int set_num, input_params& ip, sim_data& sd, rates& rs, con
 		} else {
 			term->verbose() << term->blue << "Done" << endl;
 		}
-		score += osc_features_wave(sd, cl, md); // Analyze traveling wave features for the wild type and her1 mutant
+		//score += osc_features_wave(sd, cl, md); // Analyze traveling wave features for the wild type and her1 mutant
 	}
 	
 	// Copy and print the appropriate data
@@ -336,7 +352,7 @@ int simulate_mutant (int set_num, input_params& ip, sim_data& sd, rates& rs, con
 	if (passed) {
 		md.secs_passed[sd.section] = true; // Mark that this mutant has passed this simulation
 		score += md.tests[sd.section](md, wtfeat);
-		int max_score = md.max_cond_scores[sd.section];
+		double max_score = md.max_cond_scores[sd.section];
 		if (sd.section == SEC_ANT && md.secs_passed[SEC_WAVE]) { // The max score has to be adjusted for mutants which have a wave section
 			max_score += md.max_cond_scores[SEC_WAVE];
 		}
@@ -368,13 +384,15 @@ int simulate_mutant (int set_num, input_params& ip, sim_data& sd, rates& rs, con
 	notes:
 	todo:
 */
-bool model (sim_data& sd, rates& rs, con_levels& cl, con_levels& baby_cl, mutant_data& md) {
+bool model (sim_data& sd, rates& rs, con_levels& cl, con_levels& baby_cl, mutant_data& md, double temp_rates[2]) {
 	int steps_elapsed = sd.steps_split; // Used to determine when to split a column of cells
 	update_rates(rs, sd.active_start); // Update the active rates based on the base rates, perturbations, and gradients
 	
 	// Iterate through each time step
 	int j; // Absolute time used by cl
 	int baby_j; // Cyclical time used by baby_cl
+	bool past_induction = false; // Whether we've passed the point of induction of knockouts or overexpression
+    bool past_recovery = false; // Whether we've recovered from the knockouts or overexpression
 	for (j = sd.time_start, baby_j = 0; j < sd.time_end; j++, baby_j = WRAP(baby_j + 1, sd.max_delay_size)) {
 		int time_prev = WRAP(baby_j - 1, sd.max_delay_size); // Time is cyclical, so time_prev may not be baby_j - 1
 		copy_records(sd, baby_cl, baby_j, time_prev); // Copy each cell's birth and parent so the records are accessible at every time step
@@ -391,7 +409,7 @@ bool model (sim_data& sd, rates& rs, con_levels& cl, con_levels& baby_cl, mutant
 				st_context stc(time_prev, baby_j, k);
 				protein_synthesis(sd, rs.rates_active, baby_cl, stc, old_cells_protein);
 				dimer_proteins(sd, rs.rates_active, baby_cl, stc);
-				mRNA_synthesis(sd, rs.rates_active, baby_cl, stc, old_cells_mrna, md);
+				mRNA_synthesis(sd, rs.rates_active, baby_cl, stc, old_cells_mrna, md, past_induction, past_recovery);
 			}
 		}
 		
@@ -648,17 +666,45 @@ void protein_synthesis (sim_data& sd, double** rs, con_levels& cl, st_context& s
 	
 	// Her1
 	dim_int(dia, di_indices(CPH1, CPH7,  CPH1H7,  RDAH1H7,  RDDIH1H7,  IH1));
+	if (sd.section == SEC_ANT) {
+        dim_int(dia, di_indices(CPH1, CPMESPA, CPH1MESPA, RDAH1MESPA, RDDIH1MESPA, IH1));
+        dim_int(dia, di_indices(CPH1, CPMESPB, CPH1MESPB, RDAH1MESPB, RDDIH1MESPB, IH1));
+    }
 	dim_int(dia, di_indices(CPH1, CPH13, CPH1H13, RDAH1H13, RDDIH1H13, IH1));
 	con_protein_her(cpa, cph_indices(CMH1, CPH1, CPH1H1, RPSH1, RPDH1, RDAH1H1, RDDIH1H1, RDELAYPH1, IH1, IPH1));
 	
 	// Her7
 	dim_int(dia, di_indices(CPH7, CPH1,  CPH1H7,  RDAH1H7,  RDDIH1H7,  IH7));
+	if (sd.section == SEC_ANT) {
+        dim_int(dia, di_indices(CPH7, CPMESPA, CPH7MESPA, RDAH7MESPA, RDDIH7MESPA, IH7));
+        dim_int(dia, di_indices(CPH7, CPMESPB, CPH7MESPB, RDAH7MESPB, RDDIH7MESPB, IH7));
+    }
 	dim_int(dia, di_indices(CPH7, CPH13, CPH7H13, RDAH7H13, RDDIH7H13, IH7));
 	con_protein_her(cpa, cph_indices(CMH7, CPH7, CPH7H7, RPSH7, RPDH7, RDAH7H7, RDDIH7H7, RDELAYPH7, IH7, IPH7));
+
+	if (sd.section == SEC_ANT) {
+	    // MespA
+	    dim_int(dia, di_indices(CPMESPA, CPH1,  CPH1MESPA,  RDAH1MESPA,  RDDIH1MESPA,  IMESPA));
+	    dim_int(dia, di_indices(CPMESPA, CPH7,  CPH7MESPA,  RDAH7MESPA,  RDDIH7MESPA,  IMESPA));
+	    dim_int(dia, di_indices(CPMESPA, CPMESPB, CPMESPAMESPB, RDAMESPAMESPB, RDDIMESPAMESPB, IMESPA));
+	    dim_int(dia, di_indices(CPMESPA, CPH13, CPMESPAH13, RDAMESPAH13, RDDIMESPAH13, IMESPA));
+	    con_protein_her(cpa, cph_indices(CMMESPA, CPMESPA, CPMESPAMESPA, RPSMESPA, RPDMESPA, RDAMESPAMESPA, RDDIMESPAMESPA, RDELAYPMESPA, IMESPA, IPMESPA));
+
+        // MespB
+	    dim_int(dia, di_indices(CPMESPB, CPH1,  CPH1MESPB,  RDAH1MESPB,  RDDIH1MESPB,  IMESPB));
+	    dim_int(dia, di_indices(CPMESPB, CPH7,  CPH7MESPB,  RDAH7MESPB,  RDDIH7MESPB,  IMESPB));
+	    dim_int(dia, di_indices(CPMESPB, CPMESPA, CPMESPAMESPB, RDAMESPAMESPB, RDDIMESPAMESPB, IMESPB));
+	    dim_int(dia, di_indices(CPMESPB, CPH13, CPMESPBH13, RDAMESPBH13, RDDIMESPBH13, IMESPB));
+	    con_protein_her(cpa, cph_indices(CMMESPB, CPMESPB, CPMESPBMESPB, RPSMESPB, RPDMESPB, RDAMESPBMESPB, RDDIMESPBMESPB, RDELAYPMESPB, IMESPB, IPMESPB));
+    }
 	
 	// Her13
 	dim_int(dia, di_indices(CPH13, CPH1,  CPH1H13,  RDAH1H13,  RDDIH1H13,  IH13));
 	dim_int(dia, di_indices(CPH13, CPH7,  CPH7H13,  RDAH7H13,  RDDIH7H13,  IH13));
+	if (sd.section == SEC_ANT) {
+        dim_int(dia, di_indices(CPH13, CPMESPA, CPMESPAH13, RDAMESPAH13, RDDIMESPAH13, IH13));
+	    dim_int(dia, di_indices(CPH13, CPMESPB, CPMESPBH13, RDAMESPBH13, RDDIMESPBH13, IH13));
+    }
 	con_protein_her(cpa, cph_indices(CMH13, CPH13, CPH13H13, RPSH13, RPDH13, RDAH13H13, RDDIH13H13, RDELAYPH13, IH13, IPH13));
 	
 	/// Nondimerizing genes
@@ -753,11 +799,27 @@ void dimer_proteins (sim_data& sd, double** rs, con_levels& cl, st_context& stc)
 	cd_args cda(sd, rs, cl, stc); // WRAPper for repeatedly used structs
 	
 	for (int i = CPH1H1,   j = 0;   i <= CPH1H13;  i++, j++) {
+		while (sd.section == SEC_POST && CPH1MESPA <= i && i <= CPH1MESPB) { //skip dimers containing mespa and mespb for posterior
+            i++;
+            j++;
+        }
 		con_dimer(cda, i, j, cd_indices(CPH1, RDAH1H1, RDDIH1H1, RDDGH1H1));
 	}
 	for (int i = CPH7H7,   j = 0;   i <= CPH7H13;  i++, j++) {
+		while (sd.section == SEC_POST && CPH7MESPA <= i && i <= CPH7MESPB) { //skip dimers containing mespa and mespb for posterior
+            i++;
+            j++;
+        }
 		con_dimer(cda, i, j, cd_indices(CPH7, RDAH7H7, RDDIH7H7, RDDGH7H7));
 	}
+	if (sd.section == SEC_ANT) {
+        for (int i = CPMESPAMESPA, j = 0;   i <= CPMESPAH13; i++, j++) {
+            con_dimer(cda, i, j, cd_indices(CPMESPA, RDAMESPAMESPA, RDDIMESPAMESPA, RDDGMESPAMESPA));
+        }
+	    for (int i = CPMESPBMESPB, j = 0;   i <= CPMESPBH13;  i++, j++) {
+		    con_dimer(cda, i, j, cd_indices(CPMESPB, RDAMESPBMESPB, RDDIMESPBMESPB, RDDGMESPBMESPB));
+    	}
+    }
 	for (int i = CPH13H13, j = 0; i <= CPH13H13;   i++, j++) {
 		con_dimer(cda, i, j, cd_indices(CPH13, RDAH13H13, RDDIH13H13, RDDGH13H13));
 	}
@@ -801,7 +863,7 @@ inline void con_dimer (cd_args& a, int con, int offset, cd_indices i) {
 	notes:
 	todo:
 */
-void mRNA_synthesis (sim_data& sd, double** rs, con_levels& cl, st_context& stc, int old_cells_mrna[], mutant_data& md) {
+void mRNA_synthesis (sim_data& sd, double** rs, con_levels& cl, st_context& stc, int old_cells_mrna[], mutant_data& md, bool past_induction, bool past_recovery) {
 	// Translate delays from minutes to time steps
 	int delays[NUM_INDICES];
 	for (int j = 0; j < NUM_INDICES; j++) {
@@ -880,6 +942,11 @@ void mRNA_synthesis (sim_data& sd, double** rs, con_levels& cl, st_context& stc,
 			} else { // delta mRNA is not affected by Delta-Notch signaling
 				avgpd = 0;
 			}
+
+			double oe = 0;
+            if (past_induction && !past_recovery && ((IMH1 + j) == md.overexpression_rate)) {
+                oe = md.overexpression_factor;
+            }
 			mtrans = transcription(rs, cl, WRAP(stc.time_cur - delays[j], sd.max_delay_size), old_cells_mrna[IMH1 + j], avgpd, rs[RMSH1 + j][stc.cell], md.overexpressions[IMH1 + j]);
 		}
 		
@@ -905,9 +972,14 @@ void mRNA_synthesis (sim_data& sd, double** rs, con_levels& cl, st_context& stc,
 		TODO clean up these parameters
 */
 inline double transcription (double** rs, con_levels& cl, int time, int cell, double avgpd, double ms, double oe) {
-	double th1h1, th7h13, tdelta;
+	double th1h1, th7h13, tmespamespa = 0, tmespamespb = 0, tmespbmespb = 0, tdelta;
 	th1h1 = rs[RCRITPH1H1][cell] == 0 ? 0 : cl.cons[CPH1H1][time][cell] / rs[RCRITPH1H1][cell];
 	th7h13 = rs[RCRITPH7H13][cell] == 0 ? 0 : cl.cons[CPH7H13][time][cell] / rs[RCRITPH7H13][cell];
+	if (section == SEC_ANT) {
+	    tmespamespa = rs[RCRITPMESPAMESPA][cell] == 0 ? 0 : cl.cons[CPMESPAMESPA][time][cell] / rs[RCRITPMESPAMESPA][cell];
+	    tmespamespb = rs[RCRITPMESPAMESPB][cell] == 0 ? 0 : cl.cons[CPMESPAMESPB][time][cell] / rs[RCRITPMESPAMESPB][cell];
+	    tmespbmespb = rs[RCRITPMESPBMESPB][cell] == 0 ? 0 : cl.cons[CPMESPBMESPB][time][cell] / rs[RCRITPMESPBMESPB][cell];
+    }
 	tdelta = rs[RCRITPDELTA][cell] == 0 ? 0 : avgpd / rs[RCRITPDELTA][cell];
 	return ms * (oe + (1 + tdelta) / (1 + tdelta + SQUARE(th1h1) + SQUARE(th7h13)));
 }
