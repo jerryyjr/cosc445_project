@@ -8,5 +8,5 @@
 #
 cd $PBS_O_WORKDIR
 
-./sres -r guess.ranges -a -x 10 -w 10 -y 6 -M 1
+mpiexec -np 4 ./sres -r guess.ranges -g 100 -a -x 10 -w 10 -y 6 -M 1
 
