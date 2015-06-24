@@ -244,8 +244,8 @@ double simulate_set (double parameters[]) {
 	}
 	
 	// Pipe in the simulation's score
-	int max_score;
-	int score;
+	double max_score;
+	double score;
 	v << "  ";
 	term->rank(rank, v);
 	v << term->blue << "Reading the pipe " << term->reset << "(file descriptor " << pipes[0] << ") . . . ";
@@ -313,7 +313,7 @@ void write_pipe_int (int fd, int value) {
 	notes:
 	todo:
 */
-void read_pipe (int fd, int* max_score, int* score) {
+void read_pipe (int fd, double* max_score, double* score) {
 	read_pipe_int(fd, max_score);
 	read_pipe_int(fd, score);
 }
@@ -326,8 +326,8 @@ void read_pipe (int fd, int* max_score, int* score) {
 	notes:
 	todo:
 */
-void read_pipe_int (int fd, int* address) {
-	if (read(fd, address, sizeof(int)) == -1) {
+void read_pipe_int (int fd, double* address) {
+	if (read(fd, address, sizeof(double)) == -1) {
 		term->failed_pipe_read();
 		exit(EXIT_PIPE_READ_ERROR);
 	}

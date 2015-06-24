@@ -49,17 +49,17 @@ macros.hpp contains every constant and macro function used in the program.
 #define CMH1		1
 #define CMH7		2
 #define CMMESPA     3
-#define CMMESPB		4
-#define CCMH13      5
-#define CMDELTA		6
+#define CMMESPB     4
+#define CMH13		5
+#define CMDELTA	    6
 
 // Protein levels
 #define CPH1		7
 #define CPH7		8
-#define CMMESPA     9
-#define CMMESPB     10
+#define CPMESPA     9
+#define CPMESPB     10
 #define CPH13		11
-#define CPDELTA		12
+#define CPDELTA     12
 
 // Dimer levels
 #define CPH1H1		13
@@ -203,7 +203,7 @@ macros.hpp contains every constant and macro function used in the program.
 #define RDELAYPH13		79
 #define RDELAYPDELTA	80
 
-// Critical number of molecules of proteins per cell for inhibition of transcription
+// Critical numbers of molecules of proteins per cell for inhibition of transcription
 #define RCRITPH1H1 		81
 #define RCRITPH7H13		82
 #define RCRITPDELTA		83
@@ -217,7 +217,7 @@ macros.hpp contains every constant and macro function used in the program.
 
 /// Named shortcuts for each index of mRNA, protein, dimer
 
-// gene indices
+// Her gene indices
 #define IH1		0
 #define IH7		1
 #define IMESPA  2

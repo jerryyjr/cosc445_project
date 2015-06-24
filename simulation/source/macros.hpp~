@@ -35,8 +35,10 @@ macros.hpp contains every constant and macro function used in the program.
 #define MUTANT_HER7OVER		8
 #define MUTANT_HER1OVER		9
 #define MUTANT_DELTAOVER	10
+#define MUTANT_DAPT       11
+#define MUTANT_HER1HER7   12
 
-#define NUM_MUTANTS 		11
+#define NUM_MUTANTS 		13
 
 /// Named shortcuts for each concentration level of mRNA, protein, and dimer
 
@@ -46,27 +48,42 @@ macros.hpp contains every constant and macro function used in the program.
 // mRNA levels
 #define CMH1		1
 #define CMH7		2
-#define CMH13		3
-#define CMDELTA		4
+#define CMMESPA     3
+#define CMMESPB     4
+#define CMH13		5
+#define CMDELTA	    6
 
 // Protein levels
-#define CPH1		5
-#define CPH7		6
-#define CPH13		7
-#define CPDELTA		8
+#define CPH1		7
+#define CPH7		8
+#define CPMESPA     9
+#define CPMESPB     10
+#define CPH13		11
+#define CPDELTA     12
 
 // Dimer levels
-#define CPH1H1		9
-#define CPH1H7		10
-#define CPH1H13		11
+#define CPH1H1		13
+#define CPH1H7		14
+#define CPH1MESPA   15
+#define CPH1MESPB   16
+#define CPH1H13		17
 
-#define CPH7H7		12
-#define CPH7H13		13
+#define CPH7H7		18
+#define CPH7MESPA   19
+#define CPH7MESPB   20
+#define CPH7H13		21
 
-#define CPH13H13	14
+#define CPMESPAMESPA  22
+#define CPMESPAMESPB  23
+#define CPMESPAH13  24
+
+#define CPMESPBMESPB  25
+#define CPMESPBH13  26
+
+#define CPH13H13  27
 
 // The index of the cell's parent
-#define PARENT		15
+#define PARENT		28
 
 #define NUM_CON_LEVELS	29 // How big an array holding concentration levels must be
 #define NUM_CON_STORE	7 // How many concentration levels to store in the bigger struct (for analyzing oscillation features)
@@ -78,95 +95,154 @@ macros.hpp contains every constant and macro function used in the program.
 // mRNA synthesis rates
 #define RMSH1			0
 #define RMSH7			1
-#define RMSH13			2
-#define RMSDELTA		3
+#define RMSMESPA        2
+#define RMSMESPB        3
+#define RMSH13			4
+#define RMSDELTA		5
 
 // mRNA degradation rates
-#define RMDH1			4
-#define RMDH7			5
-#define RMDH13			6
-#define RMDDELTA		7
+#define RMDH1			6
+#define RMDH7			7
+#define RMDMESPA        8
+#define RMDMESPB        9
+#define RMDH13			10
+#define RMDDELTA		11
 
 // Protein synthesis rates
-#define RPSH1			8
-#define RPSH7			9
-#define RPSH13			10
-#define RPSDELTA		11
+#define RPSH1			12
+#define RPSH7			13
+#define RPSMESPA        14
+#define RPSMESPB        15
+#define RPSH13			16
+#define RPSDELTA		17
 
 // Protein degradation rates
-#define RPDH1			12
-#define RPDH7			13
-#define RPDH13			14
-#define RPDDELTA		15
+#define RPDH1			18
+#define RPDH7			19
+#define RPDMESPA        20
+#define RPDMESPB        21
+#define RPDH13			22
+#define RPDDELTA		23
 
 // Dimer association rates
-#define RDAH1H1			16
-#define RDAH1H7			17
-#define RDAH1H13		18
-#define RDAH7H7			19
-#define RDAH7H13		20
-#define RDAH13H13		21
+#define RDAH1H1         24
+#define RDAH1H7         25
+#define RDAH1MESPA      26
+#define RDAH1MESPB      27
+#define RDAH1H13		28
+
+#define RDAH7H7		    29
+#define RDAH7MESPA      30
+#define RDAH7MESPB      31
+#define RDAH7H13		32
+
+#define RDAMESPAMESPA   33
+#define RDAMESPAMESPB   34
+#define RDAMESPAH13     35
+
+#define RDAMESPBMESPB   36
+#define RDAMESPBH13     37
+
+#define RDAH13H13       38
 
 // Dimer dissociation rates
-#define RDDIH1H1		22
-#define RDDIH1H7		23
-#define RDDIH1H13		24
-#define RDDIH7H7		25
-#define RDDIH7H13		26
-#define RDDIH13H13		27
+#define RDDIH1H1        39
+#define RDDIH1H7        40        
+#define RDDIH1MESPA     41
+#define RDDIH1MESPB     42
+#define RDDIH1H13       43
+
+#define RDDIH7H7        44
+#define RDDIH7MESPA     45
+#define RDDIH7MESPB     46
+#define RDDIH7H13		47
+
+#define RDDIMESPAMESPA   48
+#define RDDIMESPAMESPB   49
+#define RDDIMESPAH13     50
+
+#define RDDIMESPBMESPB   51
+#define RDDIMESPBH13     52
+
+#define RDDIH13H13       53
 
 // Dimer degradation rates
-#define RDDGH1H1		28
-#define RDDGH1H7		29
-#define RDDGH1H13		30
-#define RDDGH7H7		31
-#define RDDGH7H13		32
-#define RDDGH13H13		33
+#define RDDGH1H1        54
+#define RDDGH1H7        55        
+#define RDDGH1MESPA     56
+#define RDDGH1MESPB     57
+#define RDDGH1H13       58
+
+#define RDDGH7H7        59
+#define RDDGH7MESPA     60
+#define RDDGH7MESPB     61
+#define RDDGH7H13		62
+
+#define RDDGMESPAMESPA   63
+#define RDDGMESPAMESPB   64
+#define RDDGMESPAH13     65
+
+#define RDDGMESPBMESPB   66
+#define RDDGMESPBH13     67
+
+#define RDDGH13H13       68
 
 // mRNA transcription delays
-#define RDELAYMH1		34
-#define RDELAYMH7		35
-#define RDELAYMH13		36
-#define RDELAYMDELTA	37
+#define RDELAYMH1		69
+#define RDELAYMH7		70
+#define RDELAYMMESPA    71
+#define RDELAYMMESPB    72
+#define RDELAYMH13		73
+#define RDELAYMDELTA	74
 
 // Protein translation delays
-#define RDELAYPH1		38
-#define RDELAYPH7		39
-#define RDELAYPH13		40
-#define RDELAYPDELTA	41
+#define RDELAYPH1		75
+#define RDELAYPH7		76
+#define RDELAYPMESPA    77
+#define RDELAYPMESPB    78
+#define RDELAYPH13		79
+#define RDELAYPDELTA	80
 
-// Critical number of molecules of proteins per cell for inhibition of transcription
-#define RCRITPH1H1 		42
-#define RCRITPH7H13		43
+// Critical numbers of molecules of proteins per cell for inhibition of transcription
+#define RCRITPH1H1 		81
+#define RCRITPH7H13		82
+#define RCRITPDELTA		83
+#define RCRITPMESPAMESPA 84
+#define RCRITPMESPAMESPB 85
+#define RCRITPMESPBMESPB 86
 
-#define RCRITPDELTA		44
-
-#define NUM_RATES		45 // How big an array holding rates must be
-#define MIN_DELAY		34 // The smallest index referring to a delay
-#define MAX_DELAY		41 // The largest index referring to a delay
+#define NUM_RATES		87 // How big an array holding rates must be
+#define MIN_DELAY		69 // The smallest index referring to a delay
+#define MAX_DELAY		80 // The largest index referring to a delay
 
 /// Named shortcuts for each index of mRNA, protein, dimer
 
 // Her gene indices
 #define IH1		0
 #define IH7		1
-#define IH13	2
+#define IMESPA  2
+#define IMESPB  3
+#define IH13	4
 
-#define NUM_HER_INDICES	3 // How big an array holding the her gene indices must be
+#define NUM_HER_INDICES	5 // How big an array holding the her gene indices must be
 
 // mRNA indices
 #define IMH1 	0
 #define IMH7 	1
-#define IMH13	2
-#define IMDELTA	3
+#define IMMESPA 2
+#define IMMESPB 3
+#define IMH13	4
+#define IMDELTA	5
 
 // Protein indices
 #define IPH1	0
 #define IPH7	1
-#define IPH13	2
-#define IPDELTA	3
+#define IPMESPA 2
+#define IPMESPB 3
+#define IPH13	4
+#define IPDELTA	5
 
-#define NUM_INDICES		4 // How big an array holding mRNA or protein indices must be
+#define NUM_INDICES		6 // How big an array holding mRNA or protein indices must be
 #define NUM_DD_INDICES	2 // How many mRNA levels are affected by Delta and need to calculate its affects (stands for delta dependent indices)
 
 // Neighbor counts
@@ -189,7 +265,7 @@ macros.hpp contains every constant and macro function used in the program.
 
 // Maximum numbers of conditions
 #define MAX_CONDS_POST	3
-#define MAX_CONDS_ANT	3
+#define MAX_CONDS_ANT	8
 #define MAX_CONDS_WAVE	4
 #define MAX_CONDS_ALL	(MAX_CONDS_POST + MAX_CONDS_ANT + MAX_CONDS_WAVE)
 #define MAX_CONDS_ANY	MAX(MAX(MAX_CONDS_POST, MAX_CONDS_ANT), MAX_CONDS_WAVE)
@@ -207,7 +283,7 @@ macros.hpp contains every constant and macro function used in the program.
 #define EXIT_MEMORY_ERROR		1
 #define EXIT_FILE_READ_ERROR	2
 #define EXIT_FILE_WRITE_ERROR	3
-#define EXIT_PIPE_READ_ERROR	4
+#define EXIT_PIPE_READ_ERROR	4z
 #define EXIT_PIPE_WRITE_ERROR	5
 #define EXIT_INPUT_ERROR		6
 

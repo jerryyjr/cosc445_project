@@ -362,6 +362,7 @@ void print_concentrations (input_params& ip, sim_data& sd, con_levels& cl, mutan
 
 void print_cell_columns (input_params& ip, sim_data& sd, con_levels &cl, char* filename_cons, int set_num) {
 	if (ip.num_colls_print) { // Print the cells only if the user specified it
+        cerr << "But why are we here" << endl;
 		int strlen_set_num = INT_STRLEN(set_num); // How many bytes the ASCII representation of set_num takes
 		char* str_set_num = (char*)mallocate(sizeof(char) * (strlen_set_num + 1));
 		sprintf(str_set_num, "%d", set_num);
@@ -528,7 +529,7 @@ void print_conditions (input_params& ip, ofstream* file_conditions, mutant_data 
 		This function prints the set index then score for each mutant then the total score, all separated by commas, one set per line.
 	todo:
 */
-void print_scores (input_params& ip, ofstream* file_scores, int set_num, int scores[], int total_score) {
+void print_scores (input_params& ip, ofstream* file_scores, int set_num, double scores[], double total_score) {
 	if (ip.print_scores) {
 		try {
 			*file_scores << set_num << ",";
@@ -636,13 +637,13 @@ void read_pipe_set (int fd, double pars[]) {
 		This function assumes that fd points to a valid pipe and will exit with an error if it does not.
 	todo:
 */
-void write_pipe (int score[], input_params& ip, sim_data& sd) {
+void write_pipe (double score[], input_params& ip, sim_data& sd) {
 	// Write the maximum possible score an single run can achieve to the pipe
-	write_pipe_int(ip.pipe_out, (sd.no_growth ? sd.max_scores[SEC_POST] : sd.max_score_all));
+	write_pipe_double(ip.pipe_out, (sd.no_growth ? sd.max_scores[SEC_POST] : sd.max_score_all));
 	
 	// Write the scores to the pipe
 	for (int i = 0; i < ip.num_sets; i++) {
-		write_pipe_int(ip.pipe_out, score[i]);
+		write_pipe_double(ip.pipe_out, score[i]);
 	}
 	
 	// Close the pipe
@@ -661,8 +662,8 @@ void write_pipe (int score[], input_params& ip, sim_data& sd) {
 		This function assumes that fd points to a valid pipe and will exit with an error if it does not.
 	todo:
 */
-void write_pipe_int (int fd, int value) {
-	if (write(fd, &value, sizeof(int)) == -1) {
+void write_pipe_double (int fd, double value) {
+	if (write(fd, &value, sizeof(double)) == -1) {
 		term->failed_pipe_write();
 		exit(EXIT_PIPE_WRITE_ERROR);
 	}

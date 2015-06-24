@@ -29,6 +29,7 @@ structs.hpp contains every struct used in the program.
 #include <iostream> // Needed for cout
 #include <bitset> // Needed for bitset
 #include <fstream> // Needed for ofstream
+#include <map> // Needed for map
 
 #include "macros.hpp"
 #include "memory.hpp"
@@ -94,7 +95,7 @@ struct terminal {
 		cout << this->red << "Couldn't read from the pipe!" << this->reset << endl;
 	}
 	
-	// Indicates the program couldn't write to a pipe
+	// Indicates the program couldn't write to a pipeinput_params
 	void failed_pipe_write () {
 		cout << this->red << "Couldn't write to the pipe!" << this->reset << endl;
 	}
@@ -167,6 +168,9 @@ struct input_params {
 	int num_active_mutants; // The number of mutants to simulate for each parameter set, default=num_mutants
 	int big_gran; // The granularity in time steps with which to store data, default=1
 	int small_gran; // The granularit in time steps with which to simulate data, default=1
+	int her1_induction; // The time point of the induction of her1 overexpression
+	int her7_induction; // The time point of the induction of her7 overexpression
+	int DAPT_induction; // The time point of the induction of NICD perturbation
 	
 	// Piping data
 	bool piping; // Whether or not input and output should be piped (as opposed to written to disk), default=false
@@ -440,9 +444,14 @@ struct features {
 	double peaktotrough_end[NUM_INDICES]; // The peak to trough ratio for relevant concentrations at the end of the simulation time-wise
 	double sync_score_post[NUM_INDICES]; // The synchronization score for the relevant concentrations in the posterior
 	double sync_score_ant[NUM_INDICES]; // The synchronization score for the relevant concentrations in the anterior
-	double comp_score_ant_mespa; // The score for the complementary expression of her and mespa
-   	double comp_score_ant_mespb; // The score for the complementary expression of her and mespb
+    double comp_score_ant_mespa; // The score for the complementary expression of her and mespa
+    double comp_score_ant_mespb; // The score for the complementary expression of her and mespb
 	double num_good_somites[NUM_INDICES]; // The number of good somites for the relevant concentrations
+    map<int, double> period_post_time[NUM_INDICES]; // The period in the posterior at various time points in the simulation
+    map<int, double> amplitude_post_time[NUM_INDICES]; // The amplitude in the posterior at various time points in the simulation
+    map<int, double> period_ant_time[NUM_INDICES]; // The period in the anterior at various time points in the simulation
+    map<int, double> amplitude_ant_time[NUM_INDICES]; // The amplitude in the anterior at various time points in the simulaiton
+    map<int, double> sync_time[NUM_INDICES]; // The amplitude in the anterior at various time points in the simulation
 	
 	features () {
 		memset(period_post, 0, sizeof(period_post));
@@ -452,9 +461,9 @@ struct features {
 		memset(peaktotrough_mid, 0, sizeof(peaktotrough_mid));
 		memset(peaktotrough_end, 0, sizeof(peaktotrough_end));
 		memset(sync_score_post, 0, sizeof(sync_score_post));
-		comp_score_ant_mespa = 0;
-		comp_score_ant_mespb = 0;
 		memset(num_good_somites, 0, sizeof(num_good_somites));
+        comp_score_ant_mespa = 0;
+        comp_score_ant_mespb = 0;
 	}
 	
 	void reset () {
@@ -465,11 +474,10 @@ struct features {
 		memset(peaktotrough_mid, 0, sizeof(peaktotrough_mid));
 		memset(peaktotrough_end, 0, sizeof(peaktotrough_end));
 		memset(sync_score_post, 0, sizeof(sync_score_post));
+		memset(num_good_somites, 0, sizeof(num_good_somites));
         comp_score_ant_mespa = 0;
         comp_score_ant_mespb = 0;
-		memset(num_good_somites, 0, sizeof(num_good_somites));
 	}
-
 };
 
 /* mutant_data contains data for a particular mutant
@@ -482,15 +490,16 @@ struct mutant_data {
 	char* dir_name; // The mutant's name for making its directory
 	int num_knockouts; // The number of knockouts required to achieve this mutant
 	int knockouts[2]; // The indices of the concentrations to knockout (num_knockouts determines how many indices to knockout)
-	double overexpressions[NUM_INDICES]; // Overexpression factors with 1=100% overexpressed
+    double overexpression_rate; // Which gene should be overexpressed, -1 = none 
+	double overexpression_factor; // Overexpression factors with 1=100% overexpressed, if 0 then no overexpression
 	int induction; // The induction point for mutants that are time sensitive
-	int recovery;
+    int recovery;
 	con_levels cl; // The concentration levels at the end of this mutant's posterior simulation run
-	int (*tests[2])(mutant_data&, features&); // The posterior and anterior conditions tests
+	double (*tests[2])(mutant_data&, features&); // The posterior and anterior conditions tests
 	int (*wave_test)(pair<int, int>[], int, mutant_data&, int, int); // The traveling wave conditions test
 	int num_conditions[NUM_SECTIONS]; // The number of conditions this mutant is tested on
-	int cond_scores[NUM_SECTIONS][MAX_CONDS_ANY]; // The score this mutant can achieve for each condition
-	int max_cond_scores[NUM_SECTIONS]; // The maximum score this mutant can achieve for each section
+	double cond_scores[NUM_SECTIONS][MAX_CONDS_ANY]; // The score this mutant can achieve for each condition
+	double max_cond_scores[NUM_SECTIONS]; // The maximum score this mutant can achieve for each section
 	bool secs_passed[NUM_SECTIONS]; // Whether or not this mutant has passed each section's conditions
 	double conds_passed[NUM_SECTIONS][1 + MAX_CONDS_ANY]; // The score this mutant achieved for each condition when run
 	features feat; // The oscillation features this mutant produced when run
@@ -503,8 +512,9 @@ struct mutant_data {
 		this->num_knockouts = 0;
 		this->induction = 0;
         this->recovery = 999999999;
+        this->overexpression_rate = -1;
+        this->overexpression_factor = 0;
 		memset(this->knockouts, 0, sizeof(this->knockouts));
-		memset(this->overexpressions, 0, sizeof(this->overexpressions));
 		memset(this->tests, 0, sizeof(this->tests));
 		this->wave_test = NULL;
 		memset(this->num_conditions, 0, sizeof(this->num_conditions));
@@ -574,8 +584,8 @@ struct sim_data {
 	
 	// Mutants and condition scores
 	int num_active_mutants; // The number of mutants to simulate for each parameter set
-	int max_scores[NUM_SECTIONS]; // The maximum score possible for all mutants for each testing section
-	int max_score_all; // The maximum score possible for all mutants for all testing sections
+	double max_scores[NUM_SECTIONS]; // The maximum score possible for all mutants for each testing section
+	double max_score_all; // The maximum score possible for all mutants for all testing sections
 	
 	explicit sim_data (input_params& ip) {
 		this->step_size = ip.step_size;

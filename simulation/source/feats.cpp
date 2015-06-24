@@ -31,6 +31,12 @@ using namespace std;
 
 extern terminal* term; // Declared in init.cpp
 
+/*
+
+In the future need to find a way to unify the functions in this file into some more consistent ones.
+For the time being, I'm focusing on obtaining the needed data.
+
+*/
 int get_peaks_and_troughs (sim_data& sd, con_levels& cl, int actual_cell, int time_start, growin_array& crit_points, growin_array& type, growin_array& position, int mr) {
 	/*
 	Calculates all the peaks and troughs for the her1 mRNA oscillations in a cell within a time range. The cell number is given as a
@@ -56,7 +62,6 @@ int get_peaks_and_troughs (sim_data& sd, con_levels& cl, int actual_cell, int ti
 				is_peak = false;
 			}
 		}
-
 		if (is_peak) {
 			crit_points[num_points] = j;
 			type[num_points] = 1;
@@ -78,14 +83,33 @@ int get_peaks_and_troughs (sim_data& sd, con_levels& cl, int actual_cell, int ti
 			num_points++;
 		}
 	}
-
 	return num_points;
 }
 
+double test_complementary (sim_data& sd, con_levels& cl, int time, int con1, int con2) {
+	double avg_row_con1[sd.width_total];
+    double avg_row_con2[sd.width_total];
+	memset(avg_row_con1, 0, sizeof(double) * sd.width_total);
+    memset(avg_row_con2, 0, sizeof(double) * sd.width_total);
+
+	for (int y = 0; y < sd.width_total; y++) {
+		for (int x = 0; x < sd.height; x++) {
+			int cell = x * sd.width_total + y;
+			avg_row_con1[y] += cl.cons[con1][time][cell];
+            avg_row_con2[y] += cl.cons[con2][time][cell];
+		}
+		
+		avg_row_con1[y] /= sd.height;
+        avg_row_con2[y] /= sd.height;
+	}
+
+	return pearson_correlation(avg_row_con1, avg_row_con2, sd.width_initial, sd.width_total);
+}
+
 void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* filename_feats, con_levels& cl, mutant_data& md, int start_line, int end_line, int start_col, int end_col, int set_num) {
-	static int con[2] = {CMH1, CMDELTA};
-	static int ind[2] = {IMH1, IMDELTA};
-	static const char* concs[2] = {"mh1", "mdelta"};
+	static int con[4] = {CMH1, CMDELTA, CMMESPA, CMMESPB};
+	static int ind[4] = {IMH1, IMDELTA, IMMESPA, IMMESPB};
+	static const char* concs[4] = {"mh1", "mdelta", "mespa", "mespb"};
 	static const char* feat_names[NUM_FEATURES] = {"period", "amplitude", "sync"};
 	static double curve[101] = {1, 1.003367003, 1.003367003, 1.003367003, 1.004713805, 1.004713805, 1.007407407, 1.015488215, 1.015488215, 1.020875421, 1.023569024, 1.023569024, 1.026262626, 1.028956229, 1.037037037, 1.037037037, 1.03973064, 1.042424242, 1.047811448, 1.050505051, 1.055892256, 1.058585859, 1.061279461, 1.066666667, 1.069360269, 1.072053872, 1.077441077, 1.082828283, 1.088215488, 1.090909091, 1.096296296, 1.098989899, 1.104377104, 1.10976431, 1.115151515, 1.115151515, 1.120538721, 1.125925926, 1.128619529, 1.139393939, 1.142087542, 1.15016835, 1.155555556, 1.160942761, 1.169023569, 1.174410774, 1.182491582, 1.187878788, 1.195959596, 1.201346801, 1.212121212, 1.22020202, 1.228282828, 1.239057239, 1.247138047, 1.255218855, 1.268686869, 1.276767677, 1.287542088, 1.301010101, 1.314478114, 1.325252525, 1.336026936, 1.352188552, 1.368350168, 1.381818182, 1.397979798, 1.414141414, 1.432996633, 1.454545455, 1.476094276, 1.492255892, 1.519191919, 1.546127946, 1.573063973, 1.6, 1.632323232, 1.672727273, 1.705050505, 1.742760943, 1.785858586, 1.837037037, 1.896296296, 1.955555556, 2.025589226, 2.106397306, 2.195286195, 2.303030303, 2.418855219, 2.572390572, 2.725925926, 2.941414141, 3.208080808, 3.574410774, 4, 8.399297321, 12.79859464, 17.19789196, 21.59718928, 25.99648661, 30.39578393};
 	
@@ -97,7 +121,7 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 	char* str_set_num = (char*)mallocate(sizeof(char) * (strlen_set_num + 1));
 	sprintf(str_set_num, "%d", set_num);
 	
-	for (int i = 0; i < 2; i++) {
+	for (int i = 0; i < 4; i++) {
 		ofstream features_files[NUM_FEATURES]; // Array that will hold the files in which to output the period and amplitude
 	
 		int mr = con[i];
@@ -116,21 +140,30 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 		}
 		double** conc = cl.cons[mr];
 		double amp_avg = 0;
-		int time_start = anterior_time(sd, sd.steps_til_growth + (sd.width_total - sd.width_initial - 1) * sd.steps_split); // time after which the PSM is full of cells
+        int time_start;
+        if (md.induction == 0) {
+		    time_start = anterior_time(sd, sd.steps_til_growth + (sd.width_total - sd.width_initial - 1) * sd.steps_split); // time after which the PSM is full of cells
+        } else {
+            time_start = anterior_time(sd, md.induction + (30 / sd.big_gran));
+        }
 		int num_cells_passed = 0;
-
 		for (int col = start_col; col < end_col; col++) {						
 			for (int line = start_line; line < end_line; line++) {
 				int pos = cl.active_start_record[time_start]; // always looking at cell at position active_start because that is the newest cell
 				int cell = line * sd.width_total + pos;
 				int num_points = 0;
-				num_points = get_peaks_and_troughs(sd, cl, cell, time_start, crit_points, type, position, mr);
+                if (mr != CMMESPA && mr != CMMESPB) {
+				    num_points = get_peaks_and_troughs(sd, cl, cell, time_start, crit_points, type, position, mr);
+                } else {
+                    num_points = 0;
+                }
 			
 				double periods[num_points];
 				double per_pos[num_points];
+                double per_time[num_points];
 				double amplitudes[num_points];
 				double amp_pos[num_points];
-				
+                double amp_time[num_points];
 				memset(periods, 0, sizeof(double) * num_points);
 				memset(amplitudes, 0, sizeof(double) * num_points);
 				memset(per_pos, 0, sizeof(double) * num_points);
@@ -149,6 +182,7 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 						if (type[cur_point] == 1 && cur_point >= 2) {
 							periods[pers] = (crit_points[cur_point] - crit_points[cur_point - 2]) * sd.step_size * sd.big_gran;
 							per_pos[pers] = position[cur_point - 2] + (position[cur_point] - position[cur_point - 2]) / 2;
+                            per_time[pers] = (crit_points[cur_point] - crit_points[cur_point - 2]) / 2 * sd.step_size * sd.big_gran;
 							pers++;
 						}
 						
@@ -156,6 +190,7 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 						if (type[cur_point] == 1 && cur_point >= 1 && cur_point < num_points - 1) {
 							amplitudes[amps] = conc[crit_points[cur_point]][cell] - (conc[crit_points[cur_point - 1]][cell] + conc[crit_points[cur_point + 1]][cell]) / 2;
 							amp_pos[amps] = position[cur_point];
+                            amp_time[amps] = crit_points[cur_point];
 							amps++;
 						}
 					}
@@ -193,7 +228,7 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 				} else {
 					amp_avg += 1;
 				}
-				
+                // Printing to files for the anterior features
 				if (ip.ant_features) {
 					for (int j = 0; j < pers; j++) {
 						features_files[PERIOD] << per_pos[j] << ",";
@@ -213,6 +248,24 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 					features_files[AMPLITUDE] << endl;
 				}
 
+                // Updating mutant data
+                for (int j = 0; j < pers; j++) {
+                    double half_hour_index = 0.5 * ((per_time[j] - anterior_time(sd, md.induction)) * sd.big_gran / 30 + 1);
+                    if (per_pos[j] < sd.width_initial) {
+                        md.feat.period_post_time[index][half_hour_index] = periods[j];
+                    } else {
+                        md.feat.period_ant_time[index][half_hour_index] = periods[j];
+                    }
+                }
+                for (int j = 0; j < amps; j++) {
+                    double half_hour_index = 0.5 * ((amp_time[j] - anterior_time(sd, md.induction)) * sd.big_gran / 30 + 1);
+                    if (per_pos[j] < sd.width_initial) {
+                        md.feat.amplitude_post_time[index][half_hour_index] = amplitudes[j];
+                    } else {
+                        md.feat.amplitude_ant_time[index][half_hour_index] = amplitudes[j];
+                    }
+                }
+
 				type.reset(sd.steps_total / 2000);
 				crit_points.reset(sd.steps_total / 2000);
 			}		
@@ -230,16 +283,26 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 			int threshold = 0.8 * (end_line - start_line) * (end_col - start_col);
 			md.conds_passed[SEC_ANT][0] = (num_cells_passed >= threshold);
 		}
-		
+
 		// for sync take 5 snapshots and average sync scores	
 		double sync_avg = 0;
-		int time_full = anterior_time(sd, sd.steps_til_growth + (sd.width_total - sd.width_initial - 1) * sd.steps_split);
-		for (int time = time_full; time < sd.time_end; time += (sd.time_end - 1 - time_full) / 4) {
-			sync_avg += ant_sync(sd, cl, CMH1, time);
-		}
+	    int time_full = anterior_time(sd, sd.steps_til_growth + (sd.width_total - sd.width_initial - 1) * sd.steps_split);
+	    for (int time = time_full; time < sd.time_end; time += (sd.time_end - 1 - time_full) / 4) {
+		    sync_avg += ant_sync(sd, cl, CMH1, time);
+	    }
 
-		md.feat.sync_score_ant[index] = sync_avg / 5;
-		
+	    md.feat.sync_score_ant[index] = sync_avg / 5;
+        if (md.induction != 0) {
+            int time_after_induction = anterior_time(sd, md.induction + 30 / sd.big_gran);
+            for (int i = 0; i < 4; i++) {
+                int mr = con[i];
+                double half_hour_index = 0.5;
+                for (int time = time_after_induction; time < sd.time_end; time += (30 / sd.big_gran)) {
+                    md.feat.sync_time[index][half_hour_index] = ant_sync(sd, cl, mr, time);
+                    half_hour_index += 0.5;
+                }
+            }
+        }
 		if (ip.ant_features) {
 			int time_start = anterior_time(sd, sd.steps_til_growth + (sd.width_total - sd.width_initial - 1) * sd.steps_split);
 			for (int col = start_col; col < end_col; col++) {
@@ -250,12 +313,25 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 			}
 			features_files[SYNC].close();
 		}
+		if (index == IMH1) { // this is only done for her1
+			// for complementary mesp expression take 6 snapshots and average comp score
+			double num = 0;
+		    int time_full = anterior_time(sd, sd.steps_til_growth + (sd.width_total - sd.width_initial - 1) * sd.steps_split);
+			for (int time = time_full; time < sd.time_end; time += 600) { // have 6 minutes in between snapshots
+                md.feat.comp_score_ant_mespa += test_complementary(sd, cl, time, CMH1, CMMESPA);
+                md.feat.comp_score_ant_mespb += test_complementary(sd, cl, time, CMH1, CMMESPB);
+				num += 1;
+			}
+
+			md.feat.comp_score_ant_mespa /= num;
+            md.feat.comp_score_ant_mespb /= num;
+		}
 		md.feat.sync_score_ant[index] = sync_avg / 5;
 	}
 	mfree(str_set_num);
 }
 
-void osc_features_post (sim_data& sd, input_params& ip, con_levels& cl, features& feat, features& wtfeat, char* filename_feats, int section, int start, int end, int set_num) {
+void osc_features_post (sim_data& sd, input_params& ip, con_levels& cl, features& feat, features& wtfeat, char* filename_feats, int start, int end, int set_num) {
 	/*
 	 Calculates the oscillation features: period, amplitude, and peak to trough ratio for a set of concentration levels.
 	 The values are calculated using the last peak and trough of the oscillations, since the amplitude of the first few oscillations can be slightly unstable.
@@ -263,16 +339,17 @@ void osc_features_post (sim_data& sd, input_params& ip, con_levels& cl, features
 	*/
 
 	int strlen_set_num = INT_STRLEN(set_num); // How many bytes the ASCII representation of set_num takes
-	char* str_set_num = (char*)mallocate(sizeof(char) * (strlen_set_num + 1));
+	//char* str_set_num = (char*)mallocate(sizeof(char) * (strlen_set_num + 1));
+    char* str_set_num = (char*) mallocate(2);
 	sprintf(str_set_num, "%d", set_num);
 
-	int con[3] = {CMH1, CMH7, CMDELTA};
-	int ind[3] = {IMH1, IMH7, IMDELTA};
-	static const char* concs[3] = {"mh1", "mh7", "mdelta"};
+	int con[2] = {CMH1, CMH7};
+	int ind[2] = {IMH1, IMH7};
+	static const char* concs[2] = {"mh1", "mh7"};
 	static const char* feat_names[NUM_FEATURES] = {"period", "amplitude", "sync"};
 	ofstream features_files[NUM_FEATURES]; // Array that will hold the files in which to output the period and amplitude
 
-	int num_genes = (section == SEC_POST ? 2 : 3);
+	int num_genes = 2;
 	for (int i = 0; i < num_genes; i++) {
 		if (ip.post_features) {
 			for (int j = 0; j < NUM_FEATURES; j++) {
@@ -327,7 +404,9 @@ void osc_features_post (sim_data& sd, input_params& ip, con_levels& cl, features
 						if (num_peaks >= 2 && calc_period) {
 							double period = (peaks[num_peaks - 1] - peaks[num_peaks - 2]) * sd.step_size * sd.big_gran;
 							cell_period += period;
-							features_files[PERIOD] << period << " ";
+							if (num_peaks >= 4) {
+								features_files[PERIOD] << period << " ";
+							}
 						}
 					}
 					
@@ -344,15 +423,14 @@ void osc_features_post (sim_data& sd, input_params& ip, con_levels& cl, features
 							
 							double first_amp = peaks[1] - (troughs[0] + troughs[1]) / 2;
 							double cur_amp = conc[last_peak][cell] - (conc[last_trough][cell] + conc[sec_last_trough][cell]) / 2;
-							features_files[AMPLITUDE] << cur_amp << " ";
+							if (num_peaks >= 4) {
+								features_files[AMPLITUDE] << cur_amp << " ";
+							}
 							if (cur_amp < (wtfeat.amplitude_post[mr] > 0 ? 0.3 * wtfeat.amplitude_post[mr] : 0.3 * first_amp)) {
 								calc_period = false;
 							}
 						}
 					}
-				}
-				if (section == SEC_ANT) {
-					peaks_period = 1;
 				}
 				cell_period /= peaks_period;
 
@@ -389,45 +467,14 @@ void osc_features_post (sim_data& sd, input_params& ip, con_levels& cl, features
 		peaktotrough_mid /= cells;
 		num_good_somites /= cells;
 
-		if (section == SEC_POST) {
-			feat.period_post[index] = period_tot;
-			feat.amplitude_post[index] = amplitude;
-			feat.peaktotrough_end[index] = peaktotrough_end;
-			feat.peaktotrough_mid[index] = peaktotrough_mid;
-			feat.num_good_somites[index] = num_good_somites;
-		} else {
-			feat.period_ant[index] = period_tot;
-			feat.amplitude_ant[index] = amplitude;
-			feat.peaktotrough_end[index] = peaktotrough_end;
-			feat.peaktotrough_mid[index] = peaktotrough_mid;
-			feat.num_good_somites[index] = num_good_somites;
-		}
+		feat.period_post[index] = period_tot;
+		feat.amplitude_post[index] = amplitude;
+		feat.peaktotrough_end[index] = peaktotrough_end;
+		feat.peaktotrough_mid[index] = peaktotrough_mid;
+		feat.num_good_somites[index] = num_good_somites;
 		
-		if (section == SEC_POST) {
-			feat.sync_score_post[index] = post_sync(sd, cl, mr, (start + end) / 2, end);
-		} else {
-			feat.sync_score_ant[index] = ant_sync(sd, cl, mr, end - 1);
-		}		
+		feat.sync_score_post[index] = post_sync(sd, cl, mr, (start + end) / 2, end);
 	}
-}	
-
-int osc_features_wave (sim_data& sd, con_levels& cl, mutant_data& md) {
-	int score = 0;
-	if (md.index == MUTANT_WILDTYPE || md.index == MUTANT_HER1) {
-		term->verbose() << term->blue << "    Analyzing " << term->reset << "traveling wave features . . . ";
-		md.secs_passed[SEC_WAVE] = true;
-		int wave_start = anterior_time(sd, sd.steps_til_growth + ((sd.width_total - sd.width_initial - 1) * sd.steps_split));
-		int wave_end = sd.time_end;
-		int step = (wave_end - 1 - wave_start) / 4;
-		for (int i = wave_start; i < wave_end; i += step) {
-			score = wave_testing(sd, cl, md, i, CMH1, cl.active_start_record[i]);
-			if (score != md.max_cond_scores[SEC_WAVE]) {
-				break;
-			}
-		}
-		term->done(term->verbose());
-	}
-	return score;
 }
 
 double ant_sync (sim_data& sd, con_levels& cl, int con, int time) {
@@ -469,7 +516,7 @@ void plot_ant_sync (sim_data& sd, con_levels& cl, int time_start, ofstream* file
 	}
 	int time_end = time;
 	int interval = INTERVAL / sd.step_size;
-	int num_points = (time_end - time_start - interval) / (interval / 2) + 1; 
+	int num_points = (time_end - time_start - interval) / (interval / 2); 
 	
 	if (first_col) {
 		*file_pointer << sd.height - 1 << "," << INTERVAL << "," << sd.steps_split * sd.small_gran << endl;

@@ -26,9 +26,9 @@ feats.hpp contains function declarations for feats.cpp.
 #include "structs.hpp"
 
 int get_peaks_and_troughs(sim_data&, con_levels&, int, int, growin_array&, growin_array&, growin_array&, int);
-void osc_features_post(sim_data&, input_params&, con_levels&, features&, features&, char*, int, int, int, int);
+void osc_features_post(sim_data&, input_params&, con_levels&, features&, features&, char*, int, int, int);
+double test_mesp_complementary(sim_data&, con_levels&, int);
 void osc_features_ant(sim_data&, input_params&, features&, char*, con_levels&, mutant_data&, int, int, int, int, int);
-int osc_features_wave(sim_data&, con_levels&, mutant_data&);
 double post_sync(sim_data&, con_levels&, int, int, int);
 double ant_sync(sim_data&, con_levels&, int, int);
 void plot_ant_sync(sim_data&, con_levels&, int, ofstream*, bool);

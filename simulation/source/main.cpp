@@ -25,6 +25,7 @@ Avoid putting functions in main.cpp that could be put in a more specific file.
 
 #include "init.hpp"
 #include "sim.hpp"
+#include "debug.hpp"
 
 using namespace std;
 
@@ -65,7 +66,7 @@ int main(int argc, char** argv) {
 	fill_perturbations(*rs, perturb_data.buffer);
 	fill_gradients(*rs, gradients_data.buffer);
 	calc_max_delay_size(ip, sd, *rs, sets);
-	mutant_data* mds = create_mutant_data(sd);
+	mutant_data* mds = create_mutant_data(sd, ip);
 	sd.initialize_conditions_data(mds);
 	
 	// Create the specified output files
@@ -120,6 +121,9 @@ void usage (const char* message) {
 	cout << "-t, --print-cons         [N/A]        : print concentration values to the specified output directory, default=unused" << endl;
 	cout << "-B, --binary-cons-output [N/A]        : print concentration values as binary numbers rather than ASCII, default=unused" << endl;
 	cout << "-f, --print-osc-features [filename]   : the relative filename of the file summarizing all the oscillation features, default=none" << endl;
+	cout << "-X, --her1-induction     [int]        : the induction point for her1 overexpression" << endl;
+	cout << "-Y, --her7-induction     [int]        : the induction point for her7 overexpression" << endl;
+	cout << "-Z, --DAPT-induction     [int]        : the induction point for DAPT treatment" << endl;
 	cout << "-D, --directory-path     [directory]  : the relative directory where concentrations or anterior oscillation features files will be printed, default=none" << endl;
 	cout << "-A, --anterior-feats     [N/A]        : print in depth oscillation features for the anterior cells over time, default=unused" << endl;
 	cout << "-P, --posterior-feats    [N/A]        : print in depth oscillation features for the posterior cells over time, default=unused" << endl;

@@ -32,8 +32,8 @@ void open_file(ofstream*, char*, bool);
 double simulate_set(double[]);
 void write_pipe(int, double[]);
 void write_pipe_int(int, int);
-void read_pipe(int, int*, int*);
-void read_pipe_int(int, int*);
+void read_pipe(int, double*, double*);
+void read_pipe_int(int, double*);
 void close_if_open(ofstream&);
 
 #endif

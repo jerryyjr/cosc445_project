@@ -25,28 +25,32 @@ tests.hpp contains function declarations for tests.cpp.
 
 #include "structs.hpp"
 
-int test_wildtype_post(mutant_data&, features&);
-int test_her7_mutant_post(mutant_data&, features&);
-int test_her13_mutant_post(mutant_data&, features&);
-int test_delta_mutant_post(mutant_data&, features&);
-int test_her7her13_mutant_post(mutant_data&, features&);
-int test_her1_mutant_post(mutant_data&, features&);
-int test_her7delta_mutant_post(mutant_data&, features&);
-int test_her1delta_mutant_post(mutant_data&, features&);
-int test_her7over_mutant_post(mutant_data&, features&);
-int test_her1over_mutant_post(mutant_data&, features&);
-int test_deltaover_mutant_post(mutant_data&, features&);
-int test_wildtype_ant(mutant_data&, features&);
-int test_her7_mutant_ant(mutant_data&, features&);
-int test_her13_mutant_ant(mutant_data&, features&);
-int test_delta_mutant_ant(mutant_data&, features&);
-int test_her7her13_mutant_ant(mutant_data&, features&);
-int test_her1_mutant_ant(mutant_data&, features&);
-int test_her7delta_mutant_ant(mutant_data&, features&);
-int test_her1delta_mutant_ant(mutant_data&, features&);
-int test_her7over_mutant_ant(mutant_data&, features&);
-int test_her1over_mutant_ant(mutant_data&, features&);
-int test_deltaover_mutant_ant(mutant_data&, features&);
+double test_wildtype_post(mutant_data&, features&);
+double test_her7_mutant_post(mutant_data&, features&);
+double test_her13_mutant_post(mutant_data&, features&);
+double test_delta_mutant_post(mutant_data&, features&);
+double test_her7her13_mutant_post(mutant_data&, features&);
+double test_her1_mutant_post(mutant_data&, features&);
+double test_her7delta_mutant_post(mutant_data&, features&);
+double test_her1delta_mutant_post(mutant_data&, features&);
+double test_her7over_mutant_post(mutant_data&, features&);
+double test_her1over_mutant_post(mutant_data&, features&);
+double test_deltaover_mutant_post(mutant_data&, features&);
+double test_her1her7_mutant_post(mutant_data&, features&);
+double test_DAPT_mutant_post(mutant_data&, features&);
+double test_wildtype_ant(mutant_data&, features&);
+double test_her7_mutant_ant(mutant_data&, features&);
+double test_her13_mutant_ant(mutant_data&, features&);
+double test_delta_mutant_ant(mutant_data&, features&);
+double test_her7her13_mutant_ant(mutant_data&, features&);
+double test_her1_mutant_ant(mutant_data&, features&);
+double test_her7delta_mutant_ant(mutant_data&, features&);
+double test_her1delta_mutant_ant(mutant_data&, features&);
+double test_her7over_mutant_ant(mutant_data&, features&);
+double test_her1over_mutant_ant(mutant_data&, features&);
+double test_deltaover_mutant_ant(mutant_data&, features&);
+double test_her1her7_mutant_ant(mutant_data&, features&);
+double test_DAPT_mutant_ant(mutant_data&, features&);
 int test_wildtype_wave (pair<int, int>[], int, mutant_data&, int, int);
 int test_her1_wave (pair<int, int>[], int, mutant_data&, int, int);
 

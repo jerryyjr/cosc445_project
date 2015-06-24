@@ -39,13 +39,13 @@ void print_concentrations(input_params&, sim_data&, con_levels&, mutant_data&, c
 void print_cell_columns(input_params&, sim_data&, con_levels&, char*, int);
 void print_osc_features(input_params&, ofstream*, mutant_data[], int, int);
 void print_conditions (input_params&, ofstream*, mutant_data[], int);
-void print_scores(input_params&, ofstream*, int, int[], int);
+void print_scores(input_params&, ofstream*, int, double[], double);
 void close_if_open(ofstream*);
 void read_pipe(double**&, input_params&);
 void read_pipe_int(int, int*);
 void read_pipe_set(int, double[]);
-void write_pipe(int[], input_params&, sim_data&);
-void write_pipe_int(int, int);
+void write_pipe(double[], input_params&, sim_data&);
+void write_pipe_double(int, double);
 
 #endif
 
