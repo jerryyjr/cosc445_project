@@ -353,8 +353,18 @@ double simulate_mutant (int set_num, input_params& ip, sim_data& sd, rates& rs, 
 		md.secs_passed[sd.section] = true; // Mark that this mutant has passed this simulation
 		score += md.tests[sd.section](md, wtfeat);
 		double max_score = md.max_cond_scores[sd.section];
-		if (sd.section == SEC_ANT && md.secs_passed[SEC_WAVE]) { // The max score has to be adjusted for mutants which have a wave section
+		if (sd.section == SEC_ANT && (md.index == 0 || md.index == 5)) { // The max score has to be adjusted for mutants which have a wave section
 			max_score += md.max_cond_scores[SEC_WAVE];
+			int time_full = anterior_time(sd, sd.steps_til_growth + (sd.width_total - sd.width_initial - 1) * sd.steps_split);
+			int wave_score=0;
+			for (int time = time_full; time < sd.time_end; time += (sd.time_end - 1 - time_full) / 4) {
+		    	if (md.index == 0){
+					wave_score = wave_testing(sd, cl, md, time, CMH1, sd.active_start);
+				} else {
+					wave_score = wave_testing_her1(sd, cl, md, time, sd.active_start);
+				}
+	    	}
+			score += wave_score;
 		}
 		if (score == max_score) {
 			// Copy the concentration levels to the mutant data if this is a posterior simulation (if short circuiting)

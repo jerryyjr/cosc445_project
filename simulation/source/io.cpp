@@ -362,7 +362,7 @@ void print_concentrations (input_params& ip, sim_data& sd, con_levels& cl, mutan
 
 void print_cell_columns (input_params& ip, sim_data& sd, con_levels &cl, char* filename_cons, int set_num) {
 	if (ip.num_colls_print) { // Print the cells only if the user specified it
-        cerr << "But why are we here" << endl;
+        //cerr << "But why are we here" << endl;
 		int strlen_set_num = INT_STRLEN(set_num); // How many bytes the ASCII representation of set_num takes
 		char* str_set_num = (char*)mallocate(sizeof(char) * (strlen_set_num + 1));
 		sprintf(str_set_num, "%d", set_num);

@@ -925,11 +925,12 @@ mutant_data* create_mutant_data (sim_data& sd, input_params& ip) {
     mds[MUTANT_WILDTYPE].cond_scores[SEC_ANT][4] = CW_B;
     mds[MUTANT_WILDTYPE].cond_scores[SEC_ANT][5] = CW_B;
 	mds[MUTANT_WILDTYPE].num_conditions[SEC_WAVE] = 4;
-	mds[MUTANT_WILDTYPE].cond_scores[SEC_WAVE][0] = CW_B;
-	mds[MUTANT_WILDTYPE].cond_scores[SEC_WAVE][1] = CW_B;
-	mds[MUTANT_WILDTYPE].cond_scores[SEC_WAVE][2] = CW_B;
-	mds[MUTANT_WILDTYPE].cond_scores[SEC_WAVE][3] = CW_B;
+	mds[MUTANT_WILDTYPE].cond_scores[SEC_WAVE][0] = CW_A;
+	mds[MUTANT_WILDTYPE].cond_scores[SEC_WAVE][1] = CW_A;
+	mds[MUTANT_WILDTYPE].cond_scores[SEC_WAVE][2] = CW_A;
+	mds[MUTANT_WILDTYPE].cond_scores[SEC_WAVE][3] = CW_A;
 	mds[MUTANT_WILDTYPE].calc_max_scores();
+	//mds[MUTANT_WILDTYPE].secs_passed[SEC_WAVE] = true;
 	
 	// Her7
 	if (MUTANT_HER7 >= sd.num_active_mutants) {return mds;}
@@ -1043,6 +1044,7 @@ mutant_data* create_mutant_data (sim_data& sd, input_params& ip) {
 	mds[MUTANT_HER1].num_conditions[SEC_WAVE] = 1;
 	mds[MUTANT_HER1].cond_scores[SEC_WAVE][0] = CW_AB;
 	mds[MUTANT_HER1].calc_max_scores();
+	//mds[MUTANT_HER1].secs_passed[SEC_WAVE] = true;
 	
 	// Her7-Delta
 	if (MUTANT_HER7DELTA >= sd.num_active_mutants) {return mds;}

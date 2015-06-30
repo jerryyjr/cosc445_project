@@ -265,7 +265,7 @@ macros.hpp contains every constant and macro function used in the program.
 
 // Maximum numbers of conditions
 #define MAX_CONDS_POST	3
-#define MAX_CONDS_ANT	8
+#define MAX_CONDS_ANT	9
 #define MAX_CONDS_WAVE	4
 #define MAX_CONDS_ALL	(MAX_CONDS_POST + MAX_CONDS_ANT + MAX_CONDS_WAVE)
 #define MAX_CONDS_ANY	MAX(MAX(MAX_CONDS_POST, MAX_CONDS_ANT), MAX_CONDS_WAVE)

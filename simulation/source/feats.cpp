@@ -103,7 +103,7 @@ double test_complementary (sim_data& sd, con_levels& cl, int time, int con1, int
         avg_row_con2[y] /= sd.height;
 	}
 
-	return pearson_correlation(avg_row_con1, avg_row_con2, sd.width_initial, sd.width_total);
+	return pearson_correlation(avg_row_con1, avg_row_con2, sd.width_initial, sd.width_total);  //JY WT.10 rounding?
 }
 
 void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* filename_feats, con_levels& cl, mutant_data& md, int start_line, int end_line, int start_col, int end_col, int set_num) {
@@ -208,7 +208,7 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 
 							int percentage = per_pos[i] * 100 / (sd.width_total - 1); // Find the place on the curve of the current period
 							double ratio = periods[i] / periods[0]; // The ratio between the current period and the first period
-							if (!( (0.9 * curve[percentage] / curve[first_fit]) < ratio && ratio < (1.1 * curve[percentage] / curve[first_fit]))) {
+							if (!( (0.9 * curve[percentage] / curve[first_fit]) < ratio && ratio < (1.1 * curve[percentage] / curve[first_fit]))) {   //JY WT.2. checking every period for every cell
 								passed = false;
 								break;
 							}
@@ -252,7 +252,7 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
                 for (int j = 0; j < pers; j++) {
                     double half_hour_index = 0.5 * ((per_time[j] - anterior_time(sd, md.induction)) * sd.big_gran / 30 + 1);
                     if (per_pos[j] < sd.width_initial) {
-                        md.feat.period_post_time[index][half_hour_index] = periods[j];
+                        md.feat.period_post_time[index][half_hour_index] = periods[j];   //JY WT.2.
                     } else {
                         md.feat.period_ant_time[index][half_hour_index] = periods[j];
                     }
@@ -278,17 +278,20 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 
 		amp_avg /= (end_line - start_line) * (end_col - start_col);
 
-		md.feat.amplitude_ant[index] = amp_avg;
+		md.feat.amplitude_ant[index] = amp_avg;  //JY WT.3.  take average of all amplitude for all cell
 		if (md.index == MUTANT_WILDTYPE && mr == CMH1) {
 			int threshold = 0.8 * (end_line - start_line) * (end_col - start_col);
 			md.conds_passed[SEC_ANT][0] = (num_cells_passed >= threshold);
 		}
 
-		// for sync take 5 snapshots and average sync scores	
+		// for sync take 5 snapshots and average sync scores and count waves of mespa and mespb	for wildtype
 		double sync_avg = 0;
 	    int time_full = anterior_time(sd, sd.steps_til_growth + (sd.width_total - sd.width_initial - 1) * sd.steps_split);
 	    for (int time = time_full; time < sd.time_end; time += (sd.time_end - 1 - time_full) / 4) {
 		    sync_avg += ant_sync(sd, cl, CMH1, time);
+			if (md.index == 0) {  // wildtype
+				wave_testing_mesp(sd, cl, md, time, sd.active_start);
+			}
 	    }
 
 	    md.feat.sync_score_ant[index] = sync_avg / 5;
@@ -326,7 +329,7 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 			md.feat.comp_score_ant_mespa /= num;
             md.feat.comp_score_ant_mespb /= num;
 		}
-		md.feat.sync_score_ant[index] = sync_avg / 5;
+		//md.feat.sync_score_ant[index] = sync_avg / 5; // JY bug?
 	}
 	mfree(str_set_num);
 }
@@ -477,7 +480,7 @@ void osc_features_post (sim_data& sd, input_params& ip, con_levels& cl, features
 	}
 }
 
-double ant_sync (sim_data& sd, con_levels& cl, int con, int time) {
+double ant_sync (sim_data& sd, con_levels& cl, int con, int time) {  //JY WT.1. compare every column and take average
 	if (sd.height == 1) {
 		return 1; // for 1d arrays there is no synchronization between rows 
 	}
@@ -498,7 +501,7 @@ double ant_sync (sim_data& sd, con_levels& cl, int con, int time) {
 		pearson_sum += pearson_correlation(first_row, cur_row, 0, sd.width_total);
 	}
 
-	return pearson_sum / (sd.height - 1);
+	return pearson_sum / (sd.height - 1); 
 }
 
 void plot_ant_sync (sim_data& sd, con_levels& cl, int time_start, ofstream* file_pointer, bool first_col) {
@@ -599,7 +602,7 @@ double pearson_correlation (double* x, double* y, int start, int end) {
 	}
 }
 
-int wave_testing (sim_data& sd, con_levels& cl, mutant_data& md, int time, int con, int active_start) {
+int wave_testing (sim_data& sd, con_levels& cl, mutant_data& md, int time, int con, int active_start) { //JY WT.4.5.6.7
 	// average the rows to create one array
 	double conc[sd.width_total];
 	memset(conc, 0, sizeof(double) * sd.width_total);
@@ -665,7 +668,161 @@ int wave_testing (sim_data& sd, con_levels& cl, mutant_data& md, int time, int c
 			}
 		}
 	}
-	int result = md.wave_test(waves, num_waves, md, wlength_post, wlength_ant);
+	int result = md.wave_test(waves, num_waves, md, wlength_post, wlength_ant); //JY WT.5.6.7
 	return result;
 }
 
+
+int wave_testing_her1 (sim_data& sd, con_levels& cl, mutant_data& md, int time, int active_start) { //JY WT.4.5.6.7
+	// average the rows to create one array
+	double conc[sd.width_total];
+	memset(conc, 0, sizeof(double) * sd.width_total);
+	int cur_score = 0;
+	
+	for (int her1or7 = 0; her1or7 <2 ; her1or7++){
+		for (int x = 0; x < sd.width_total; x++) {
+			double avg = 0;
+			for (int y = 0; y < sd.height; y++) {
+				int cell = y * sd.width_total + WRAP(active_start - x, sd.width_total);
+				if (her1or7 ==0){
+					avg += cl.cons[CMH1][time][cell];
+				} else {
+					avg += cl.cons[CMH7][time][cell];
+				}	
+			}
+			conc[x] = avg / sd.height;
+		}
+	
+	// find the highest peak in the entire psm to set the threshold for a signal
+		double thresh = 0;
+		for (int x = 0; x < sd.width_total; x++) {
+			if (conc[x] > thresh) {
+				thresh = conc[x];
+			}
+		}
+		thresh /= 2;
+
+		int num_waves = 0;
+		pair <int, int> waves[3];
+		for (int wave = 0; wave < 3; wave++) {
+			waves[wave].first = 0;
+			waves[wave].second = sd.width_total;
+		}
+
+		// count the number of waves in the anterior
+		for (int x = 0; x < sd.width_total; x++) {
+		// check for wave start
+			if (conc[x] >= thresh && (x == 0 || conc[x - 1] < thresh)) {
+				if (num_waves == 3) {
+					num_waves++;
+					break;
+				}
+				waves[num_waves].first = (x == 0 ? 0 : x - 1);
+			}
+
+		// check for wave end
+			if (conc[x] < thresh && x > 0 && (conc[x - 1] >= thresh)) {
+				if (num_waves == 3) {
+					num_waves++;
+					break;
+				}
+				waves[num_waves].second = x;			
+				num_waves++;
+			}
+		}
+		cur_score = test_her1_wave(waves, num_waves, md, 0, 0);
+	}
+	return cur_score;
+}
+
+void wave_testing_mesp (sim_data& sd, con_levels& cl, mutant_data& md, int time, int active_start) { //JY WT.4.5.6.7
+	// average the rows to create one array
+	double conc[sd.width_total];
+	memset(conc, 0, sizeof(double) * sd.width_total);
+	
+	
+	for (int mespaorb = 0; mespaorb <2 ; mespaorb++){
+		for (int x = 0; x < sd.width_total; x++) {
+			double avg = 0;
+			for (int y = 0; y < sd.height; y++) {
+				int cell = y * sd.width_total + WRAP(active_start - x, sd.width_total);
+				if (mespaorb ==0){
+					avg += cl.cons[CMMESPA][time][cell];
+				} else {
+					avg += cl.cons[CMMESPB][time][cell];
+				}	
+			}
+			conc[x] = avg / sd.height;
+		}
+	
+	// find the highest peak in the entire psm to set the threshold for a signal
+		double thresh = 0;
+		for (int x = 0; x < sd.width_total; x++) {
+			if (conc[x] > thresh) {
+				thresh = conc[x];
+			}
+		}
+		thresh /= 2;
+
+		int num_waves = 0;
+		pair <int, int> waves[3];
+		for (int wave = 0; wave < 3; wave++) {
+			waves[wave].first = 0;
+			waves[wave].second = sd.width_total;
+		}
+
+		// count the number of waves in the anterior
+		for (int x = 0; x < sd.width_total; x++) {
+		// check for wave start
+			if (conc[x] >= thresh && (x == 0 || conc[x - 1] < thresh)) {
+				if (num_waves == 3) {
+					num_waves++;
+					break;
+				}
+				waves[num_waves].first = (x == 0 ? 0 : x - 1);
+			}
+
+		// check for wave end
+			if (conc[x] < thresh && x > 0 && (conc[x - 1] >= thresh)) {
+				if (num_waves == 3) {
+					num_waves++;
+					break;
+				}
+				waves[num_waves].second = x;			
+				num_waves++;
+			}
+		}
+		int wlength_post=5;
+		int wlength_ant=3;
+		md.conds_passed[SEC_ANT][8] = md.conds_passed[SEC_ANT][8]&&true;
+		if (mespaorb == 0) {
+			md.conds_passed[SEC_ANT][6] = md.conds_passed[SEC_ANT][6]&&(1<=num_waves && num_waves<=2);
+			for (int wave = 0; wave < num_waves; wave++) {
+				int start = waves[wave].first;
+				int end = waves[wave].second;
+				int mid = (end - start) / 2;
+				if (mid > sd.width_initial && mid < 0.8 * sd.width_total) {
+					wlength_post = end - start + 1;
+					if (wlength_post<3 || wlength_post>5){
+						md.conds_passed[SEC_ANT][8] = 0;
+						break;
+					} else {
+						md.conds_passed[SEC_ANT][8] = 1;
+					}
+				}
+				if (mid >= 0.8 * sd.width_total) {
+					wlength_ant = end - start + 1;
+					if (wlength_ant<1 || wlength_post>2){
+						md.conds_passed[SEC_ANT][8] = 0;
+						break;
+					} else {
+						md.conds_passed[SEC_ANT][8] = 1;
+					}
+				}
+			}
+		} else {
+			md.conds_passed[SEC_ANT][7] = md.conds_passed[SEC_ANT][7]&&(2<=num_waves && num_waves<=3);
+		}
+	}
+	return;
+}
