@@ -216,8 +216,10 @@ void reset_mutant_scores (input_params& ip, mutant_data mds[]) {
                 mds[i].conds_passed[j][k] = 0;
             }
 			mds[i].secs_passed[j] = false;
+			
 		}
 	}
+	mds[0].conds_passed[SEC_WAVE][0]=1;
 }
 
 /* mutant_sim_message prints a message indicating that the given mutant is being simulated in the given section
