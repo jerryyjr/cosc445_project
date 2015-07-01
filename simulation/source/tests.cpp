@@ -99,9 +99,10 @@ double test_wildtype_ant (mutant_data& md, features& wtfeat) {
 	md.conds_passed[SEC_ANT][1] = md.feat.sync_score_ant[IMH1] > 0.8;
 	md.conds_passed[SEC_ANT][2] = 1.4 < (md.feat.period_ant[IMH1] / md.feat.period_post[IMH1]) && (md.feat.period_ant[IMH7] / md.feat.period_post[IMH7]) < 2.2;  //JY change second IMH1 to IMH7  potential bug
 	md.conds_passed[SEC_ANT][3] = 1.3 < (md.feat.amplitude_ant[IMDELTA] / md.feat.amplitude_post[IMDELTA]);
-    md.conds_passed[SEC_ANT][4] = (1 - md.feat.comp_score_ant_mespa) / 2.0;
+	//cout<<md.conds_passed[SEC_ANT][3]<<endl;
+    md.conds_passed[SEC_ANT][4] = (1 - md.feat.comp_score_ant_mespa) / 2;
     md.conds_passed[SEC_ANT][5] = (1 - md.feat.comp_score_ant_mespb) / 2.0;
-    //cerr << md.feat.comp_score_ant_mespa << " " << md.feat.comp_score_ant_mespb << endl;
+    cout << md.feat.comp_score_ant_mespa << " " << md.conds_passed[SEC_ANT][4] << endl;
 	return (md.conds_passed[SEC_ANT][0] * md.cond_scores[SEC_ANT][0]) + (md.conds_passed[SEC_ANT][1] * md.cond_scores[SEC_ANT][1]) + (md.conds_passed[SEC_ANT][2] * md.cond_scores[SEC_ANT][2]) + (md.conds_passed[SEC_ANT][3] * md.cond_scores[SEC_ANT][3]) + (md.conds_passed[SEC_ANT][4] * md.cond_scores[SEC_ANT][4]) + (md.conds_passed[SEC_ANT][5] * md.cond_scores[SEC_ANT][5]) + (md.conds_passed[SEC_ANT][6] * md.cond_scores[SEC_ANT][6]) + (md.conds_passed[SEC_ANT][7] * md.cond_scores[SEC_ANT][7]);
 }
 
@@ -205,11 +206,12 @@ int test_wildtype_wave (pair<int, int> waves[], int num_waves, mutant_data& md, 
 	} else {
 		md.conds_passed[SEC_WAVE][1] = md.conds_passed[SEC_WAVE][1] && (2 <= wlength_post && wlength_post <= 8);//JY WT.5. Mild
 		md.conds_passed[SEC_WAVE][2] = md.conds_passed[SEC_WAVE][2] && (2 <= wlength_ant && wlength_ant <= 8); //JY WT.6. Mild
-		cout<<md.conds_passed[SEC_WAVE][1]<<endl;
+		//cout<<md.conds_passed[SEC_WAVE][1]<<endl;
 		// Calculate traveling wave distance
 		for (int wave = 1; wave < num_waves; wave++) {
 			int dist = waves[wave].first - waves[wave - 1].second;
 			md.conds_passed[SEC_WAVE][3] = md.conds_passed[SEC_WAVE][3] && (2 <= dist && dist <= 8);  //JY WT.7.
+			cout<<md.conds_passed[SEC_WAVE][3]<<"dist"<<dist<<endl;
 		}
 	}
 	
