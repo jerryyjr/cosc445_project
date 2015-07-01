@@ -926,8 +926,8 @@ mutant_data* create_mutant_data (sim_data& sd, input_params& ip) {
     mds[MUTANT_WILDTYPE].cond_scores[SEC_ANT][5] = CW_B;
 	mds[MUTANT_WILDTYPE].num_conditions[SEC_WAVE] = 4;
 	mds[MUTANT_WILDTYPE].cond_scores[SEC_WAVE][0] = CW_A;
-	mds[MUTANT_WILDTYPE].cond_scores[SEC_WAVE][1] = CW_B;
-	mds[MUTANT_WILDTYPE].cond_scores[SEC_WAVE][2] = CW_B;
+	mds[MUTANT_WILDTYPE].cond_scores[SEC_WAVE][1] = CW_A;
+	mds[MUTANT_WILDTYPE].cond_scores[SEC_WAVE][2] = CW_A;
 	mds[MUTANT_WILDTYPE].cond_scores[SEC_WAVE][3] = CW_B;
 	mds[MUTANT_WILDTYPE].calc_max_scores();
 	//mds[MUTANT_WILDTYPE].secs_passed[SEC_WAVE] = true;

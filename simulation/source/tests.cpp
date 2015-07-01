@@ -196,7 +196,7 @@ double test_DAPT_mutant_ant (mutant_data& md, features& wtfeat) {
 
 int test_wildtype_wave (pair<int, int> waves[], int num_waves, mutant_data& md, int wlength_post, int wlength_ant) {
 	md.conds_passed[SEC_WAVE][0] = md.conds_passed[SEC_WAVE][0] && (2 <= num_waves && num_waves <= 3); //JY WT.4.
-	
+	//cout<<md.conds_passed[SEC_WAVE][0]<<endl;
 	// If there are not between 2 and 3 waves in the PSM the rest of the conditions default to false
 	if (!md.conds_passed[SEC_WAVE][0]) {
 		md.conds_passed[SEC_WAVE][1] = md.conds_passed[SEC_WAVE][1] && false;
@@ -205,7 +205,7 @@ int test_wildtype_wave (pair<int, int> waves[], int num_waves, mutant_data& md, 
 	} else {
 		md.conds_passed[SEC_WAVE][1] = md.conds_passed[SEC_WAVE][1] && (2 <= wlength_post && wlength_post <= 8);//JY WT.5. Mild
 		md.conds_passed[SEC_WAVE][2] = md.conds_passed[SEC_WAVE][2] && (2 <= wlength_ant && wlength_ant <= 8); //JY WT.6. Mild
-
+		cout<<md.conds_passed[SEC_WAVE][1]<<endl;
 		// Calculate traveling wave distance
 		for (int wave = 1; wave < num_waves; wave++) {
 			int dist = waves[wave].first - waves[wave - 1].second;
