@@ -225,13 +225,16 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 					for (int i = 0; i < amps; i++) {
 						amp_cell += amplitudes[i];
 					}
-					double period_cell = 0;
-					for (int i = 0; i < pers; i++) {
-						period_cell += periods[i];
-					}
+					//double period_cell = 0;
+					int rang = (int)(0.85 * pers);
+					//int count = 0;
+					/*for (; rang < pers; rang++) {
+						period_cell += periods[rang];
+						count++;
+					}*/
 					
 					amp_avg += amp_cell / amps;
-					period_avg += period_cell/pers;
+					period_avg += (periods[rang]);
 				} else {
 					amp_avg += 1;
 					period_avg += 1;
