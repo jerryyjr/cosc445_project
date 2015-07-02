@@ -140,6 +140,7 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 		}
 		double** conc = cl.cons[mr];
 		double amp_avg = 0;
+		double period_avg = 0;
         int time_start;
         if (md.induction == 0) {
 		    time_start = anterior_time(sd, sd.steps_til_growth + (sd.width_total - sd.width_initial - 1) * sd.steps_split); // time after which the PSM is full of cells
@@ -224,9 +225,16 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 					for (int i = 0; i < amps; i++) {
 						amp_cell += amplitudes[i];
 					}
+					double period_cell = 0;
+					for (int i = 0; i < pers; i++) {
+						period_cell += periods[i];
+					}
+					
 					amp_avg += amp_cell / amps;
+					period_avg += period_cell/pers;
 				} else {
 					amp_avg += 1;
+					period_avg += 1;
 				}
                 // Printing to files for the anterior features
 				if (ip.ant_features) {
@@ -277,7 +285,10 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 		}
 
 		amp_avg /= (end_line - start_line) * (end_col - start_col);
-
+		period_avg /= (end_line - start_line) * (end_col - start_col);
+		
+		
+        md.feat.period_ant[index] = period_avg;
 		md.feat.amplitude_ant[index] = amp_avg;  //JY WT.3.  take average of all amplitude for all cell
 		if (md.index == MUTANT_WILDTYPE && mr == CMH1) {
 			int threshold = 0.8 * (end_line - start_line) * (end_col - start_col);
@@ -794,7 +805,7 @@ void wave_testing_mesp (sim_data& sd, con_levels& cl, mutant_data& md, int time,
 		}
 		int wlength_post=5;
 		int wlength_ant=3;
-		md.conds_passed[SEC_ANT][8] = md.conds_passed[SEC_ANT][8]&&true;
+		md.conds_passed[SEC_ANT][8] = 1;
 		if (mespaorb == 0) {
 			md.conds_passed[SEC_ANT][6] = md.conds_passed[SEC_ANT][6]&&(1<=num_waves && num_waves<=2);
 			for (int wave = 0; wave < num_waves; wave++) {
@@ -804,24 +815,47 @@ void wave_testing_mesp (sim_data& sd, con_levels& cl, mutant_data& md, int time,
 				if (mid > sd.width_initial && mid < 0.8 * sd.width_total) {
 					wlength_post = end - start + 1;
 					if (wlength_post<3 || wlength_post>5){
-						md.conds_passed[SEC_ANT][8] = 0;
+						md.conds_passed[SEC_ANT][8] = md.conds_passed[SEC_ANT][8]&&0;
 						break;
 					} else {
-						md.conds_passed[SEC_ANT][8] = 1;
+						md.conds_passed[SEC_ANT][8] = md.conds_passed[SEC_ANT][8]&&1;
 					}
 				}
 				if (mid >= 0.8 * sd.width_total) {
 					wlength_ant = end - start + 1;
 					if (wlength_ant<1 || wlength_post>2){
-						md.conds_passed[SEC_ANT][8] = 0;
+						md.conds_passed[SEC_ANT][8] = md.conds_passed[SEC_ANT][8]&&0;
 						break;
 					} else {
-						md.conds_passed[SEC_ANT][8] = 1;
+						md.conds_passed[SEC_ANT][8] = md.conds_passed[SEC_ANT][8]&&1;
 					}
 				}
 			}
 		} else {
 			md.conds_passed[SEC_ANT][7] = md.conds_passed[SEC_ANT][7]&&(2<=num_waves && num_waves<=3);
+			for (int wave = 0; wave < num_waves; wave++) {
+				int start = waves[wave].first;
+				int end = waves[wave].second;
+				int mid = (end - start) / 2;
+				if (mid > sd.width_initial && mid < 0.8 * sd.width_total) {
+					wlength_post = end - start + 1;
+					if (wlength_post<3 || wlength_post>5){
+						md.conds_passed[SEC_ANT][8] = md.conds_passed[SEC_ANT][8]&&0;
+						break;
+					} else {
+						md.conds_passed[SEC_ANT][8] = md.conds_passed[SEC_ANT][8]&&1;
+					}
+				}
+				if (mid >= 0.8 * sd.width_total) {
+					wlength_ant = end - start + 1;
+					if (wlength_ant<1 || wlength_post>2){
+						md.conds_passed[SEC_ANT][8] = md.conds_passed[SEC_ANT][8]&&0;
+						break;
+					} else {
+						md.conds_passed[SEC_ANT][8] = md.conds_passed[SEC_ANT][8]&&1;
+					}
+				}
+			}
 		}
 	}
 	return;
