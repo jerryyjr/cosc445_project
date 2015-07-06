@@ -25,11 +25,11 @@ macros.hpp contains every constant and macro function used in the program.
 
 // Mutant indices
 #define MUTANT_WILDTYPE		0
-#define MUTANT_HER7			1
+#define MUTANT_HER7			5
 #define MUTANT_HER13		2
 #define MUTANT_DELTA		3
 #define MUTANT_HER7HER13	4
-#define MUTANT_HER1			5
+#define MUTANT_HER1			1
 #define MUTANT_HER7DELTA	6
 #define MUTANT_HER1DELTA	7
 #define MUTANT_HER7OVER		8

@@ -121,7 +121,7 @@ void usage (const char* message) {
 	cout << "-t, --print-cons         [N/A]        : print concentration values to the specified output directory, default=unused" << endl;
 	cout << "-B, --binary-cons-output [N/A]        : print concentration values as binary numbers rather than ASCII, default=unused" << endl;
 	cout << "-f, --print-osc-features [filename]   : the relative filename of the file summarizing all the oscillation features, default=none" << endl;
-	cout << "-X, --her1-induction     [int]        : the induction point for her1 overexpression" << endl;
+	cout << "-V, --her1-induction     [int]        : the induction point for her1 overexpression" << endl;
 	cout << "-Y, --her7-induction     [int]        : the induction point for her7 overexpression" << endl;
 	cout << "-Z, --DAPT-induction     [int]        : the induction point for DAPT treatment" << endl;
 	cout << "-D, --directory-path     [directory]  : the relative directory where concentrations or anterior oscillation features files will be printed, default=none" << endl;

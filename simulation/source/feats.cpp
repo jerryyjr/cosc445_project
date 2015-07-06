@@ -303,7 +303,7 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 	    int time_full = anterior_time(sd, sd.steps_til_growth + (sd.width_total - sd.width_initial - 1) * sd.steps_split);
 	    for (int time = time_full; time < sd.time_end; time += (sd.time_end - 1 - time_full) / 4) {
 		    sync_avg += ant_sync(sd, cl, CMH1, time);
-			if (md.index == 0) {  // wildtype
+			if (md.index == MUTANT_WILDTYPE) {  // wildtype
 				wave_testing_mesp(sd, cl, md, time, sd.active_start);
 			}
 	    }
@@ -693,7 +693,7 @@ int wave_testing_her1 (sim_data& sd, con_levels& cl, mutant_data& md, int time, 
 	memset(conc, 0, sizeof(double) * sd.width_total);
 	int cur_score = 0;
 	
-	for (int her1or7 = 0; her1or7 <2 ; her1or7++){
+	for (int her1or7 = 0; her1or7 <1 ; her1or7++){
 		for (int x = 0; x < sd.width_total; x++) {
 			double avg = 0;
 			for (int y = 0; y < sd.height; y++) {
@@ -826,7 +826,7 @@ void wave_testing_mesp (sim_data& sd, con_levels& cl, mutant_data& md, int time,
 				}
 				if (mid >= 0.8 * sd.width_total) {
 					wlength_ant = end - start + 1;
-					if (wlength_ant<1 || wlength_post>2){
+					if (wlength_ant<2 || wlength_post>3){
 						md.conds_passed[SEC_ANT][8] = md.conds_passed[SEC_ANT][8]&&0;
 						break;
 					} else {
@@ -851,7 +851,7 @@ void wave_testing_mesp (sim_data& sd, con_levels& cl, mutant_data& md, int time,
 				}
 				if (mid >= 0.8 * sd.width_total) {
 					wlength_ant = end - start + 1;
-					if (wlength_ant<1 || wlength_post>2){
+					if (wlength_ant<2 || wlength_post>3){
 						md.conds_passed[SEC_ANT][8] = md.conds_passed[SEC_ANT][8]&&0;
 						break;
 					} else {

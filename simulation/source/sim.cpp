@@ -169,6 +169,7 @@ int simulate_section (int set_num, input_params& ip, sim_data& sd, rates& rs, co
 	for (int i = 0; i < ip.num_active_mutants; i++) {
 		mutant_sim_message(mds[i], i);
         store_original_rates(rs, mds[i], temp_rates); // will be used to revert original rates after current mutant
+		knockout (rs, mds[i]);
 		double current_score = simulate_mutant(set_num, ip, sd, rs, cl, baby_cl, mds[i], mds[MUTANT_WILDTYPE].feat, dirnames_cons[i], temp_rates);
 		scores[sd.section * ip.num_active_mutants + i] = current_score;
 		baby_cl.reset();
@@ -219,12 +220,12 @@ void reset_mutant_scores (input_params& ip, mutant_data mds[]) {
 			
 		}
 	}
-	mds[0].conds_passed[SEC_WAVE][0]=1;
-	mds[0].conds_passed[SEC_WAVE][1]=1;
-	mds[0].conds_passed[SEC_WAVE][2]=1;
-	mds[0].conds_passed[SEC_WAVE][3]=1;
-	mds[0].conds_passed[SEC_ANT][6]=1;
-	mds[0].conds_passed[SEC_ANT][7]=1;
+	mds[MUTANT_WILDTYPE].conds_passed[SEC_WAVE][0]=1;
+	mds[MUTANT_WILDTYPE].conds_passed[SEC_WAVE][1]=1;
+	mds[MUTANT_WILDTYPE].conds_passed[SEC_WAVE][2]=1;
+	mds[MUTANT_WILDTYPE].conds_passed[SEC_WAVE][3]=1;
+	mds[MUTANT_WILDTYPE].conds_passed[SEC_ANT][6]=1;
+	mds[MUTANT_WILDTYPE].conds_passed[SEC_ANT][7]=1;
 }
 
 /* mutant_sim_message prints a message indicating that the given mutant is being simulated in the given section
@@ -360,12 +361,12 @@ double simulate_mutant (int set_num, input_params& ip, sim_data& sd, rates& rs, 
 		md.secs_passed[sd.section] = true; // Mark that this mutant has passed this simulation
 		score += md.tests[sd.section](md, wtfeat);
 		double max_score = md.max_cond_scores[sd.section];
-		if (sd.section == SEC_ANT && (md.index == 0 || md.index == 5)) { // The max score has to be adjusted for mutants which have a wave section
+		if (sd.section == SEC_ANT && (md.index == MUTANT_WILDTYPE || md.index == MUTANT_HER1)) { // The max score has to be adjusted for mutants which have a wave section
 			max_score += md.max_cond_scores[SEC_WAVE];
 			int time_full = anterior_time(sd, sd.steps_til_growth + (sd.width_total - sd.width_initial - 1) * sd.steps_split);
 			int wave_score=0;
 			for (int time = time_full; time < sd.time_end; time += (sd.time_end - 1 - time_full) / 4) {
-		    	if (md.index == 0){
+		    	if (md.index == MUTANT_WILDTYPE){
 					wave_score = wave_testing(sd, cl, md, time, CMH1, sd.active_start);
 				} else {
 					wave_score = wave_testing_her1(sd, cl, md, time, sd.active_start);
@@ -411,7 +412,7 @@ bool model (sim_data& sd, rates& rs, con_levels& cl, con_levels& baby_cl, mutant
     bool past_induction = false; // Whether we've passed the point of induction of knockouts or overexpression
     bool past_recovery = false; // Whether we've recovered from the knockouts or overexpression
 	for (j = sd.time_start, baby_j = 0; j < sd.time_end; j++, baby_j = WRAP(baby_j + 1, sd.max_delay_size)) {
-        /*
+        
         if (!past_induction && !past_recovery && (j + sd.steps_til_growth > md.induction)) {
     	    knockout(rs, md); //knock down rates after the induction point
             past_induction = true;
@@ -419,7 +420,7 @@ bool model (sim_data& sd, rates& rs, con_levels& cl, con_levels& baby_cl, mutant
         if (past_induction && (j + sd.steps_til_growth > md.recovery)) {
             revert_knockout(rs, md, temp_rates);
             past_recovery = true;
-        } */           
+        }            
 
 		int time_prev = WRAP(baby_j - 1, sd.max_delay_size); // Time is cyclical, so time_prev may not be baby_j - 1
 		copy_records(sd, baby_cl, baby_j, time_prev); // Copy each cell's birth and parent so the records are accessible at every time step
