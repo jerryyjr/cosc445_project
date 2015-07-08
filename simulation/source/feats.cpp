@@ -336,12 +336,14 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 		    int time_full = anterior_time(sd, sd.steps_til_growth + (sd.width_total - sd.width_initial - 1) * sd.steps_split);
 			for (int time = time_full; time < sd.time_end; time += 600) { // have 6 minutes in between snapshots
                 md.feat.comp_score_ant_mespa += test_complementary(sd, cl, time, CMH1, CMMESPA);
+				
                 md.feat.comp_score_ant_mespb += test_complementary(sd, cl, time, CMH1, CMMESPB);
 				num += 1;
 			}
-
+			//cout<<md.feat.comp_score_ant_mespa<<endl;
 			md.feat.comp_score_ant_mespa /= num;
             md.feat.comp_score_ant_mespb /= num;
+			
 		}
 		//md.feat.sync_score_ant[index] = sync_avg / 5; // JY bug?
 	}
@@ -597,6 +599,7 @@ double pearson_correlation (double* x, double* y, int start, int end) {
 	for (int j = start; j < end; j++) {
 		x_avg += x[j];
 		y_avg += y[j];
+		
 	}
 	x_avg /= (end - start);
 	y_avg /= (end - start);
@@ -606,12 +609,16 @@ double pearson_correlation (double* x, double* y, int start, int end) {
 		sigma_x2 += SQUARE(x[j] - x_avg);
 		sigma_y2 += SQUARE(y[j] - y_avg);
 	}
+	
 	sigma_x2 = sqrt(sigma_x2);
 	sigma_y2 = sqrt(sigma_y2);
-
+    
 	if (sigma_x2 == 0 || sigma_y2 == 0) {
+		
+		//cout<<y[0]<<"abc"<<y_avg<<endl;
 		return 1;
 	} else {	
+		
 		return sigma_xy / ((sigma_x2 * sigma_y2));
 	}
 }

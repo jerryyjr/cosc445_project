@@ -56,6 +56,8 @@ void mRNA_synthesis(sim_data&, double**, con_levels&, st_context&, int[], mutant
 void calc_neighbors_1d(sim_data&, int[], int, int, int);
 void calc_neighbors_2d(sim_data&);
 double transcription(double**, con_levels&, int, int, double, double, double, int);
+double transcription_mespa(double**, con_levels&, int, int, double, double, double, int);
+double transcription_mespb(double**, con_levels&, int, int, double, double, double, int);
 void perturb_rates_all(rates&);
 void perturb_rates_column(sim_data&, rates&, int);
 double random_perturbation(double);

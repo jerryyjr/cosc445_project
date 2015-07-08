@@ -694,45 +694,45 @@ void protein_synthesis (sim_data& sd, double** rs, con_levels& cl, st_context& s
 	
 	// Her1
 	dim_int(dia, di_indices(CPH1, CPH7,  CPH1H7,  RDAH1H7,  RDDIH1H7,  IH1));
-    if (sd.section == SEC_ANT) {
+    /*if (sd.section == SEC_ANT) {
         dim_int(dia, di_indices(CPH1, CPMESPA, CPH1MESPA, RDAH1MESPA, RDDIH1MESPA, IH1));
         dim_int(dia, di_indices(CPH1, CPMESPB, CPH1MESPB, RDAH1MESPB, RDDIH1MESPB, IH1));
-    }
+    }*/
 	dim_int(dia, di_indices(CPH1, CPH13, CPH1H13, RDAH1H13, RDDIH1H13, IH1));
 	con_protein_her(cpa, cph_indices(CMH1, CPH1, CPH1H1, RPSH1, RPDH1, RDAH1H1, RDDIH1H1, RDELAYPH1, IH1, IPH1));
 	
 	// Her7
 	dim_int(dia, di_indices(CPH7, CPH1,  CPH1H7,  RDAH1H7,  RDDIH1H7,  IH7));
-    if (sd.section == SEC_ANT) {
+    /*if (sd.section == SEC_ANT) {
         dim_int(dia, di_indices(CPH7, CPMESPA, CPH7MESPA, RDAH7MESPA, RDDIH7MESPA, IH7));
         dim_int(dia, di_indices(CPH7, CPMESPB, CPH7MESPB, RDAH7MESPB, RDDIH7MESPB, IH7));
-    }
+    }*/
 	dim_int(dia, di_indices(CPH7, CPH13, CPH7H13, RDAH7H13, RDDIH7H13, IH7));
 	con_protein_her(cpa, cph_indices(CMH7, CPH7, CPH7H7, RPSH7, RPDH7, RDAH7H7, RDDIH7H7, RDELAYPH7, IH7, IPH7));
 	
     if (sd.section == SEC_ANT) {
 	    // MespA
-	    dim_int(dia, di_indices(CPMESPA, CPH1,  CPH1MESPA,  RDAH1MESPA,  RDDIH1MESPA,  IMESPA));
-	    dim_int(dia, di_indices(CPMESPA, CPH7,  CPH7MESPA,  RDAH7MESPA,  RDDIH7MESPA,  IMESPA));
+	    //dim_int(dia, di_indices(CPMESPA, CPH1,  CPH1MESPA,  RDAH1MESPA,  RDDIH1MESPA,  IMESPA));
+	    //dim_int(dia, di_indices(CPMESPA, CPH7,  CPH7MESPA,  RDAH7MESPA,  RDDIH7MESPA,  IMESPA));
 	    dim_int(dia, di_indices(CPMESPA, CPMESPB, CPMESPAMESPB, RDAMESPAMESPB, RDDIMESPAMESPB, IMESPA));
-	    dim_int(dia, di_indices(CPMESPA, CPH13, CPMESPAH13, RDAMESPAH13, RDDIMESPAH13, IMESPA));
+	    //dim_int(dia, di_indices(CPMESPA, CPH13, CPMESPAH13, RDAMESPAH13, RDDIMESPAH13, IMESPA));
 	    con_protein_her(cpa, cph_indices(CMMESPA, CPMESPA, CPMESPAMESPA, RPSMESPA, RPDMESPA, RDAMESPAMESPA, RDDIMESPAMESPA, RDELAYPMESPA, IMESPA, IPMESPA));
 
         // MespB
-	    dim_int(dia, di_indices(CPMESPB, CPH1,  CPH1MESPB,  RDAH1MESPB,  RDDIH1MESPB,  IMESPB));
-	    dim_int(dia, di_indices(CPMESPB, CPH7,  CPH7MESPB,  RDAH7MESPB,  RDDIH7MESPB,  IMESPB));
+	    //dim_int(dia, di_indices(CPMESPB, CPH1,  CPH1MESPB,  RDAH1MESPB,  RDDIH1MESPB,  IMESPB));
+	    //dim_int(dia, di_indices(CPMESPB, CPH7,  CPH7MESPB,  RDAH7MESPB,  RDDIH7MESPB,  IMESPB));
 	    dim_int(dia, di_indices(CPMESPB, CPMESPA, CPMESPAMESPB, RDAMESPAMESPB, RDDIMESPAMESPB, IMESPB));
-	    dim_int(dia, di_indices(CPMESPB, CPH13, CPMESPBH13, RDAMESPBH13, RDDIMESPBH13, IMESPB));
+	    //dim_int(dia, di_indices(CPMESPB, CPH13, CPMESPBH13, RDAMESPBH13, RDDIMESPBH13, IMESPB));
 	    con_protein_her(cpa, cph_indices(CMMESPB, CPMESPB, CPMESPBMESPB, RPSMESPB, RPDMESPB, RDAMESPBMESPB, RDDIMESPBMESPB, RDELAYPMESPB, IMESPB, IPMESPB));
     }
 
 	// Her13
 	dim_int(dia, di_indices(CPH13, CPH1,  CPH1H13,  RDAH1H13,  RDDIH1H13,  IH13));
 	dim_int(dia, di_indices(CPH13, CPH7,  CPH7H13,  RDAH7H13,  RDDIH7H13,  IH13));
-	if (sd.section == SEC_ANT) {
+	/*if (sd.section == SEC_ANT) {
         dim_int(dia, di_indices(CPH13, CPMESPA, CPMESPAH13, RDAMESPAH13, RDDIMESPAH13, IH13));
 	    dim_int(dia, di_indices(CPH13, CPMESPB, CPMESPBH13, RDAMESPBH13, RDDIMESPBH13, IH13));
-    }
+    }*/
 	con_protein_her(cpa, cph_indices(CMH13, CPH13, CPH13H13, RPSH13, RPDH13, RDAH13H13, RDDIH13H13, RDELAYPH13, IH13, IPH13));
 	
 	/// Nondimerizing genes
@@ -827,26 +827,26 @@ void dimer_proteins (sim_data& sd, double** rs, con_levels& cl, st_context& stc)
 	cd_args cda(sd, rs, cl, stc); // WRAPper for repeatedly used structs
 	
 	for (int i = CPH1H1,       j = 0;   i <= CPH1H13;   i++, j++) {
-        while (sd.section == SEC_POST && CPH1MESPA <= i && i <= CPH1MESPB) { 
+        /*while (sd.section == SEC_POST && CPH1MESPA <= i && i <= CPH1MESPB) { 
             i++;
             j++;
-        }
+        }*/
 		con_dimer(cda, i, j, cd_indices(CPH1, RDAH1H1, RDDIH1H1, RDDGH1H1));
 	}
 	for (int i = CPH7H7,       j = 0;   i <= CPH7H13;   i++, j++) {
-        while (sd.section == SEC_POST && CPH7MESPA <= i && i <= CPH7MESPB) {
+        /*while (sd.section == SEC_POST && CPH7MESPA <= i && i <= CPH7MESPB) {
             i++;
             j++;
-        }
+        }*/
 		con_dimer(cda, i, j, cd_indices(CPH7, RDAH7H7, RDDIH7H7, RDDGH7H7));
 	}
     if (sd.section == SEC_ANT) {
-        for (int i = CPMESPAMESPA, j = 0;   i <= CPMESPAH13; i++, j++) {
+        for (int i = CPMESPAMESPA, j = 0;   i <= CPMESPAMESPB; i++, j++) {
             con_dimer(cda, i, j, cd_indices(CPMESPA, RDAMESPAMESPA, RDDIMESPAMESPA, RDDGMESPAMESPA));
         }
-	    for (int i = CPMESPBMESPB, j = 0;   i <= CPMESPBH13;  i++, j++) {
-		    con_dimer(cda, i, j, cd_indices(CPMESPB, RDAMESPBMESPB, RDDIMESPBMESPB, RDDGMESPBMESPB));
-    	}
+	    //for (int i = CPMESPBMESPB, j = 0;   i <= CPMESPBH13;  i++, j++) {
+		con_dimer(cda, CPMESPBMESPB, 0, cd_indices(CPMESPB, RDAMESPBMESPB, RDDIMESPBMESPB, RDDGMESPBMESPB));
+    	//}
     }
 
 	con_dimer(cda, CPH13H13, 0, cd_indices(CPH13, RDAH13H13, RDDIH13H13, RDDGH13H13));
@@ -974,7 +974,16 @@ void mRNA_synthesis (sim_data& sd, double** rs, con_levels& cl, st_context& stc,
             if (past_induction && !past_recovery && ((IMH1 + j) == md.overexpression_rate)) {
                 oe = md.overexpression_factor;
             }
-    		mtrans = transcription(rs, cl, WRAP(stc.time_cur - delays[j], sd.max_delay_size), old_cells_mrna[IMH1 + j], avgpd, rs[RMSH1 + j][stc.cell], oe, sd.section);
+			if (j == IMMESPA && sd.section == SEC_ANT) {
+				mtrans = transcription_mespa(rs, cl, WRAP(stc.time_cur - delays[j], sd.max_delay_size), old_cells_mrna[IMH1 + j], avgpd, rs[RMSH1 + j][stc.cell], oe, sd.section);
+				//cout<<"mespa"<<mtrans<<endl;
+			} else if (j == IMMESPB && sd.section == SEC_ANT) {
+				mtrans = transcription_mespb(rs, cl, WRAP(stc.time_cur - delays[j], sd.max_delay_size), old_cells_mrna[IMH1 + j], avgpd, rs[RMSH1 + j][stc.cell], oe, sd.section);
+				
+			} else {
+				mtrans = transcription(rs, cl, WRAP(stc.time_cur - delays[j], sd.max_delay_size), old_cells_mrna[IMH1 + j], avgpd, rs[RMSH1 + j][stc.cell], oe, sd.section);
+			}
+    		
 		}
 		
 		// The current mRNA concentration's differential equation
@@ -1002,13 +1011,69 @@ inline double transcription (double** rs, con_levels& cl, int time, int cell, do
 	double th1h1, th7h13, tmespamespa = 0, tmespamespb = 0, tmespbmespb = 0, tdelta;
 	th1h1 = rs[RCRITPH1H1][cell] == 0 ? 0 : cl.cons[CPH1H1][time][cell] / rs[RCRITPH1H1][cell];
 	th7h13 = rs[RCRITPH7H13][cell] == 0 ? 0 : cl.cons[CPH7H13][time][cell] / rs[RCRITPH7H13][cell];
-    if (section == SEC_ANT) {
-	    tmespamespa = rs[RCRITPMESPAMESPA][cell] == 0 ? 0 : cl.cons[CPMESPAMESPA][time][cell] / rs[RCRITPMESPAMESPA][cell];
-	    tmespamespb = rs[RCRITPMESPAMESPB][cell] == 0 ? 0 : cl.cons[CPMESPAMESPB][time][cell] / rs[RCRITPMESPAMESPB][cell];
-	    tmespbmespb = rs[RCRITPMESPBMESPB][cell] == 0 ? 0 : cl.cons[CPMESPBMESPB][time][cell] / rs[RCRITPMESPBMESPB][cell];
-    }
+    //if (section == SEC_ANT) {
+	  //  tmespamespa = rs[RCRITPMESPAMESPA][cell] == 0 ? 0 : cl.cons[CPMESPAMESPA][time][cell] / rs[RCRITPMESPAMESPA][cell];
+	   // tmespamespb = rs[RCRITPMESPAMESPB][cell] == 0 ? 0 : cl.cons[CPMESPAMESPB][time][cell] / rs[RCRITPMESPAMESPB][cell];
+	   // tmespbmespb = rs[RCRITPMESPBMESPB][cell] == 0 ? 0 : cl.cons[CPMESPBMESPB][time][cell] / rs[RCRITPMESPBMESPB][cell];
+    //}
 	tdelta = rs[RCRITPDELTA][cell] == 0 ? 0 : avgpd / rs[RCRITPDELTA][cell];
 	return ms * (oe + (1 + tdelta) / (1 + tdelta + SQUARE(th1h1) + SQUARE(th7h13) + SQUARE(tmespamespa) + SQUARE(tmespamespb) + SQUARE(tmespbmespb)));
+}
+
+/* transcription_mespa calculates mRNA transcription for mespa, taking into account the effects of dimer repression
+	parameters:
+		rs: the active rates
+		cl: the concentration levels for simulating
+		time: the current time
+		cell: the current cell
+		avgpd: the neighbor-averaged Delta protein concentration
+		ms: the rate of mRNA synthesis
+		oe: the rate of mRNA overexpression
+	returns: the transcription factor
+	notes:
+	todo:
+		TODO clean up these parameters
+*/
+inline double transcription_mespa (double** rs, con_levels& cl, int time, int cell, double avgpd, double ms, double oe, int section) {
+	double th1h1, th7h13, tmespbmespb = 0, tdelta;
+	th1h1 = rs[RCRITPH1H1][cell] == 0 ? 0 : cl.cons[CPH1H1][time][cell] / rs[RCRITPH1H1][cell];
+	th7h13 = rs[RCRITPH7H13][cell] == 0 ? 0 : cl.cons[CPH7H13][time][cell] / rs[RCRITPH7H13][cell];
+    //if (section == SEC_ANT) {
+	    //tmespamespa = rs[RCRITPMESPAMESPA][cell] == 0 ? 0 : cl.cons[CPMESPAMESPA][time][cell] / rs[RCRITPMESPAMESPA][cell];
+	    //tmespamespb = rs[RCRITPMESPAMESPB][cell] == 0 ? 0 : cl.cons[CPMESPAMESPB][time][cell] / rs[RCRITPMESPAMESPB][cell];
+	tmespbmespb = rs[RCRITPMESPBMESPB][cell] == 0 ? 0 : cl.cons[CPMESPBMESPB][time][cell] / rs[RCRITPMESPBMESPB][cell];
+    //}
+	tdelta = rs[RCRITPDELTA][cell] == 0 ? 0 : avgpd / rs[RCRITPDELTA][cell];
+	
+	return ms * (oe + (1+tdelta) / (1 + tdelta + rs[NS1][cell] * SQUARE(th1h1) + SQUARE(th7h13) + SQUARE(tmespbmespb)));
+}
+
+/* transcription_mespb calculates mRNA transcription for mespb, taking into account the effects of dimer repression
+	parameters:
+		rs: the active rates
+		cl: the concentration levels for simulating
+		time: the current time
+		cell: the current cell
+		avgpd: the neighbor-averaged Delta protein concentration
+		ms: the rate of mRNA synthesis
+		oe: the rate of mRNA overexpression
+	returns: the transcription factor
+	notes:
+	todo:
+		TODO clean up these parameters
+*/
+inline double transcription_mespb (double** rs, con_levels& cl, int time, int cell, double avgpd, double ms, double oe, int section) {
+	double tmespamespa = 0, tmespamespb = 0, tmespbmespb = 0, tdelta;
+	//th1h1 = rs[RCRITPH1H1][cell] == 0 ? 0 : cl.cons[CPH1H1][time][cell] / rs[RCRITPH1H1][cell];
+	//th7h13 = rs[RCRITPH7H13][cell] == 0 ? 0 : cl.cons[CPH7H13][time][cell] / rs[RCRITPH7H13][cell];
+    //if (section == SEC_ANT) {
+	tmespamespa = rs[RCRITPMESPAMESPA][cell] == 0 ? 0 : cl.cons[CPMESPAMESPA][time][cell] / rs[RCRITPMESPAMESPA][cell];
+	tmespamespb = rs[RCRITPMESPAMESPB][cell] == 0 ? 0 : cl.cons[CPMESPAMESPB][time][cell] / rs[RCRITPMESPAMESPB][cell];
+	tmespbmespb = rs[RCRITPMESPBMESPB][cell] == 0 ? 0 : cl.cons[CPMESPBMESPB][time][cell] / rs[RCRITPMESPBMESPB][cell];
+    //}
+	tdelta = rs[RCRITPDELTA][cell] == 0 ? 0 : rs[NS2][cell] * avgpd / rs[RCRITPDELTA][cell];
+	
+	return ms * (oe + (1 + tdelta) / (1 + tdelta + SQUARE(tmespamespa) + SQUARE(tmespamespb) + SQUARE(tmespbmespb)));
 }
 
 /* calc_neighbors_1d calculates a given cell's neighbors in a 1D simulation

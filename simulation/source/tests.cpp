@@ -26,7 +26,7 @@ double test_wildtype_post (mutant_data& md, features& wtfeat) {
 	md.conds_passed[SEC_POST][0] = 29 < md.feat.period_post[IMH1] && md.feat.period_post[IMH1] < 31;
 	md.conds_passed[SEC_POST][1] = md.feat.sync_score_post[IMH1] > 0.8;
 	md.conds_passed[SEC_POST][2] = md.feat.peaktotrough_end[IMH1] >= 1.5 && md.feat.peaktotrough_mid[IMH1] >= 1.5 && (md.feat.peaktotrough_mid[IMH1] / md.feat.peaktotrough_end[IMH1]) <= 1.5;
-	//cout<<"p0: "<<md.conds_passed[SEC_POST][0]<<" p1: "<<md.conds_passed[SEC_POST][1]<<" p2: "<<md.conds_passed[SEC_POST][2]<<endl;
+	cout<<"p0: "<<md.conds_passed[SEC_POST][0]<<" p1: "<<md.conds_passed[SEC_POST][1]<<" p2: "<<md.conds_passed[SEC_POST][2]<<endl;
 	return (md.conds_passed[SEC_POST][0] * md.cond_scores[SEC_POST][0]) + (md.conds_passed[SEC_POST][1] * md.cond_scores[SEC_POST][1]) + (md.conds_passed[SEC_POST][2] * md.cond_scores[SEC_POST][2]);
 }
 
@@ -98,19 +98,19 @@ double test_DAPT_mutant_post (mutant_data& md, features& wtfeat) {
 }
 
 double test_wildtype_ant (mutant_data& md, features& wtfeat) {
-	//cout<<"0: "<<md.conds_passed[SEC_ANT][0]<<endl;
+	cout<<"0: "<<md.conds_passed[SEC_ANT][0]<<endl;
 	md.conds_passed[SEC_ANT][1] = md.feat.sync_score_ant[IMH1] > 0.8;
-	//cout<<"1: "<<md.conds_passed[SEC_ANT][1]<<endl;
+	cout<<"1: "<<md.conds_passed[SEC_ANT][1]<<endl;
 	md.conds_passed[SEC_ANT][2] = 1.4 < (md.feat.period_ant[IMH1] / md.feat.period_post[IMH1]) && (md.feat.period_ant[IMH1] / md.feat.period_post[IMH1]) < 2.2;  //JY change second IMH1 to IMH7  potential bug
-	//cout<<"2: "<<md.conds_passed[SEC_ANT][2]<<endl;
+	cout<<"2: "<<md.conds_passed[SEC_ANT][2]<<endl;
 	md.conds_passed[SEC_ANT][3] = 1.3 < (md.feat.amplitude_ant[IMDELTA] / md.feat.amplitude_post[IMDELTA]);
-	//cout<<"3: "<<md.conds_passed[SEC_ANT][3]<<endl;
+	cout<<"3: "<<md.conds_passed[SEC_ANT][3]<<endl;
     md.conds_passed[SEC_ANT][4] = (1 - md.feat.comp_score_ant_mespa) / 2;
     md.conds_passed[SEC_ANT][5] = (1 - md.feat.comp_score_ant_mespb) / 2.0;
-	//cout<<"8.a: "<<md.conds_passed[SEC_ANT][6]<<endl;
-	//cout<<"8.b: "<<md.conds_passed[SEC_ANT][7]<<endl;
-	//cout<<"10.a: "<<md.conds_passed[SEC_ANT][4]<<endl;
-	//cout<<"10.b: "<<md.conds_passed[SEC_ANT][5]<<endl;
+	cout<<"8.a: "<<md.conds_passed[SEC_ANT][6]<<endl;
+	cout<<"8.b: "<<md.conds_passed[SEC_ANT][7]<<endl;
+	cout<<"10.a: "<<md.conds_passed[SEC_ANT][4]<<endl;
+	cout<<"10.b: "<<md.conds_passed[SEC_ANT][5]<<endl;
     //cout << md.feat.comp_score_ant_mespa << " " << md.conds_passed[SEC_ANT][4] << endl;
 	return (md.conds_passed[SEC_ANT][0] * md.cond_scores[SEC_ANT][0]) + (md.conds_passed[SEC_ANT][1] * md.cond_scores[SEC_ANT][1]) + (md.conds_passed[SEC_ANT][2] * md.cond_scores[SEC_ANT][2]) + (md.conds_passed[SEC_ANT][3] * md.cond_scores[SEC_ANT][3]) + (md.conds_passed[SEC_ANT][4] * md.cond_scores[SEC_ANT][4]) + (md.conds_passed[SEC_ANT][5] * md.cond_scores[SEC_ANT][5]) + (md.conds_passed[SEC_ANT][6] * md.cond_scores[SEC_ANT][6]) + (md.conds_passed[SEC_ANT][7] * md.cond_scores[SEC_ANT][7]);
 }
@@ -208,7 +208,7 @@ double test_DAPT_mutant_ant (mutant_data& md, features& wtfeat) {
 
 int test_wildtype_wave (pair<int, int> waves[], int num_waves, mutant_data& md, int wlength_post, int wlength_ant) {
 	md.conds_passed[SEC_WAVE][0] = md.conds_passed[SEC_WAVE][0] && (2 <= num_waves && num_waves <= 3); //JY WT.4.
-	//cout<<"4: "<<md.conds_passed[SEC_WAVE][0]<<endl;
+	cout<<"4: "<<md.conds_passed[SEC_WAVE][0]<<endl;
 	
 	// If there are not between 2 and 3 waves in the PSM the rest of the conditions default to false
 	if (!md.conds_passed[SEC_WAVE][0]) {
