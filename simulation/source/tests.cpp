@@ -23,7 +23,7 @@ tests.cpp contains test functions for every mutant.
 #include "tests.hpp" // Function declarations
 
 double test_wildtype_post (mutant_data& md, features& wtfeat) {
-	md.conds_passed[SEC_POST][0] = 29 < md.feat.period_post[IMH1] && md.feat.period_post[IMH1] < 31;
+	md.conds_passed[SEC_POST][0] = 28 < md.feat.period_post[IMH1] && md.feat.period_post[IMH1] < 32;  // ***29 30
 	md.conds_passed[SEC_POST][1] = md.feat.sync_score_post[IMH1] > 0.8;
 	md.conds_passed[SEC_POST][2] = md.feat.peaktotrough_end[IMH1] >= 1.5 && md.feat.peaktotrough_mid[IMH1] >= 1.5 && (md.feat.peaktotrough_mid[IMH1] / md.feat.peaktotrough_end[IMH1]) <= 1.5;
 	cout<<"p0: "<<md.conds_passed[SEC_POST][0]<<" p1: "<<md.conds_passed[SEC_POST][1]<<" p2: "<<md.conds_passed[SEC_POST][2]<<endl;
