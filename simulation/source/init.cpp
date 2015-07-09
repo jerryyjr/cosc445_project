@@ -920,11 +920,11 @@ mutant_data* create_mutant_data (sim_data& sd, input_params& ip) {
 	mds[MUTANT_WILDTYPE].tests[SEC_ANT] = test_wildtype_ant;
 	mds[MUTANT_WILDTYPE].wave_test = test_wildtype_wave;
 	mds[MUTANT_WILDTYPE].num_conditions[SEC_POST] = 3;
-	mds[MUTANT_WILDTYPE].cond_scores[SEC_POST][0] = CW_A;
+	mds[MUTANT_WILDTYPE].cond_scores[SEC_POST][0] = 15;
 	mds[MUTANT_WILDTYPE].cond_scores[SEC_POST][1] = CW_A;
-	mds[MUTANT_WILDTYPE].cond_scores[SEC_POST][2] = CW_A;
+	mds[MUTANT_WILDTYPE].cond_scores[SEC_POST][2] = 20;
 	mds[MUTANT_WILDTYPE].num_conditions[SEC_ANT] = 9;
-	mds[MUTANT_WILDTYPE].cond_scores[SEC_ANT][0] = CW_A;
+	mds[MUTANT_WILDTYPE].cond_scores[SEC_ANT][0] = 15;
 	mds[MUTANT_WILDTYPE].cond_scores[SEC_ANT][1] = CW_A;
 	mds[MUTANT_WILDTYPE].cond_scores[SEC_ANT][2] = CW_A;
     mds[MUTANT_WILDTYPE].cond_scores[SEC_ANT][3] = CW_B;
