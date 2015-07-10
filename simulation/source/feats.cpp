@@ -92,7 +92,7 @@ double test_complementary (sim_data& sd, con_levels& cl, int time, int con1, int
 	memset(avg_row_con1, 0, sizeof(double) * sd.width_total);
     memset(avg_row_con2, 0, sizeof(double) * sd.width_total);
 
-	for (int y = 0; y < sd.width_total; y++) {
+	for (int y = 0.6*sd.width_total; y < sd.width_total; y++) {
 		for (int x = 0; x < sd.height; x++) {
 			int cell = x * sd.width_total + y;
 			avg_row_con1[y] += cl.cons[con1][time][cell];
