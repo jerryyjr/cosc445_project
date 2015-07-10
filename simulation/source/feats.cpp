@@ -89,12 +89,12 @@ int get_peaks_and_troughs (sim_data& sd, con_levels& cl, int actual_cell, int ti
 double test_complementary (sim_data& sd, con_levels& cl, int time, int con1, int con2) {
 	double avg_row_con1[sd.width_total];
     double avg_row_con2[sd.width_total];
-	memset(avg_row_con1, 0, sizeof(double) * sd.width_total);
-    memset(avg_row_con2, 0, sizeof(double) * sd.width_total);
+	memset(avg_row_con1, 0, sizeof(double) * 0.4*sd.width_total);
+    memset(avg_row_con2, 0, sizeof(double) * 0.4*sd.width_total);
 
-	for (int y = 0.6*sd.width_total; y < sd.width_total; y++) {
+	for (int y = 0; y < 0.4*sd.width_total; y++) {
 		for (int x = 0; x < sd.height; x++) {
-			int cell = x * sd.width_total + y;
+			int cell = x * sd.width_total + y + 0.6 * sd.width_total;
 			avg_row_con1[y] += cl.cons[con1][time][cell];
             avg_row_con2[y] += cl.cons[con2][time][cell];
 		}
