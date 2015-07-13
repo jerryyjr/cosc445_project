@@ -89,12 +89,12 @@ int get_peaks_and_troughs (sim_data& sd, con_levels& cl, int actual_cell, int ti
 double test_complementary (sim_data& sd, con_levels& cl, int time, int con1, int con2) {
 	double avg_row_con1[sd.width_total];
     double avg_row_con2[sd.width_total];
-	memset(avg_row_con1, 0, sizeof(double) * 0.4*sd.width_total);
-    memset(avg_row_con2, 0, sizeof(double) * 0.4*sd.width_total);
+	memset(avg_row_con1, 0, sizeof(double) * sd.width_total);
+    memset(avg_row_con2, 0, sizeof(double) * sd.width_total);
 
-	for (int y = 0; y < 0.4*sd.width_total; y++) {
+	for (int y = 0; y < sd.width_total; y++) {
 		for (int x = 0; x < sd.height; x++) {
-			int cell = x * sd.width_total + y + 0.6 * sd.width_total;
+			int cell = x * sd.width_total + y;
 			avg_row_con1[y] += cl.cons[con1][time][cell];
             avg_row_con2[y] += cl.cons[con2][time][cell];
 		}
@@ -103,7 +103,7 @@ double test_complementary (sim_data& sd, con_levels& cl, int time, int con1, int
         avg_row_con2[y] /= sd.height;
 	}
 
-	return pearson_correlation(avg_row_con1, avg_row_con2, sd.width_initial, sd.width_total);  //JY WT.10 rounding?
+	return pearson_correlation(avg_row_con1, avg_row_con2, 30, sd.width_total);  //JY WT.10 rounding?
 }
 
 void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* filename_feats, con_levels& cl, mutant_data& md, int start_line, int end_line, int start_col, int end_col, int set_num) {
