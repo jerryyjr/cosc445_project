@@ -225,7 +225,7 @@ macros.hpp contains every constant and macro function used in the program.
 #define IPDELTA	5
 
 #define NUM_INDICES		6 // How big an array holding mRNA or protein indices must be
-#define NUM_DD_INDICES	2 // How many mRNA levels are affected by Delta and need to calculate its affects (stands for delta dependent indices)
+#define NUM_DD_INDICES	4 // How many mRNA levels are affected by Delta and need to calculate its affects (stands for delta dependent indices)
 
 // Neighbor counts
 #define NEIGHBORS_1D	2

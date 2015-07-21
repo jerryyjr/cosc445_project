@@ -214,7 +214,7 @@ struct input_params {
 		this->height = 1;
 		this->time_total = 1200;
 		this->time_split = 6;
-		this->time_til_growth = 600;
+		this->time_til_growth = 300;
 		this->seed = 0;
 		this->reset_seed = false;
 		this->pseed = 0;

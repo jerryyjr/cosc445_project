@@ -105,7 +105,7 @@ double test_wildtype_ant (mutant_data& md, features& wtfeat) {
 	cout<<"2: "<<md.conds_passed[SEC_ANT][2]<<endl;
 	md.conds_passed[SEC_ANT][3] = 1.3 < (md.feat.amplitude_ant[IMDELTA] / md.feat.amplitude_post[IMDELTA]);
 	cout<<"3: "<<md.conds_passed[SEC_ANT][3]<<endl;
-    md.conds_passed[SEC_ANT][4] = (1 - md.feat.comp_score_ant_mespa) / 2;
+    md.conds_passed[SEC_ANT][4] = (1 - md.feat.comp_score_ant_mespa) / 2.0;
     md.conds_passed[SEC_ANT][5] = (1 - md.feat.comp_score_ant_mespb) / 2.0;
 	cout<<"8.a: "<<md.conds_passed[SEC_ANT][6]<<endl;
 	cout<<"8.b: "<<md.conds_passed[SEC_ANT][7]<<endl;

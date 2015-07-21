@@ -145,7 +145,8 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
         if (md.induction == 0) {
 		    time_start = anterior_time(sd, sd.steps_til_growth + (sd.width_total - sd.width_initial - 1) * sd.steps_split); // time after which the PSM is full of cells
         } else {
-            time_start = anterior_time(sd, md.induction + (30 / sd.big_gran));
+            //time_start = anterior_time(sd, md.induction + (30 / sd.big_gran));
+			time_start = anterior_time(sd, sd.steps_til_growth + (30 / sd.step_size));
         }
 		int num_cells_passed = 0;
 		for (int col = start_col; col < end_col; col++) {						
@@ -153,7 +154,7 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 				int pos = cl.active_start_record[time_start]; // always looking at cell at position active_start because that is the newest cell
 				int cell = line * sd.width_total + pos;
 				int num_points = 0;
-                if (mr != CMMESPA && mr != CMMESPB) {
+                if (mr != CMMESPB) {
 				    num_points = get_peaks_and_troughs(sd, cl, cell, time_start, crit_points, type, position, mr);
                 } else {
                     num_points = 0;
@@ -261,20 +262,24 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 
                 // Updating mutant data
                 for (int j = 0; j < pers; j++) {
-                    double half_hour_index = 0.5 * ((per_time[j] - anterior_time(sd, md.induction)) * sd.big_gran / 30 + 1);
-                    if (per_pos[j] < sd.width_initial) {
-                        md.feat.period_post_time[index][half_hour_index] = periods[j];   //JY WT.2.
-                    } else {
-                        md.feat.period_ant_time[index][half_hour_index] = periods[j];
-                    }
+					if (per_time[j] >= anterior_time(sd, md.induction)) {
+                    	double half_hour_index = 0.5 * ((per_time[j] - anterior_time(sd, md.induction)) * sd.big_gran / 30 + 1);
+                   		if (per_pos[j] < sd.width_initial) {
+                   		    md.feat.period_post_time[index][half_hour_index] = periods[j];   //JY WT.2.
+                    	} else {
+                    	    md.feat.period_ant_time[index][half_hour_index] = periods[j];
+                    	}
+					}
                 }
                 for (int j = 0; j < amps; j++) {
-                    double half_hour_index = 0.5 * ((amp_time[j] - anterior_time(sd, md.induction)) * sd.big_gran / 30 + 1);
-                    if (per_pos[j] < sd.width_initial) {
-                        md.feat.amplitude_post_time[index][half_hour_index] = amplitudes[j];
-                    } else {
-                        md.feat.amplitude_ant_time[index][half_hour_index] = amplitudes[j];
-                    }
+					if (amp_time[j] >= anterior_time(sd, md.induction)) {
+                    	double half_hour_index = 0.5 * ((amp_time[j] - anterior_time(sd, md.induction)) * sd.big_gran / 30 + 1);
+                    	if (per_pos[j] < sd.width_initial) {
+                    	    md.feat.amplitude_post_time[index][half_hour_index] = amplitudes[j];
+                    	} else {
+                    	    md.feat.amplitude_ant_time[index][half_hour_index] = amplitudes[j];
+                    	}
+					}
                 }
 
 				type.reset(sd.steps_total / 2000);
@@ -362,13 +367,13 @@ void osc_features_post (sim_data& sd, input_params& ip, con_levels& cl, features
     char* str_set_num = (char*) mallocate(2);
 	sprintf(str_set_num, "%d", set_num);
 
-	int con[2] = {CMH1, CMH7};
-	int ind[2] = {IMH1, IMH7};
-	static const char* concs[2] = {"mh1", "mh7"};
+	int con[3] = {CMH1, CMH7, CMDELTA};
+	int ind[3] = {IMH1, IMH7, IMDELTA};
+	static const char* concs[3] = {"mh1", "mh7", "deltac"};
 	static const char* feat_names[NUM_FEATURES] = {"period", "amplitude", "sync"};
 	ofstream features_files[NUM_FEATURES]; // Array that will hold the files in which to output the period and amplitude
 
-	int num_genes = 2;
+	int num_genes = 3;
 	for (int i = 0; i < num_genes; i++) {
 		if (ip.post_features) {
 			for (int j = 0; j < NUM_FEATURES; j++) {
