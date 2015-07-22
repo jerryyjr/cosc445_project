@@ -37,17 +37,17 @@ In the future need to find a way to unify the functions in this file into some m
 For the time being, I'm focusing on obtaining the needed data.
 
 */
-int get_peaks_and_troughs (sim_data& sd, con_levels& cl, int actual_cell, int time_start, growin_array& crit_points, growin_array& type, growin_array& position, int mr) {
+int get_peaks_and_troughs1 (sim_data& sd, con_levels& cl, int actual_cell, int time_start, growin_array& crit_points, growin_array& type, growin_array& position, int mr) {
 	/*
 	Calculates all the peaks and troughs for the her1 mRNA oscillations in a cell within a time range. The cell number is given as a
 	number relative to the entire PSM.
 	*/
 	int num_points = 0;
 	int col = actual_cell % sd.width_total;
-
+	
 	double** conc = cl.cons[mr];
 	for (int j = time_start + 1; j < sd.time_end - 1 && cl.cons[BIRTH][j][actual_cell] == cl.cons[BIRTH][j - 1][actual_cell] && cl.cons[BIRTH][j][actual_cell] == cl.cons[BIRTH][j + 1][actual_cell]; j++) {
-		// calculate position in the PSM of the cell
+		
 		int pos = 0;
 		if (cl.active_start_record[j] >= col) {
 			pos = cl.active_start_record[j] - col;
@@ -83,6 +83,65 @@ int get_peaks_and_troughs (sim_data& sd, con_levels& cl, int actual_cell, int ti
 			num_points++;
 		}
 	}
+	//cout<<max-min<<endl;
+	return num_points;
+}
+
+
+int get_peaks_and_troughs2 (sim_data& sd, con_levels& cl, int actual_cell, int time_start, growin_array& crit_points, growin_array& type, growin_array& position, int mr, double* mh1_comp, double* mespa_comp, double* mespb_comp) {
+	/*
+	Calculates all the peaks and troughs for the her1 mRNA oscillations in a cell within a time range. The cell number is given as a
+	number relative to the entire PSM.
+	*/
+	int num_points = 0;
+	int col = actual_cell % sd.width_total;
+	
+	double** conc = cl.cons[mr];
+	int compl_count=0;
+	for (int j = time_start + 1; j < sd.time_end - 1 && cl.cons[BIRTH][j][actual_cell] == cl.cons[BIRTH][j - 1][actual_cell] && cl.cons[BIRTH][j][actual_cell] == cl.cons[BIRTH][j + 1][actual_cell]; j++) {
+		// calculate position in the PSM of the cell
+		
+		mh1_comp[compl_count]+=cl.cons[CMH1][j][actual_cell];
+		mespa_comp[compl_count]+=cl.cons[CMMESPA][j][actual_cell];
+		mespb_comp[compl_count]+=cl.cons[CMMESPB][j][actual_cell];
+		compl_count++;
+		
+		int pos = 0;
+		if (cl.active_start_record[j] >= col) {
+			pos = cl.active_start_record[j] - col;
+		} else {
+			pos = cl.active_start_record[j] + sd.width_total - col;
+		}
+	
+		// check if the current point is a peak
+		bool is_peak = true;
+		for (int k = MAX(j - (2 / sd.step_size / sd.big_gran), time_start); k <= MIN(j + 2 / sd.step_size / sd.big_gran, sd.time_end - 1); k++) {
+			if (conc[j][actual_cell] < conc[k][actual_cell]) {
+				is_peak = false;
+			}
+		}
+		if (is_peak) {
+			crit_points[num_points] = j;
+			type[num_points] = 1;
+			position[num_points] = pos;
+			num_points++;
+		}
+		
+		// check if the current point is a trough
+		bool is_trough = true;
+		for (int k = MAX(j - (2 / sd.step_size / sd.big_gran), time_start); k <= MIN(j + 2 / sd.step_size / sd.big_gran, sd.time_end - 1); k++) {
+			if (conc[j][actual_cell] > conc[k][actual_cell]) {
+				is_trough = false;
+			}
+		}
+		if (is_trough) {
+			crit_points[num_points] = j;
+			type[num_points] = -1;
+			position[num_points] = pos;
+			num_points++;
+		}
+	}
+	//cout<<max-min<<endl;
 	return num_points;
 }
 
@@ -106,6 +165,22 @@ double test_complementary (sim_data& sd, con_levels& cl, int time, int con1, int
 	return pearson_correlation(avg_row_con1, avg_row_con2, 30, sd.width_total);  //JY WT.10 rounding?
 }
 
+double test_compl(sim_data& sd, double* con1, double* con2, int num_cell) {
+	int count=sd.width_total*sd.steps_split - 2;
+	for (int i =0; i<count; i++) {
+		
+		con1[i]/=num_cell;
+		
+		con2[i]/=num_cell;
+		
+		//cout<<(con2[i]!=0)<<endl;
+	}
+	
+	return pearson_correlation(con1, con2, (int)(0.6*(sd.width_total*sd.steps_split - 2)),sd.width_total*sd.steps_split - 2);
+}
+
+
+
 void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* filename_feats, con_levels& cl, mutant_data& md, int start_line, int end_line, int start_col, int end_col, int set_num) {
 	static int con[4] = {CMH1, CMDELTA, CMMESPA, CMMESPB};
 	static int ind[4] = {IMH1, IMDELTA, IMMESPA, IMMESPB};
@@ -120,6 +195,13 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 	int strlen_set_num = INT_STRLEN(set_num); // How many bytes the ASCII representation of set_num takes
 	char* str_set_num = (char*)mallocate(sizeof(char) * (strlen_set_num + 1));
 	sprintf(str_set_num, "%d", set_num);
+	
+	double mh1_comp[sd.width_total*sd.steps_split - 2];
+	double mespa_comp[sd.width_total*sd.steps_split - 2];
+	double mespb_comp[sd.width_total*sd.steps_split - 2];
+	memset(mh1_comp, 0, sizeof(double) * (sd.width_total*sd.steps_split - 2));
+	memset(mespa_comp, 0, sizeof(double) * (sd.width_total*sd.steps_split - 2));
+	memset(mespb_comp, 0, sizeof(double) * (sd.width_total*sd.steps_split - 2));
 	
 	for (int i = 0; i < 4; i++) {
 		ofstream features_files[NUM_FEATURES]; // Array that will hold the files in which to output the period and amplitude
@@ -149,14 +231,18 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 			time_start = anterior_time(sd, sd.steps_til_growth + (30 / sd.step_size));
         }
 		int num_cells_passed = 0;
+		
 		for (int col = start_col; col < end_col; col++) {						
 			for (int line = start_line; line < end_line; line++) {
 				int pos = cl.active_start_record[time_start]; // always looking at cell at position active_start because that is the newest cell
 				int cell = line * sd.width_total + pos;
 				int num_points = 0;
-                if (mr != CMMESPB) {
-				    num_points = get_peaks_and_troughs(sd, cl, cell, time_start, crit_points, type, position, mr);
-                } else {
+                if (mr != CMMESPB && mr != CMMESPA) {
+				    num_points = get_peaks_and_troughs1(sd, cl, cell, time_start, crit_points, type, position, mr);
+                } else if (mr == CMMESPA){
+					
+					num_points = get_peaks_and_troughs2(sd, cl, cell, time_start, crit_points, type, position, mr, mh1_comp, mespa_comp, mespb_comp);
+				} else {
                     num_points = 0;
                 }
 			
@@ -335,19 +421,22 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 			}
 			features_files[SYNC].close();
 		}
-		if (index == IMH1) { // this is only done for her1
+		if (index == IMMESPA) { // this is only done for her1
 			// for complementary mesp expression take 6 snapshots and average comp score
-			double num = 0;
-		    int time_full = anterior_time(sd, sd.steps_til_growth + (sd.width_total - sd.width_initial - 1) * sd.steps_split);
-			for (int time = time_full; time < sd.time_end; time += 600) { // have 6 minutes in between snapshots
-                md.feat.comp_score_ant_mespa += test_complementary(sd, cl, time, CMH1, CMMESPA);
+			//double num = 0;
+			
+			
+		    //int time_full = anterior_time(sd, sd.steps_til_growth + (sd.width_total - sd.width_initial - 1) * sd.steps_split + 9000);
+			/*for ( int time= time_full; time < time_full + 3000; time += 600) { // have 6 minutes in between snapshots
+                //md.feat.comp_score_ant_mespa += test_complementary(sd, cl, time, CMH1, CMMESPA);
 				
                 md.feat.comp_score_ant_mespb += test_complementary(sd, cl, time, CMH1, CMMESPB);
 				num += 1;
-			}
+			}*/
 			//cout<<md.feat.comp_score_ant_mespa<<endl;
-			md.feat.comp_score_ant_mespa /= num;
-            md.feat.comp_score_ant_mespb /= num;
+			int num_cell = (end_line - start_line) * (end_col - start_col);
+			md.feat.comp_score_ant_mespa = test_compl(sd, mh1_comp, mespa_comp, num_cell);
+            md.feat.comp_score_ant_mespb = test_compl(sd, mh1_comp, mespb_comp, num_cell);
 			
 		}
 		//md.feat.sync_score_ant[index] = sync_avg / 5; // JY bug?
@@ -605,6 +694,7 @@ double pearson_correlation (double* x, double* y, int start, int end) {
 		x_avg += x[j];
 		y_avg += y[j];
 		
+		
 	}
 	x_avg /= (end - start);
 	y_avg /= (end - start);
@@ -617,10 +707,10 @@ double pearson_correlation (double* x, double* y, int start, int end) {
 	
 	sigma_x2 = sqrt(sigma_x2);
 	sigma_y2 = sqrt(sigma_y2);
-    
+	
 	if (sigma_x2 == 0 || sigma_y2 == 0) {
 		
-		//cout<<y[0]<<"abc"<<y_avg<<endl;
+		
 		return 1;
 	} else {	
 		
