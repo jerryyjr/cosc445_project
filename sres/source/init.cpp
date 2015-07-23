@@ -147,6 +147,7 @@ void accept_input_params (int num_args, char** args, input_params& ip) {
 				ip.printing_precision = atoi(value);
 				if (ip.printing_precision < 1) {
 					usage("The printing precision must be a positive integer. Set -e or --printing-precision to at least 1.");
+				}
 			} else if (option_set(option, "-o", "--print-good-sets")) {
                 ensure_nonempty(option, value);
                 store_filename(&(ip.good_sets_file), value);
