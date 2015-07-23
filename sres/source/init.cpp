@@ -124,7 +124,13 @@ void accept_input_params (int num_args, char** args, input_params& ip) {
 				if (ip.pop_total < 1) {
 					usage("The total population must be at least one simulation. Set -p or --child-population to at least 1.");
 				}
-			} else if (option_set(option, "-g", "--generations")) {
+			} else if (option_set(option, "-G", "--good-set-threshold")) {
+                ensure_nonempty(option, value);
+                ip.good_set_threshold = atof(value);
+                if (ip.good_set_threshold < 0 || ip.good_set_threshold > 1) 				{
+                    usage("The threshold for a good set must be a possible score. Set -G or --good-set-threshold to between 0 and 1.");
+                }
+            } else if (option_set(option, "-g", "--generations")) {
 				ensure_nonempty(option, value);
 				ip.generations = atoi(value);
 				if (ip.generations < 1) {
@@ -141,8 +147,11 @@ void accept_input_params (int num_args, char** args, input_params& ip) {
 				ip.printing_precision = atoi(value);
 				if (ip.printing_precision < 1) {
 					usage("The printing precision must be a positive integer. Set -e or --printing-precision to at least 1.");
-				}
-			} else if (option_set(option, "-a", "--arguments")) {
+			} else if (option_set(option, "-o", "--print-good-sets")) {
+                ensure_nonempty(option, value);
+                store_filename(&(ip.good_sets_file), value);
+                ip.print_good_sets = true;
+            } else if (option_set(option, "-a", "--arguments")) {
 				ensure_nonempty(option, value);
 				++i;
 				ip.num_sim_args = num_args - i + NUM_IMPLICIT_SIM_ARGS;
