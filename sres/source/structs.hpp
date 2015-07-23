@@ -178,6 +178,7 @@ struct input_params {
 	double good_set_threshold;
 	bool print_good_sets;
 	char* good_sets_file;
+	ofstream good_sets_stream;
 	
 	// Simulation parameters
 	char** sim_args; // Arguments to be passed to the simulation
@@ -201,6 +202,7 @@ struct input_params {
 		this->good_set_threshold = 0;
 		this->print_good_sets = false;
 		this->good_sets_file = NULL;
+		this->good_sets_stream = NULL;
 		this->sim_args = NULL;
 		this->num_sim_args = 0;
 		this->printing_precision = 6;
