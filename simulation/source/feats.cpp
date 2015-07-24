@@ -165,16 +165,8 @@ double test_complementary (sim_data& sd, con_levels& cl, int time, int con1, int
 	return pearson_correlation(avg_row_con1, avg_row_con2, 30, sd.width_total);  //JY WT.10 rounding?
 }
 
-double test_compl(sim_data& sd, double* con1, double* con2, int num_cell) {
-	int count=sd.width_total*sd.steps_split - 2;
-	for (int i =0; i<count; i++) {
-		
-		con1[i]/=num_cell;
-		
-		con2[i]/=num_cell;
-		
-		//cout<<(con2[i]!=0)<<endl;
-	}
+double test_compl(sim_data& sd, double* con1, double* con2) {
+	//int count=sd.width_total*sd.steps_split - 2;
 	
 	return pearson_correlation(con1, con2, (int)(0.6*(sd.width_total*sd.steps_split - 2)),sd.width_total*sd.steps_split - 2);
 }
@@ -196,12 +188,16 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 	char* str_set_num = (char*)mallocate(sizeof(char) * (strlen_set_num + 1));
 	sprintf(str_set_num, "%d", set_num);
 	
+	int num_cell = (end_line - start_line) * (end_col - start_col);
 	double mh1_comp[sd.width_total*sd.steps_split - 2];
 	double mespa_comp[sd.width_total*sd.steps_split - 2];
 	double mespb_comp[sd.width_total*sd.steps_split - 2];
+	double comp_score_a = 0;
+	double comp_score_b = 0;
 	memset(mh1_comp, 0, sizeof(double) * (sd.width_total*sd.steps_split - 2));
 	memset(mespa_comp, 0, sizeof(double) * (sd.width_total*sd.steps_split - 2));
 	memset(mespb_comp, 0, sizeof(double) * (sd.width_total*sd.steps_split - 2));
+	
 	
 	for (int i = 0; i < 4; i++) {
 		ofstream features_files[NUM_FEATURES]; // Array that will hold the files in which to output the period and amplitude
@@ -242,6 +238,8 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
                 } else if (mr == CMMESPA){
 					
 					num_points = get_peaks_and_troughs2(sd, cl, cell, time_start, crit_points, type, position, mr, mh1_comp, mespa_comp, mespb_comp);
+					comp_score_a+=test_compl(sd, mh1_comp, mespa_comp);
+					comp_score_b+=test_compl(sd, mh1_comp, mespb_comp);
 				} else {
                     num_points = 0;
                 }
@@ -434,9 +432,9 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 				num += 1;
 			}*/
 			//cout<<md.feat.comp_score_ant_mespa<<endl;
-			int num_cell = (end_line - start_line) * (end_col - start_col);
-			md.feat.comp_score_ant_mespa = test_compl(sd, mh1_comp, mespa_comp, num_cell);
-            md.feat.comp_score_ant_mespb = test_compl(sd, mh1_comp, mespb_comp, num_cell);
+			
+			md.feat.comp_score_ant_mespa = comp_score_a / num_cell;
+            md.feat.comp_score_ant_mespb = comp_score_b / num_cell;
 			
 		}
 		//md.feat.sync_score_ant[index] = sync_avg / 5; // JY bug?
