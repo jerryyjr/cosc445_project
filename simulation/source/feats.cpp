@@ -101,9 +101,9 @@ int get_peaks_and_troughs2 (sim_data& sd, con_levels& cl, int actual_cell, int t
 	for (int j = time_start + 1; j < sd.time_end - 1 && cl.cons[BIRTH][j][actual_cell] == cl.cons[BIRTH][j - 1][actual_cell] && cl.cons[BIRTH][j][actual_cell] == cl.cons[BIRTH][j + 1][actual_cell]; j++) {
 		// calculate position in the PSM of the cell
 		
-		mh1_comp[compl_count]+=cl.cons[CMH1][j][actual_cell];
-		mespa_comp[compl_count]+=cl.cons[CMMESPA][j][actual_cell];
-		mespb_comp[compl_count]+=cl.cons[CMMESPB][j][actual_cell];
+		mh1_comp[compl_count]=cl.cons[CMH1][j][actual_cell];
+		mespa_comp[compl_count]=cl.cons[CMMESPA][j][actual_cell];
+		mespb_comp[compl_count]=cl.cons[CMMESPB][j][actual_cell];
 		compl_count++;
 		
 		int pos = 0;
@@ -436,7 +436,7 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 			md.feat.comp_score_ant_mespa = comp_score_a / num_cell;
             md.feat.comp_score_ant_mespb = comp_score_b / num_cell;
 			
-		}
+		} //abc
 		//md.feat.sync_score_ant[index] = sync_avg / 5; // JY bug?
 	}
 	mfree(str_set_num);
