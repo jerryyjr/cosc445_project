@@ -391,7 +391,7 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 		double sync_avg = 0;
 	    int time_full = anterior_time(sd, sd.steps_til_growth + (sd.width_total - sd.width_initial - 1) * sd.steps_split);
 	    for (int time = time_full; time < sd.time_end; time += (sd.time_end - 1 - time_full) / 4) {
-		    sync_avg += ant_sync(sd, cl, CMH1, time);
+		    sync_avg += ant_sync(sd, cl, index, time);
 			if (md.index == MUTANT_WILDTYPE) {  // wildtype
 				wave_testing_mesp(sd, cl, md, time, sd.active_start);
 			}
