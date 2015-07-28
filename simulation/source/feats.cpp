@@ -436,7 +436,7 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 			md.feat.comp_score_ant_mespa = comp_score_a / num_cell;
             md.feat.comp_score_ant_mespb = comp_score_b / num_cell;
 			
-		} //abc
+		} 
 		//md.feat.sync_score_ant[index] = sync_avg / 5; // JY bug?
 	}
 	mfree(str_set_num);

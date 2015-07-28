@@ -175,10 +175,6 @@ struct input_params {
 	int pop_total; // The total population of simulations to use each generation, default=200
 	int generations; // The number of generations to run before returning results, default=1
 	int seed; // The seed used in the evolutionary strategy, default=current UNIX time
-	double good_set_threshold;
-	bool print_good_sets;
-	char* good_sets_file;
-	ofstream good_sets_stream;
 	
 	// Simulation parameters
 	char** sim_args; // Arguments to be passed to the simulation
@@ -199,10 +195,6 @@ struct input_params {
 		this->pop_total = 20;
 		this->generations = 1750;
 		this->seed = time(0);
-		this->good_set_threshold = 0;
-		this->print_good_sets = false;
-		this->good_sets_file = NULL;
-		//this->good_sets_stream = NULL;
 		this->sim_args = NULL;
 		this->num_sim_args = 0;
 		this->printing_precision = 6;

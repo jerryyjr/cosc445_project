@@ -251,9 +251,7 @@ double simulate_set (double parameters[]) {
 	v << term->blue << "Reading the pipe " << term->reset << "(file descriptor " << pipes[0] << ") . . . ";
 	read_pipe(pipes[0], &max_score, &score);
 	v << term->blue << "Done: " << term->reset << "(raw score " << score << " / " << max_score << ")" << endl;
-
-    double SRESscore = 1 - ((double)score / max_score);
-	print_good_set(parameters, SRESscore);
+	
 	// Close the reading end of the pipe
 	v << "  ";
 	term->rank(rank, v);
@@ -271,21 +269,7 @@ double simulate_set (double parameters[]) {
 	mfree(sim_args);
 	
 	// libSRES requires scores from 0 to 1 with 0 being a perfect score so convert the simulation's score format into libSRES's
-	return SRESscore;
-}
-
-void print_good_set (double parameters[], double score) {
-    if (ip.print_good_sets && score <= ip.good_set_threshold) {
-        cout << term->blue << "  Found a good set " << term->reset << "(score " << score << ")" << endl;
-        ip.good_sets_stream << score << "," << parameters[0];
-        cout << score << "," << parameters[0];
-        for (int i = 1; i < ip.num_dims; i++) {
-            ip.good_sets_stream << "," << parameters[i];
-            cout << "," << parameters[i];
-        }
-        ip.good_sets_stream << endl;
-        cout << endl;
-    }
+	return 1 - ((double)score / max_score);
 }
 
 /* write_pipe writes the given parameter set to the given pipe
