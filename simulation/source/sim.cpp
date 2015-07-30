@@ -361,7 +361,7 @@ double simulate_mutant (int set_num, input_params& ip, sim_data& sd, rates& rs, 
 		md.secs_passed[sd.section] = true; // Mark that this mutant has passed this simulation
 		score += md.tests[sd.section](md, wtfeat);
 		double max_score = md.max_cond_scores[sd.section];
-		if (sd.section == SEC_ANT && (md.index == MUTANT_WILDTYPE || md.index == MUTANT_HER1)) { // The max score has to be adjusted for mutants which have a wave section
+		if (sd.section == SEC_ANT && (md.index == MUTANT_WILDTYPE)) { // The max score has to be adjusted for mutants which have a wave section
 			max_score += md.max_cond_scores[SEC_WAVE];
 			int time_full = anterior_time(sd, sd.steps_til_growth + (sd.width_total - sd.width_initial - 1) * sd.steps_split);
 			int wave_score=0;

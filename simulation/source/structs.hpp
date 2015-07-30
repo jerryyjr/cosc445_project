@@ -171,6 +171,8 @@ struct input_params {
 	int her1_induction; // The time point of the induction of her1 overexpression
 	int her7_induction; // The time point of the induction of her7 overexpression
 	int DAPT_induction; // The time point of the induction of NICD perturbation
+	int mespa_induction; // The time point of the induction of mespa overexpression
+	int mespb_induction; // The time point of the induction of mespb overexpression
 	
 	// Piping data
 	bool piping; // Whether or not input and output should be piped (as opposed to written to disk), default=false

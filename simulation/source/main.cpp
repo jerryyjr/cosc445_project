@@ -124,6 +124,8 @@ void usage (const char* message) {
 	cout << "-V, --her1-induction     [int]        : the induction point for her1 overexpression" << endl;
 	cout << "-Y, --her7-induction     [int]        : the induction point for her7 overexpression" << endl;
 	cout << "-Z, --DAPT-induction     [int]        : the induction point for DAPT treatment" << endl;
+	cout << "-Q, --mespa-induction     [int]        : the induction point for mespa overexpression" << endl;
+	cout << "-K, --mespb-induction     [int]        : the induction point for mespb overexpression" << endl;
 	cout << "-D, --directory-path     [directory]  : the relative directory where concentrations or anterior oscillation features files will be printed, default=none" << endl;
 	cout << "-A, --anterior-feats     [N/A]        : print in depth oscillation features for the anterior cells over time, default=unused" << endl;
 	cout << "-P, --posterior-feats    [N/A]        : print in depth oscillation features for the posterior cells over time, default=unused" << endl;

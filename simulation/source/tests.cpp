@@ -97,6 +97,14 @@ double test_DAPT_mutant_post (mutant_data& md, features& wtfeat) {
     return 1;
 }
 
+double test_MESPAOVER_mutant_post (mutant_data& md, features& wtfeat) {
+    return 1;
+}
+
+double test_MESPBOVER_mutant_post (mutant_data& md, features& wtfeat) {
+    return 1;
+}
+
 double test_wildtype_ant (mutant_data& md, features& wtfeat) {
 	cout<<"0: "<<md.conds_passed[SEC_ANT][0]<<endl;
 	md.conds_passed[SEC_ANT][1] = md.feat.sync_score_ant[IMH1] > 0.8;
@@ -205,6 +213,21 @@ double test_DAPT_mutant_ant (mutant_data& md, features& wtfeat) {
     md.conds_passed[SEC_ANT][5] = md.feat.sync_time[IMMESPB][3] < 0.7;
     return (md.conds_passed[SEC_ANT][0] * md.cond_scores[SEC_ANT][0]) + (md.conds_passed[SEC_ANT][1] * md.cond_scores[SEC_ANT][1]) + (md.conds_passed[SEC_ANT][2] * md.cond_scores[SEC_ANT][2]) + (md.conds_passed[SEC_ANT][3] * md.cond_scores[SEC_ANT][3]) + (md.conds_passed[SEC_ANT][4] * md.cond_scores[SEC_ANT][4]) + (md.conds_passed[SEC_ANT][5] * md.cond_scores[SEC_ANT][5]);
 }
+
+double test_MESPAOVER_mutant_ant (mutant_data& md, features& wtfeat) {
+    
+    md.conds_passed[SEC_ANT][0] = md.feat.amplitude_ant_time[IMMESPB][1] / wtfeat.amplitude_ant[IMMESPB] < 0.2;
+    
+    return (md.conds_passed[SEC_ANT][0] * md.cond_scores[SEC_ANT][0]);
+}
+
+double test_MESPBOVER_mutant_ant (mutant_data& md, features& wtfeat) {
+    md.conds_passed[SEC_ANT][0] = md.feat.amplitude_ant_time[IMMESPA][1] / wtfeat.amplitude_ant[IMMESPA] < 0.2;
+    md.conds_passed[SEC_ANT][1] = md.feat.amplitude_ant_time[IMMESPB][1] / wtfeat.amplitude_ant[IMMESPB] < 0.2;
+   
+    return (md.conds_passed[SEC_ANT][0] * md.cond_scores[SEC_ANT][0]) + (md.conds_passed[SEC_ANT][1] * md.cond_scores[SEC_ANT][1]);
+}
+
 
 int test_wildtype_wave (pair<int, int> waves[], int num_waves, mutant_data& md, int wlength_post, int wlength_ant) {
 	md.conds_passed[SEC_WAVE][0] = md.conds_passed[SEC_WAVE][0] && (2 <= num_waves && num_waves <= 3); //JY WT.4.

@@ -25,20 +25,22 @@ macros.hpp contains every constant and macro function used in the program.
 
 // Mutant indices
 #define MUTANT_WILDTYPE		0
-#define MUTANT_HER7			1
-#define MUTANT_HER13		2
-#define MUTANT_DELTA		3
-#define MUTANT_HER7HER13	4
-#define MUTANT_HER1			5
-#define MUTANT_HER7DELTA	6
-#define MUTANT_HER1DELTA	7
-#define MUTANT_HER7OVER		8
-#define MUTANT_HER1OVER		9
-#define MUTANT_DELTAOVER	10
-#define MUTANT_DAPT       11
-#define MUTANT_HER1HER7   12
+//#define MUTANT_HER7			1
+//#define MUTANT_HER13		2
+#define MUTANT_DELTA		1
+//#define MUTANT_HER7HER13	4
+//#define MUTANT_HER1			5
+//#define MUTANT_HER7DELTA	6
+//#define MUTANT_HER1DELTA	7
+#define MUTANT_HER7OVER		2
+#define MUTANT_HER1OVER		3
+//#define MUTANT_DELTAOVER	10
+#define MUTANT_DAPT       4
+//#define MUTANT_HER1HER7   12
+#define MUTANT_MESPAOVER	5
+#define MUTANT_MESPBOVER	6
 
-#define NUM_MUTANTS 		13
+#define NUM_MUTANTS 		7
 
 /// Named shortcuts for each concentration level of mRNA, protein, and dimer
 

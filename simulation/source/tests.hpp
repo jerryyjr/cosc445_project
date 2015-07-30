@@ -38,6 +38,8 @@ double test_her1over_mutant_post(mutant_data&, features&);
 double test_deltaover_mutant_post(mutant_data&, features&);
 double test_her1her7_mutant_post(mutant_data&, features&);
 double test_DAPT_mutant_post(mutant_data&, features&);
+double test_MESPAOVER_mutant_post (mutant_data& md, features& wtfeat);
+double test_MESPBOVER_mutant_post (mutant_data& md, features& wtfeat);
 double test_wildtype_ant(mutant_data&, features&);
 double test_her7_mutant_ant(mutant_data&, features&);
 double test_her13_mutant_ant(mutant_data&, features&);
@@ -51,6 +53,8 @@ double test_her1over_mutant_ant(mutant_data&, features&);
 double test_deltaover_mutant_ant(mutant_data&, features&);
 double test_her1her7_mutant_ant(mutant_data&, features&);
 double test_DAPT_mutant_ant(mutant_data&, features&);
+double test_MESPAOVER_mutant_ant (mutant_data& md, features& wtfeat);
+double test_MESPBOVER_mutant_ant (mutant_data& md, features& wtfeat);
 int test_wildtype_wave (pair<int, int>[], int, mutant_data&, int, int);
 int test_her1_wave (pair<int, int>[], int, mutant_data&, int, int);
 
