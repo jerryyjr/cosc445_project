@@ -934,8 +934,8 @@ mutant_data* create_mutant_data (sim_data& sd, input_params& ip) {
 	mds[MUTANT_WILDTYPE].cond_scores[SEC_ANT][1] = CW_A;
 	mds[MUTANT_WILDTYPE].cond_scores[SEC_ANT][2] = CW_B;
     mds[MUTANT_WILDTYPE].cond_scores[SEC_ANT][3] = CW_B;
-    mds[MUTANT_WILDTYPE].cond_scores[SEC_ANT][4] = 20;
-    mds[MUTANT_WILDTYPE].cond_scores[SEC_ANT][5] = 20;
+    mds[MUTANT_WILDTYPE].cond_scores[SEC_ANT][4] = 10;
+    mds[MUTANT_WILDTYPE].cond_scores[SEC_ANT][5] = 10;
 	mds[MUTANT_WILDTYPE].cond_scores[SEC_ANT][6] = CW_B;
 	mds[MUTANT_WILDTYPE].cond_scores[SEC_ANT][7] = CW_B;
 	mds[MUTANT_WILDTYPE].cond_scores[SEC_ANT][8] = CW_B;
@@ -1008,7 +1008,7 @@ mutant_data* create_mutant_data (sim_data& sd, input_params& ip) {
 	mds[MUTANT_DELTA].cond_scores[SEC_POST][2] = CW_A;
 	mds[MUTANT_DELTA].num_conditions[SEC_ANT] = 4;
 	mds[MUTANT_DELTA].cond_scores[SEC_ANT][0] = CW_A;
-	mds[MUTANT_DELTA].cond_scores[SEC_ANT][1] = CW_A;
+	mds[MUTANT_DELTA].cond_scores[SEC_ANT][1] = CW_B;
     mds[MUTANT_DELTA].cond_scores[SEC_ANT][2] = CW_A;
     mds[MUTANT_DELTA].cond_scores[SEC_ANT][3] = CW_A;
 	mds[MUTANT_DELTA].num_conditions[SEC_WAVE] = 0;
@@ -1110,21 +1110,21 @@ mutant_data* create_mutant_data (sim_data& sd, input_params& ip) {
 	mds[MUTANT_HER7OVER].num_knockouts = 0;
 	//mds[MUTANT_HER7OVER].induction = ip.her7_induction / ip.small_gran;
 	mds[MUTANT_HER7OVER].induction = ip.her7_induction / ip.step_size;
-    mds[MUTANT_HER7OVER].recovery = 999999999;
+    mds[MUTANT_HER7OVER].recovery = ip.her7_induction / ip.step_size + 6000;
     mds[MUTANT_HER7OVER].overexpression_rate = RMSH7;
     mds[MUTANT_HER7OVER].overexpression_factor = 2;
 	mds[MUTANT_HER7OVER].tests[SEC_POST] = test_her7over_mutant_post;
 	mds[MUTANT_HER7OVER].tests[SEC_ANT] = test_her7over_mutant_ant;
 	mds[MUTANT_HER7OVER].num_conditions[SEC_POST] = 0;
 	mds[MUTANT_HER7OVER].num_conditions[SEC_ANT] = 8;
-	mds[MUTANT_HER7OVER].cond_scores[SEC_ANT][0] = CW_B;
+	mds[MUTANT_HER7OVER].cond_scores[SEC_ANT][0] = CW_A;
 	mds[MUTANT_HER7OVER].cond_scores[SEC_ANT][1] = CW_B;
-	mds[MUTANT_HER7OVER].cond_scores[SEC_ANT][2] = CW_B;
-	mds[MUTANT_HER7OVER].cond_scores[SEC_ANT][3] = CW_B;
+	mds[MUTANT_HER7OVER].cond_scores[SEC_ANT][2] = CW_A;
+	mds[MUTANT_HER7OVER].cond_scores[SEC_ANT][3] = CW_A;
 	mds[MUTANT_HER7OVER].cond_scores[SEC_ANT][4] = CW_B;
 	mds[MUTANT_HER7OVER].cond_scores[SEC_ANT][5] = CW_A;
 	mds[MUTANT_HER7OVER].cond_scores[SEC_ANT][6] = CW_B;
-	mds[MUTANT_HER7OVER].cond_scores[SEC_ANT][7] = CW_B;
+	mds[MUTANT_HER7OVER].cond_scores[SEC_ANT][7] = CW_A;
 	mds[MUTANT_HER7OVER].num_conditions[SEC_WAVE] = 0;
 	mds[MUTANT_HER7OVER].calc_max_scores();
 	
