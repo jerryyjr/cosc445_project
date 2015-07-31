@@ -80,7 +80,7 @@ double test_her7over_mutant_post (mutant_data& md, features& wtfeat) {
 }
 
 double test_her1over_mutant_post (mutant_data& md, features& wtfeat) {
-	md.conds_passed[SEC_POST][0] = (md.feat.amplitude_post[CMH7] / wtfeat.amplitude_post[CMH7]) < 0.2 || (md.feat.num_good_somites[CMH7] < 3);
+	md.conds_passed[SEC_POST][0] = (md.feat.amplitude_post[IMH1] / wtfeat.amplitude_post[IMH1]) < 0.2 || (md.feat.num_good_somites[IMH1] < 3);
 	return md.conds_passed[SEC_POST][0] * md.cond_scores[SEC_POST][0];
 }
 
@@ -205,11 +205,11 @@ double test_her1her7_mutant_ant (mutant_data& md, features& wtfeat) {
 }
 
 double test_DAPT_mutant_ant (mutant_data& md, features& wtfeat) {
-    md.conds_passed[SEC_ANT][0] = md.feat.sync_time[IMH1][3] < 0.5;
-    md.conds_passed[SEC_ANT][1] = md.feat.sync_time[IMH7][3] < 0.5;
+    md.conds_passed[SEC_ANT][0] = md.feat.sync_time[IMH1][3] < 0.7;
+    md.conds_passed[SEC_ANT][1] = md.feat.sync_time[IMH7][3] < 0.7;
     md.conds_passed[SEC_ANT][2] = md.feat.amplitude_ant_time[IMH1][3] / wtfeat.amplitude_ant[IMH1] < 0.85;
     md.conds_passed[SEC_ANT][3] = md.feat.amplitude_ant_time[IMH7][3] / wtfeat.amplitude_ant[IMH7] < 0.85;
-    md.conds_passed[SEC_ANT][4] = md.feat.amplitude_ant[IMMESPA] / wtfeat.amplitude_ant[IMMESPA] < 0.2;
+    md.conds_passed[SEC_ANT][4] = md.feat.amplitude_ant_time[IMMESPA][2] / wtfeat.amplitude_ant[IMMESPA] < 0.2;
     md.conds_passed[SEC_ANT][5] = md.feat.sync_time[IMMESPB][3] < 0.7;
     return (md.conds_passed[SEC_ANT][0] * md.cond_scores[SEC_ANT][0]) + (md.conds_passed[SEC_ANT][1] * md.cond_scores[SEC_ANT][1]) + (md.conds_passed[SEC_ANT][2] * md.cond_scores[SEC_ANT][2]) + (md.conds_passed[SEC_ANT][3] * md.cond_scores[SEC_ANT][3]) + (md.conds_passed[SEC_ANT][4] * md.cond_scores[SEC_ANT][4]) + (md.conds_passed[SEC_ANT][5] * md.cond_scores[SEC_ANT][5]);
 }

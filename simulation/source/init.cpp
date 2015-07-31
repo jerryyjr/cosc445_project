@@ -1144,13 +1144,13 @@ mutant_data* create_mutant_data (sim_data& sd, input_params& ip) {
 	mds[MUTANT_HER1OVER].cond_scores[SEC_POST][0] = CW_A;
 	mds[MUTANT_HER1OVER].num_conditions[SEC_ANT] = 5;
 	mds[MUTANT_HER1OVER].cond_scores[SEC_ANT][0] = CW_A;
-	mds[MUTANT_HER1OVER].cond_scores[SEC_ANT][1] = CW_A;
-	mds[MUTANT_HER1OVER].cond_scores[SEC_ANT][2] = CW_A;
+	mds[MUTANT_HER1OVER].cond_scores[SEC_ANT][1] = CW_B;
+	mds[MUTANT_HER1OVER].cond_scores[SEC_ANT][2] = CW_B;
 	mds[MUTANT_HER1OVER].cond_scores[SEC_ANT][3] = CW_A;
-	mds[MUTANT_HER1OVER].cond_scores[SEC_ANT][4] = CW_A;
+	mds[MUTANT_HER1OVER].cond_scores[SEC_ANT][4] = CW_B;
 	mds[MUTANT_HER1OVER].num_conditions[SEC_WAVE] = 0;
 	mds[MUTANT_HER1OVER].calc_max_scores();
-	mds[MUTANT_HER1OVER].print_con = CMH7;
+	//mds[MUTANT_HER1OVER].print_con = CMH7;
 	
 	// Delta-overexpressed
 	/*if (MUTANT_DELTAOVER >= sd.num_active_mutants && single_mutant==false) {return mds;}
@@ -1210,9 +1210,9 @@ mutant_data* create_mutant_data (sim_data& sd, input_params& ip) {
 	mds[MUTANT_DAPT].cond_scores[SEC_POST][0] = CW_A;
 	mds[MUTANT_DAPT].num_conditions[SEC_ANT] = 6;
 	mds[MUTANT_DAPT].cond_scores[SEC_ANT][0] = CW_A;
-	mds[MUTANT_DAPT].cond_scores[SEC_ANT][1] = CW_A;
+	mds[MUTANT_DAPT].cond_scores[SEC_ANT][1] = CW_B;
 	mds[MUTANT_DAPT].cond_scores[SEC_ANT][2] = CW_A;
-	mds[MUTANT_DAPT].cond_scores[SEC_ANT][3] = CW_A;
+	mds[MUTANT_DAPT].cond_scores[SEC_ANT][3] = CW_B;
 	mds[MUTANT_DAPT].cond_scores[SEC_ANT][4] = CW_A;
 	mds[MUTANT_DAPT].cond_scores[SEC_ANT][5] = CW_A;
 	mds[MUTANT_DAPT].num_conditions[SEC_WAVE] = 0;
@@ -1227,20 +1227,16 @@ mutant_data* create_mutant_data (sim_data& sd, input_params& ip) {
 	
 	//mds[MUTANT_MESPAOVER].induction = ip.DAPT_induction / ip.small_gran;
 	mds[MUTANT_MESPAOVER].induction = ip.mespa_induction / ip.step_size;
-    mds[MUTANT_MESPAOVER].recovery = 999999999;
-    mds[MUTANT_MESPAOVER].overexpression_rate = -1;
-    mds[MUTANT_MESPAOVER].overexpression_factor = 0;
+    mds[MUTANT_MESPAOVER].recovery = ip.mespa_induction / ip.step_size + 3000;
+    mds[MUTANT_MESPAOVER].overexpression_rate = RMSMESPA ;
+    mds[MUTANT_MESPAOVER].overexpression_factor = 2;
 	mds[MUTANT_MESPAOVER].tests[SEC_POST] = test_MESPAOVER_mutant_post;
 	mds[MUTANT_MESPAOVER].tests[SEC_ANT] = test_MESPAOVER_mutant_ant;
-	mds[MUTANT_MESPAOVER].num_conditions[SEC_POST] = 1;
-	mds[MUTANT_MESPAOVER].cond_scores[SEC_POST][0] = CW_A;
-	mds[MUTANT_MESPAOVER].num_conditions[SEC_ANT] = 6;
+	mds[MUTANT_MESPAOVER].num_conditions[SEC_POST] = 0;
+	
+	mds[MUTANT_MESPAOVER].num_conditions[SEC_ANT] = 1;
 	mds[MUTANT_MESPAOVER].cond_scores[SEC_ANT][0] = CW_A;
-	mds[MUTANT_MESPAOVER].cond_scores[SEC_ANT][1] = CW_A;
-	mds[MUTANT_MESPAOVER].cond_scores[SEC_ANT][2] = CW_A;
-	mds[MUTANT_MESPAOVER].cond_scores[SEC_ANT][3] = CW_A;
-	mds[MUTANT_MESPAOVER].cond_scores[SEC_ANT][4] = CW_A;
-	mds[MUTANT_MESPAOVER].cond_scores[SEC_ANT][5] = CW_A;
+	
 	mds[MUTANT_MESPAOVER].num_conditions[SEC_WAVE] = 0;
 	mds[MUTANT_MESPAOVER].calc_max_scores();
 	
@@ -1253,20 +1249,17 @@ mutant_data* create_mutant_data (sim_data& sd, input_params& ip) {
 	
 	//mds[MUTANT_MESPBOVER].induction = ip.DAPT_induction / ip.small_gran;
 	mds[MUTANT_MESPBOVER].induction = ip.mespb_induction / ip.step_size;
-    mds[MUTANT_MESPBOVER].recovery = 999999999;
-    mds[MUTANT_MESPBOVER].overexpression_rate = -1;
-    mds[MUTANT_MESPBOVER].overexpression_factor = 0;
+    mds[MUTANT_MESPBOVER].recovery = ip.mespb_induction / ip.step_size +3000;
+    mds[MUTANT_MESPBOVER].overexpression_rate = RMSMESPB;
+    mds[MUTANT_MESPBOVER].overexpression_factor = 2;
 	mds[MUTANT_MESPBOVER].tests[SEC_POST] = test_MESPBOVER_mutant_post;
 	mds[MUTANT_MESPBOVER].tests[SEC_ANT] = test_MESPBOVER_mutant_ant;
-	mds[MUTANT_MESPBOVER].num_conditions[SEC_POST] = 1;
-	mds[MUTANT_MESPBOVER].cond_scores[SEC_POST][0] = CW_A;
-	mds[MUTANT_MESPBOVER].num_conditions[SEC_ANT] = 6;
+	mds[MUTANT_MESPBOVER].num_conditions[SEC_POST] = 0;
+	
+	mds[MUTANT_MESPBOVER].num_conditions[SEC_ANT] = 2;
 	mds[MUTANT_MESPBOVER].cond_scores[SEC_ANT][0] = CW_A;
 	mds[MUTANT_MESPBOVER].cond_scores[SEC_ANT][1] = CW_A;
-	mds[MUTANT_MESPBOVER].cond_scores[SEC_ANT][2] = CW_A;
-	mds[MUTANT_MESPBOVER].cond_scores[SEC_ANT][3] = CW_A;
-	mds[MUTANT_MESPBOVER].cond_scores[SEC_ANT][4] = CW_A;
-	mds[MUTANT_MESPBOVER].cond_scores[SEC_ANT][5] = CW_A;
+	
 	mds[MUTANT_MESPBOVER].num_conditions[SEC_WAVE] = 0;
 	mds[MUTANT_MESPBOVER].calc_max_scores();
 	return mds;

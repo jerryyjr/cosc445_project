@@ -272,7 +272,9 @@ inline void store_original_rates (rates& rs, mutant_data& md, double orig_rates[
 */
 inline void knockout (rates& rs, mutant_data& md) {
 	for (int i = 0; i < md.num_knockouts; i++) {
-		rs.rates_base[md.knockouts[i]] = 0;
+		if (md.index!=MUTANT_DAPT){
+			rs.rates_base[md.knockouts[i]] = 0;
+		}
 	}
 }
 

@@ -347,7 +347,7 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
                 // Updating mutant data
                 for (int j = 0; j < pers; j++) {
 					if (per_time[j] >= anterior_time(sd, md.induction)) {
-                    	double half_hour_index = 0.5 * ((per_time[j] - anterior_time(sd, md.induction)) * sd.big_gran / 30 + 1);
+                    	double half_hour_index = 0.5 * ((per_time[j] - anterior_time(sd, md.induction)) * sd.big_gran / 3000 + 1);
                    		if (per_pos[j] < sd.width_initial) {
                    		    md.feat.period_post_time[index][half_hour_index] = periods[j];   //JY WT.2.
                     	} else {
@@ -357,7 +357,7 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
                 }
                 for (int j = 0; j < amps; j++) {
 					if (amp_time[j] >= anterior_time(sd, md.induction)) {
-                    	double half_hour_index = 0.5 * ((amp_time[j] - anterior_time(sd, md.induction)) * sd.big_gran / 30 + 1);
+                    	double half_hour_index = 0.5 * ((amp_time[j] - anterior_time(sd, md.induction)) * sd.big_gran / 3000 + 1);
                     	if (per_pos[j] < sd.width_initial) {
                     	    md.feat.amplitude_post_time[index][half_hour_index] = amplitudes[j];
                     	} else {
@@ -391,7 +391,7 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 		double sync_avg = 0;
 	    int time_full = anterior_time(sd, sd.steps_til_growth + (sd.width_total - sd.width_initial - 1) * sd.steps_split);
 	    for (int time = time_full; time < sd.time_end; time += (sd.time_end - 1 - time_full) / 4) {
-		    sync_avg += ant_sync(sd, cl, index, time);
+		    sync_avg += ant_sync(sd, cl, index + 1, time);
 			if (md.index == MUTANT_WILDTYPE) {  // wildtype
 				wave_testing_mesp(sd, cl, md, time, sd.active_start);
 			}
