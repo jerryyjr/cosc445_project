@@ -35,7 +35,7 @@ void determine_start_end(sim_data&);
 void reset_mutant_scores(input_params&, mutant_data[]);
 void mutant_sim_message(mutant_data&, int);
 void store_original_rates (rates&, mutant_data&, double[]);
-void knockout(rates& rs, mutant_data&);
+void knockout(rates& rs, mutant_data&, bool induction);
 void revert_knockout(rates& rs, mutant_data&, double[]);
 double simulate_mutant(int, input_params&, sim_data&, rates&, con_levels&, con_levels&, mutant_data&, features&, char*, double[2]);
 bool model(sim_data&, rates&, con_levels&, con_levels&, mutant_data&, double[2]);
