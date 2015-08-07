@@ -58,7 +58,7 @@ int get_peaks_and_troughs1 (sim_data& sd, con_levels& cl, int actual_cell, int t
 		// check if the current point is a peak
 		bool is_peak = true;
 		for (int k = MAX(j - (2 / sd.step_size / sd.big_gran), time_start); k <= MIN(j + 2 / sd.step_size / sd.big_gran, sd.time_end - 1); k++) {
-			if (conc[j][actual_cell] < conc[k][actual_cell]) {
+			if (conc[j][actual_cell] <= conc[k][actual_cell] && j!=k) {
 				is_peak = false;
 			}
 		}
@@ -72,7 +72,7 @@ int get_peaks_and_troughs1 (sim_data& sd, con_levels& cl, int actual_cell, int t
 		// check if the current point is a trough
 		bool is_trough = true;
 		for (int k = MAX(j - (2 / sd.step_size / sd.big_gran), time_start); k <= MIN(j + 2 / sd.step_size / sd.big_gran, sd.time_end - 1); k++) {
-			if (conc[j][actual_cell] > conc[k][actual_cell]) {
+			if (conc[j][actual_cell] >= conc[k][actual_cell] && j!=k) {
 				is_trough = false;
 			}
 		}
@@ -116,8 +116,9 @@ int get_peaks_and_troughs2 (sim_data& sd, con_levels& cl, int actual_cell, int t
 		// check if the current point is a peak
 		bool is_peak = true;
 		for (int k = MAX(j - (2 / sd.step_size / sd.big_gran), time_start); k <= MIN(j + 2 / sd.step_size / sd.big_gran, sd.time_end - 1); k++) {
-			if (conc[j][actual_cell] < conc[k][actual_cell]) {
+			if (conc[j][actual_cell] <= conc[k][actual_cell] && j!=k) {
 				is_peak = false;
+				
 			}
 		}
 		if (is_peak) {
@@ -130,7 +131,7 @@ int get_peaks_and_troughs2 (sim_data& sd, con_levels& cl, int actual_cell, int t
 		// check if the current point is a trough
 		bool is_trough = true;
 		for (int k = MAX(j - (2 / sd.step_size / sd.big_gran), time_start); k <= MIN(j + 2 / sd.step_size / sd.big_gran, sd.time_end - 1); k++) {
-			if (conc[j][actual_cell] > conc[k][actual_cell]) {
+			if (conc[j][actual_cell] >= conc[k][actual_cell] && j!=k) {
 				is_trough = false;
 			}
 		}
@@ -318,7 +319,11 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 						count++;
 					}*/
 					
-					amp_avg += amp_cell / amps;
+					if (amps == 0){
+						amp_avg+=0;
+					} else {
+						amp_avg += amp_cell / (amps);
+					}
 					period_avg += (periods[rang]);
 				} else {
 					amp_avg += 1;
@@ -347,7 +352,7 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
                 // Updating mutant data
                 for (int j = 0; j < pers; j++) {
 					if (per_time[j] >= anterior_time(sd, md.induction)) {
-                    	double half_hour_index = 0.5 * ((per_time[j] - anterior_time(sd, md.induction)) * sd.big_gran / 3000 + 1);
+                    	double half_hour_index = 0.5 * (((int)(per_time[j] - anterior_time(sd, md.induction)) * sd.big_gran / 3000) + 1);
                    		if (per_pos[j] < sd.width_initial) {
                    		    md.feat.period_post_time[index][half_hour_index] = periods[j];   //JY WT.2.
                     	} else {
@@ -357,7 +362,7 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
                 }
                 for (int j = 0; j < amps; j++) {
 					if (amp_time[j] >= anterior_time(sd, md.induction)) {
-                    	double half_hour_index = 0.5 * ((amp_time[j] - anterior_time(sd, md.induction)) * sd.big_gran / 3000 + 1);
+                    	double half_hour_index = 0.5 * ((int)((amp_time[j] - anterior_time(sd, md.induction)) * sd.big_gran / 3000) + 1);
                     	if (per_pos[j] < sd.width_initial) {
                     	    md.feat.amplitude_post_time[index][half_hour_index] = amplitudes[j];
                     	} else {
@@ -399,12 +404,12 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 
 	    md.feat.sync_score_ant[index] = sync_avg / 5;
         if (md.induction != 0) {
-            int time_after_induction = anterior_time(sd, md.induction + 30 / sd.big_gran);
+            int time_after_induction = anterior_time(sd, md.induction + 3000 / sd.big_gran);
             for (int i = 0; i < 4; i++) {
                 int mr = con[i];
                 double half_hour_index = 0.5;
-                for (int time = time_after_induction; time < sd.time_end; time += (30 / sd.big_gran)) {
-                    md.feat.sync_time[index][half_hour_index] = ant_sync(sd, cl, mr, time);
+                for (int time = time_after_induction; time < sd.time_end; time += (3000 / sd.big_gran)) {
+                    md.feat.sync_time[ind[i]][half_hour_index] = ant_sync(sd, cl, mr, time);
                     half_hour_index += 0.5;
                 }
             }
@@ -595,18 +600,41 @@ double ant_sync (sim_data& sd, con_levels& cl, int con, int time) {  //JY WT.1. 
 
 	double first_row[sd.width_total];
 	double cur_row[sd.width_total];
+	int pos_start = cl.active_start_record[time];
+	int pos_first = 0;
+	int pos_cur = 0;
 
 	for (int y = 0; y < sd.width_total; y++) {
-		first_row[y] = cl.cons[con][time][y];
+		if (con == 3 || con ==4){
+			if (pos_start - y <= 0){
+				pos_first = pos_start -2*y + sd.width_total;
+			} else {
+				pos_first = pos_start -2*y;
+			}
+		}
+		first_row[y] = cl.cons[con][time][y + pos_first];
 	}
 
 	double pearson_sum = 0;
 	for (int x = 1; x < sd.height; x++) {
 		for (int y = 0; y < sd.width_total; y++) {
-			int cell = x * sd.width_total + y;
+			if (con == 3 || con ==4){
+				if (pos_start - y <= 0){
+					pos_cur = pos_start -2*y + sd.width_total;
+				} else {
+					pos_cur = pos_start -2*y;
+				}
+			}
+			int cell = x * sd.width_total + y + pos_cur;
 			cur_row[y] = cl.cons[con][time][cell];
 		}
-		pearson_sum += pearson_correlation(first_row, cur_row, 0, sd.width_total);
+		if (con == 3 || con ==4){
+			
+			pearson_sum += pearson_correlation(first_row, cur_row, (int)(0.6*sd.width_total), sd.width_total );
+		} else {
+			
+			pearson_sum += pearson_correlation(first_row, cur_row, 0, sd.width_total);
+		}
 	}
 
 	return pearson_sum / (sd.height - 1); 

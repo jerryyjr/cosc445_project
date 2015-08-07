@@ -169,7 +169,7 @@ int simulate_section (int set_num, input_params& ip, sim_data& sd, rates& rs, co
 	for (int i = 0; i < ip.num_active_mutants; i++) {
 		mutant_sim_message(mds[i], i);
         store_original_rates(rs, mds[i], temp_rates); // will be used to revert original rates after current mutant
-		knockout (rs, mds[i]);
+		knockout (rs, mds[i], 0);
 		double current_score = simulate_mutant(set_num, ip, sd, rs, cl, baby_cl, mds[i], mds[MUTANT_WILDTYPE].feat, dirnames_cons[i], temp_rates);
 		scores[sd.section * ip.num_active_mutants + i] = current_score;
 		baby_cl.reset();
@@ -270,11 +270,11 @@ inline void store_original_rates (rates& rs, mutant_data& md, double orig_rates[
 	notes:
 	todo:
 */
-inline void knockout (rates& rs, mutant_data& md) {
+inline void knockout (rates& rs, mutant_data& md, bool induction) {
 	for (int i = 0; i < md.num_knockouts; i++) {
-		if (md.index!=MUTANT_DAPT){
+		if (!(md.index==MUTANT_DAPT && induction == 0)){
 			rs.rates_base[md.knockouts[i]] = 0;
-		}
+		} 
 	}
 }
 
@@ -416,7 +416,7 @@ bool model (sim_data& sd, rates& rs, con_levels& cl, con_levels& baby_cl, mutant
 	for (j = sd.time_start, baby_j = 0; j < sd.time_end; j++, baby_j = WRAP(baby_j + 1, sd.max_delay_size)) {
         
         if (!past_induction && !past_recovery && (j + sd.steps_til_growth > md.induction)) {
-    	    knockout(rs, md); //knock down rates after the induction point
+    	    knockout(rs, md, 1); //knock down rates after the induction point
             past_induction = true;
         }
         if (past_induction && (j + sd.steps_til_growth > md.recovery)) {
@@ -871,11 +871,17 @@ inline void con_dimer (cd_args& a, int con, int offset, cd_indices i) {
 	int tc = a.stc.time_cur;
 	int tp = a.stc.time_prev;
 	int cell = a.stc.cell;
-	
+	int con_offset=offset;
+	if (i.con_protein == CPH1 && offset == 2){
+		con_offset=4;
+	}
+	if (i.con_protein == CPH7 && offset == 1){
+		con_offset=3;
+	}
 	// The given dimer concentration's differential equation
 	c[con][tc][cell] =
 		c[con][tp][cell]
-		+ a.sd.step_size * (r[i.rate_association + offset][cell] * c[i.con_protein][tp][cell] * c[i.con_protein + offset][tp][cell]
+		+ a.sd.step_size * (r[i.rate_association + offset][cell] * c[i.con_protein][tp][cell] * c[i.con_protein + con_offset][tp][cell]
 			- r[i.rate_dissociation + offset][cell] * c[con][tp][cell]
 			- r[i.rate_degradation + offset][cell] * c[con][tp][cell]);
 }
