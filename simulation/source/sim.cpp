@@ -1053,7 +1053,7 @@ inline double transcription_mespa (double** rs, con_levels& cl, int time, int ce
     //}
 	tdelta = rs[RCRITPDELTA][cell] == 0 ? 0 : avgpd / rs[RCRITPDELTA][cell];
 	
-	return ms * (oe + (1+tdelta) / (1 + tdelta + rs[NS1][cell] * SQUARE(th1h1) + SQUARE(th7h13) + SQUARE(tmespbmespb)));
+	return ms * (oe + (tdelta) / (tdelta + rs[NS1][cell] * SQUARE(th1h1) + SQUARE(th7h13) + SQUARE(tmespbmespb)));
 }
 
 /* transcription_mespb calculates mRNA transcription for mespb, taking into account the effects of dimer repression

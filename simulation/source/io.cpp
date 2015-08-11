@@ -376,7 +376,7 @@ void print_cell_columns (input_params& ip, sim_data& sd, con_levels &cl, char* f
 		mfree(filename_set);
 		mfree(str_set_num);
 
-		int time_full = anterior_time(sd, sd.steps_til_growth + (sd.width_total - sd.width_initial - 1) * sd.steps_split); // Time after which the PSM is full of cells
+		int time_full = anterior_time(sd, sd.steps_til_growth + (sd.width_total - sd.width_initial - 1) * sd.steps_split) ; // Time after which the PSM is full of cells
 		int time = time_full;
 		double time_point[sd.height * ip.num_colls_print]; // Array for storing all the cells that need to be printed at each time point
 		memset(time_point, 0, sizeof(double) * sd.height * ip.num_colls_print);
