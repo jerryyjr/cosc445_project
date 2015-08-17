@@ -214,7 +214,7 @@ struct input_params {
 		this->width_total = 3;
 		this->width_initial = 3;
 		this->height = 1;
-		this->time_total = 1200;
+		this->time_total = 930;
 		this->time_split = 6;
 		this->time_til_growth = 300;
 		this->seed = 0;

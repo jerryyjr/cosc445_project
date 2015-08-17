@@ -175,9 +175,9 @@ double test_compl(sim_data& sd, double* con1, double* con2) {
 
 
 void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* filename_feats, con_levels& cl, mutant_data& md, int start_line, int end_line, int start_col, int end_col, int set_num) {
-	static int con[4] = {CMH1, CMDELTA, CMMESPA, CMMESPB};
-	static int ind[4] = {IMH1, IMDELTA, IMMESPA, IMMESPB};
-	static const char* concs[4] = {"mh1", "mdelta", "mespa", "mespb"};
+	static int con[5] = {CMH1, CMH7, CMDELTA, CMMESPA, CMMESPB};
+	static int ind[5] = {IMH1, IMH7, IMDELTA, IMMESPA, IMMESPB};
+	static const char* concs[5] = {"mh1", "mh7," "mdelta", "mespa", "mespb"};
 	static const char* feat_names[NUM_FEATURES] = {"period", "amplitude", "sync"};
 	static double curve[101] = {1, 1.003367003, 1.003367003, 1.003367003, 1.004713805, 1.004713805, 1.007407407, 1.015488215, 1.015488215, 1.020875421, 1.023569024, 1.023569024, 1.026262626, 1.028956229, 1.037037037, 1.037037037, 1.03973064, 1.042424242, 1.047811448, 1.050505051, 1.055892256, 1.058585859, 1.061279461, 1.066666667, 1.069360269, 1.072053872, 1.077441077, 1.082828283, 1.088215488, 1.090909091, 1.096296296, 1.098989899, 1.104377104, 1.10976431, 1.115151515, 1.115151515, 1.120538721, 1.125925926, 1.128619529, 1.139393939, 1.142087542, 1.15016835, 1.155555556, 1.160942761, 1.169023569, 1.174410774, 1.182491582, 1.187878788, 1.195959596, 1.201346801, 1.212121212, 1.22020202, 1.228282828, 1.239057239, 1.247138047, 1.255218855, 1.268686869, 1.276767677, 1.287542088, 1.301010101, 1.314478114, 1.325252525, 1.336026936, 1.352188552, 1.368350168, 1.381818182, 1.397979798, 1.414141414, 1.432996633, 1.454545455, 1.476094276, 1.492255892, 1.519191919, 1.546127946, 1.573063973, 1.6, 1.632323232, 1.672727273, 1.705050505, 1.742760943, 1.785858586, 1.837037037, 1.896296296, 1.955555556, 2.025589226, 2.106397306, 2.195286195, 2.303030303, 2.418855219, 2.572390572, 2.725925926, 2.941414141, 3.208080808, 3.574410774, 4, 8.399297321, 12.79859464, 17.19789196, 21.59718928, 25.99648661, 30.39578393};
 	
@@ -200,7 +200,7 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 	memset(mespb_comp, 0, sizeof(double) * (sd.width_total*sd.steps_split - 2));
 	
 	
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < 5; i++) {
 		ofstream features_files[NUM_FEATURES]; // Array that will hold the files in which to output the period and amplitude
 	
 		int mr = con[i];
@@ -222,10 +222,10 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 		double period_avg = 0;
         int time_start;
         if (md.induction == 0) {
-		    time_start = anterior_time(sd, sd.steps_til_growth + (sd.width_total - sd.width_initial - 1) * sd.steps_split); // time after which the PSM is full of cells
+		    time_start = anterior_time(sd, sd.steps_til_growth + (sd.width_total - sd.width_initial) * sd.steps_split); // time after which the PSM is full of cells
         } else {
             //time_start = anterior_time(sd, md.induction + (30 / sd.big_gran));
-			time_start = anterior_time(sd, sd.steps_til_growth + (30 / sd.step_size));
+			time_start = anterior_time(sd, sd.steps_til_growth + (sd.width_total - sd.width_initial) * sd.steps_split);//anterior_time(sd, sd.steps_til_growth + (30 / sd.step_size));
         }
 		int num_cells_passed = 0;
 		
@@ -234,16 +234,14 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 				int pos = cl.active_start_record[time_start]; // always looking at cell at position active_start because that is the newest cell
 				int cell = line * sd.width_total + pos;
 				int num_points = 0;
-                if (mr != CMMESPB && mr != CMMESPA) {
+                if ( mr != CMMESPA) {
 				    num_points = get_peaks_and_troughs1(sd, cl, cell, time_start, crit_points, type, position, mr);
-                } else if (mr == CMMESPA){
+                } else (mr == CMMESPA){
 					
 					num_points = get_peaks_and_troughs2(sd, cl, cell, time_start, crit_points, type, position, mr, mh1_comp, mespa_comp, mespb_comp);
 					comp_score_a+=test_compl(sd, mh1_comp, mespa_comp);
 					comp_score_b+=test_compl(sd, mh1_comp, mespb_comp);
-				} else {
-                    num_points = 0;
-                }
+				} 
 			
 				double periods[num_points];
 				double per_pos[num_points];
@@ -289,7 +287,7 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 					} else {
 						int first_fit = per_pos[0] * 100 / (sd.width_total - 1); // Find the place on the curve of the first period for comparison purposes
 						for (int i = 1; i < pers; i++) {
-							if (per_pos[i] > 0.8 * (sd.width_total - 1)) {
+							if (per_pos[i] > 0.85 * (sd.width_total - 1)) {
  								break;
  							}
 
@@ -405,7 +403,7 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 	    md.feat.sync_score_ant[index] = sync_avg / 5;
         if (md.induction != 0) {
             int time_after_induction = anterior_time(sd, md.induction + 3000 / sd.big_gran);
-            for (int i = 0; i < 4; i++) {
+            for (int i = 0; i < 5; i++) {
                 int mr = con[i];
                 double half_hour_index = 0.5;
                 for (int time = time_after_induction; time < sd.time_end; time += (3000 / sd.big_gran)) {

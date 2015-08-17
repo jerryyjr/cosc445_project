@@ -415,7 +415,7 @@ bool model (sim_data& sd, rates& rs, con_levels& cl, con_levels& baby_cl, mutant
     bool past_recovery = false; // Whether we've recovered from the knockouts or overexpression
 	for (j = sd.time_start, baby_j = 0; j < sd.time_end; j++, baby_j = WRAP(baby_j + 1, sd.max_delay_size)) {
         
-        if (!past_induction && !past_recovery && (j + sd.steps_til_growth > md.induction)) {
+        if (!past_induction && !past_recovery && (j  > anterior_time(md.induction))) {
     	    knockout(rs, md, 1); //knock down rates after the induction point
             past_induction = true;
         }

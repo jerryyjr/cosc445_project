@@ -47,7 +47,7 @@ double test_her13_mutant_post (mutant_data& md, features& wtfeat) {
 double test_delta_mutant_post (mutant_data& md, features& wtfeat) {
 	md.conds_passed[SEC_POST][0] = md.feat.sync_score_post[IMH1] < 0.7; //JY deltac.1.
 	md.conds_passed[SEC_POST][1] = 1.07 < (md.feat.period_post[IMH1] / wtfeat.period_post[IMH1]) && (md.feat.period_post[IMH1] / wtfeat.period_post[IMH1]) < 1.20;
-	md.conds_passed[SEC_POST][2] = 0.3 < (md.feat.amplitude_post[IMH1] / wtfeat.amplitude_post[IMH1]) && (md.feat.amplitude_post[IMH1] / wtfeat.amplitude_post[IMH1]) < 0.85;  //JY deltac.2.
+	md.conds_passed[SEC_POST][2] = 0.1 < (md.feat.amplitude_post[IMH1] / wtfeat.amplitude_post[IMH1]) && (md.feat.amplitude_post[IMH1] / wtfeat.amplitude_post[IMH1]) < 0.5;  //JY deltac.2.
 	return (md.conds_passed[SEC_POST][0] * md.cond_scores[SEC_POST][0]) + (md.conds_passed[SEC_POST][1] * md.cond_scores[SEC_POST][1]) + (md.conds_passed[SEC_POST][2] * md.cond_scores[SEC_POST][2]);
 }
 
@@ -80,8 +80,8 @@ double test_her7over_mutant_post (mutant_data& md, features& wtfeat) {
 }
 
 double test_her1over_mutant_post (mutant_data& md, features& wtfeat) {
-	md.conds_passed[SEC_POST][0] = (md.feat.amplitude_post[IMH1] / wtfeat.amplitude_post[IMH1]) < 0.2 || (md.feat.num_good_somites[IMH1] < 3);
-	return md.conds_passed[SEC_POST][0] * md.cond_scores[SEC_POST][0];
+	//md.conds_passed[SEC_POST][0] = (md.feat.amplitude_post[IMH1] / wtfeat.amplitude_post[IMH1]) < 0.2 || (md.feat.num_good_somites[IMH1] < 3);
+	return 0;//md.conds_passed[SEC_POST][0] * md.cond_scores[SEC_POST][0];
 }
 
 double test_deltaover_mutant_post (mutant_data& md, features& wtfeat) {
