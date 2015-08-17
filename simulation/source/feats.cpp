@@ -236,7 +236,7 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 				int num_points = 0;
                 if ( mr != CMMESPA) {
 				    num_points = get_peaks_and_troughs1(sd, cl, cell, time_start, crit_points, type, position, mr);
-                } else (mr == CMMESPA){
+                } else {
 					
 					num_points = get_peaks_and_troughs2(sd, cl, cell, time_start, crit_points, type, position, mr, mh1_comp, mespa_comp, mespb_comp);
 					comp_score_a+=test_compl(sd, mh1_comp, mespa_comp);
