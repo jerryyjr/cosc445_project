@@ -34,6 +34,7 @@ double test_compl(sim_data& sd, double* con1, double* con2, int num_cell);
 void osc_features_ant(sim_data&, input_params&, features&, char*, con_levels&, mutant_data&, int, int, int, int, int);
 double post_sync(sim_data&, con_levels&, int, int, int);
 double ant_sync(sim_data&, con_levels&, int, int);
+double avg_amp (sim_data& sd, con_levels&, int con, int time, int start, int end);
 void plot_ant_sync(sim_data&, con_levels&, int, ofstream*, bool);
 double pearson_correlation(double*, double*, int, int);
 int wave_testing(sim_data&, con_levels&, mutant_data&, int, int, int);

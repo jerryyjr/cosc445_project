@@ -248,7 +248,7 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
                 double per_time[num_points];
 				double amplitudes[num_points];
 				double amp_pos[num_points];
-                double amp_time[num_points];
+                //double amp_time[num_points];
 				memset(periods, 0, sizeof(double) * num_points);
 				memset(amplitudes, 0, sizeof(double) * num_points);
 				memset(per_pos, 0, sizeof(double) * num_points);
@@ -275,7 +275,7 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 						if (type[cur_point] == 1 && cur_point >= 1 && cur_point < num_points - 1) {
 							amplitudes[amps] = conc[crit_points[cur_point]][cell] - (conc[crit_points[cur_point - 1]][cell] + conc[crit_points[cur_point + 1]][cell]) / 2;
 							amp_pos[amps] = position[cur_point];
-                            amp_time[amps] = crit_points[cur_point];
+                            //amp_time[amps] = crit_points[cur_point];
 							amps++;
 						}
 					}
@@ -310,7 +310,7 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 						amp_cell += amplitudes[i];
 					}
 					//double period_cell = 0;
-					int rang = (int)(0.85 * pers);
+					//int rang = (int)(0.85 * pers);
 					//int count = 0;
 					/*for (; rang < pers; rang++) {
 						period_cell += periods[rang];
@@ -322,7 +322,7 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 					} else {
 						amp_avg += amp_cell / (amps);
 					}
-					period_avg += (periods[rang]);
+					period_avg += (periods[0]);
 				} else {
 					amp_avg += 1;
 					period_avg += 1;
@@ -358,7 +358,7 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
                     	}
 					}
                 }
-                for (int j = 0; j < amps; j++) {
+               /* for (int j = 0; j < amps; j++) {
 					if (amp_time[j] >= anterior_time(sd, md.induction)) {
                     	double half_hour_index = 0.5 * ((int)((amp_time[j] - anterior_time(sd, md.induction)) * sd.big_gran / 3000) + 1);
                     	if (per_pos[j] < sd.width_initial) {
@@ -367,7 +367,7 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
                     	    md.feat.amplitude_ant_time[index][half_hour_index] = amplitudes[j];
                     	}
 					}
-                }
+                }*/
 
 				type.reset(sd.steps_total / 2000);
 				crit_points.reset(sd.steps_total / 2000);
@@ -381,6 +381,7 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 
 		amp_avg /= (end_line - start_line) * (end_col - start_col);
 		period_avg /= (end_line - start_line) * (end_col - start_col);
+		md.feat.period_post[index]=period_avg;
 		
 		
         md.feat.period_ant[index] = period_avg;
@@ -389,9 +390,173 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 			int threshold = 0.8 * (end_line - start_line) * (end_col - start_col);
 			md.conds_passed[SEC_ANT][0] = (num_cells_passed >= threshold);
 		}
+		
+		if (md.index == MUTANT_WILDTYPE) {
+			
+			int time_half = anterior_time(sd,60000+3000);
+			int time_half_end = anterior_time(sd,60000+6000);
+			for (;time_half<time_half_end; time_half+=300){
+				md.feat.amplitude_post_time[index][0.5]+=avg_amp(sd,cl,index+1,time_half, 0, sd.width_initial);
+				md.feat.amplitude_ant_time[index][0.5]+=avg_amp(sd,cl,index+1,time_half, 0.6*sd.width_total, sd.width_total);
+				md.feat.amplitude_post[index] +=  avg_amp(sd,cl,index+1,time_half, 0, sd.width_initial);
+				//md.feat.sync_score_post[index]+=post_sync(sd,cl, index + 1, time_half);
+				md.feat.sync_score_ant[index]+=ant_sync(sd, cl, index + 1, time_half);
+			}
+			
+			//md.feat.sync_score_post[index]/=10;
+			md.feat.sync_score_ant[index]/=10;
+			if (index == 0) {
+				int time_three = anterior_time(sd, 60000+18000);
+				int time_three_end = anterior_time(sd, 60000+21000);
+				for (;time_three<time_three_end; time_three+=300){
+					md.feat.amplitude_post_time[index][3]+=avg_amp(sd,cl,index+1,time_three, 0, sd.width_total);
+					//md.feat.amplitude_ant_time[index][3]+=avg_amp(sd,cl,index+1,time_three, 0.6*sd.width_total, sd.width_total);
+				}
+
+			}
+
+			if (index == 2 || index ==3){
+				int time_one = anterior_time(sd, 60000+6000);
+				int time_one_end = anterior_time(sd, 60000+9000);
+				for (;time_one<time_one_end; time_one+=300){
+					
+					md.feat.amplitude_ant_time[index][1]+=avg_amp(sd,cl,index+1,time_one, 0.6*sd.width_total, sd.width_total);
+				}
+
+				int time_two = anterior_time(sd, 60000+12000);
+				int time_two_end = anterior_time(sd, 60000+15000);
+				for (;time_two<time_two_end; time_two+=300){
+					
+					md.feat.amplitude_ant_time[index][2]+=avg_amp(sd,cl,index+1,time_two, 0.6*sd.width_total, sd.width_total);
+				}
+			}
+
+		}
+
+		if (md.index==MUTANT_DELTA){
+						
+
+
+			if (index==2){
+				
+				int time_half = anterior_time(sd,60000+3000);
+				int time_half_end = anterior_time(sd,60000+6000);
+				for (;time_half<time_half_end; time_half+=300){
+					md.feat.sync_score_ant[0]+=ant_sync(sd, cl, 0 + 1, time_half);
+					md.feat.sync_score_ant[3]+=ant_sync(sd, cl, 3 + 1, time_half);
+					//md.feat.sync_score_post[0]+=post_sync(sd,cl, 0 + 1, time_half);
+					md.feat.amplitude_post[0] +=  avg_amp(sd,cl,0+1,time_half, 0, sd.width_initial);
+					md.feat.amplitude_ant_time[index][0.5]+=avg_amp(sd,cl,index+1,time_half, 0.6*sd.width_total, sd.width_total);
+				}
+				
+				
+				md.feat.sync_score_ant[0]/=10;
+				md.feat.sync_score_ant[3]/=10;
+				//md.feat.sync_score_post[0]/=10;
+			}
+
+			
+		}
+
+		if (md.index==MUTANT_HER7OVER){
+
+			if (index == 0 || index ==5){
+				int time_half = anterior_time(sd,60000+3000);
+				int time_half_end = anterior_time(sd,60000+6000);
+				for (;time_half<time_half_end; time_half+=300){
+					md.feat.amplitude_post_time[index][0.5]+=avg_amp(sd,cl,index+1,time_half, 0, sd.width_initial);
+					
+				}
+			}
+
+			if (index == 0 || index ==2){
+				int time_half = anterior_time(sd,60000+3000);
+				int time_half_end = anterior_time(sd,60000+6000);
+				for (;time_half<time_half_end; time_half+=300){
+					//cout<<md.feat.amplitude_ant_time[0][0.5]<<endl;
+					md.feat.amplitude_ant_time[index][0.5]+=avg_amp(sd,cl,index+1,time_half, 0.6*sd.width_total, sd.width_total);
+				}
+			}
+
+			if (index == 3) {
+				int time_onehalf = anterior_time(sd,60000+9000);
+				int time_onehalf_end = anterior_time(sd,60000+12000);
+				for (;time_onehalf<time_onehalf_end; time_onehalf+=300){
+					md.feat.sync_time[index][1.5]+=ant_sync(sd, cl, index + 1, time_onehalf);
+					
+				}
+				md.feat.sync_time[index][1.5]/=10;
+			}
+		}
+
+		if (md.index==MUTANT_HER1OVER){
+			if (index == 1 || index ==5){
+				int time_half = anterior_time(sd,60000+3000);
+				int time_half_end = anterior_time(sd,60000+6000);
+				for (;time_half<time_half_end; time_half+=300){
+					md.feat.amplitude_post_time[index][0.5]+=avg_amp(sd,cl,index+1,time_half, 0, sd.width_initial);
+					md.feat.amplitude_ant_time[index][0.5]+=avg_amp(sd,cl,index+1,time_half, 0.6*sd.width_total, sd.width_total);
+				}
+			}
+		}
+
+		if (md.index==MUTANT_DAPT){
+			if (index == 0){
+				int time_three = anterior_time(sd, 60000+18000);
+				int time_three_end = anterior_time(sd, 60000+21000);
+				for (;time_three<time_three_end; time_three+=300){
+					md.feat.amplitude_post_time[index][3]+=avg_amp(sd,cl,index+1,time_three, 0, sd.width_total);
+					md.feat.sync_time[index][3]+=ant_sync(sd, cl, index + 1, time_three);
+					//md.feat.amplitude_ant_time[index][3]+=avg_amp(sd,cl,index+1,time_three, 0.6*sd.width_total, sd.width_total);
+				}
+
+				
+				md.feat.sync_time[index][3]/=10;
+			}
+
+			if (index==2) {
+				int time_two = anterior_time(sd, 60000+12000);
+				int time_two_end = anterior_time(sd, 60000+15000);
+				for (;time_two<time_two_end; time_two+=300){
+					
+					md.feat.amplitude_ant_time[index][2]+=avg_amp(sd,cl,index+1,time_two, 0.6*sd.width_total, sd.width_total);
+				}
+			}
+
+			if (index==3) {
+				int time_three = anterior_time(sd, 60000+18000);
+				int time_three_end = anterior_time(sd, 60000+21000);
+				for (;time_three<time_three_end; time_three+=300){
+					md.feat.sync_time[index][3]+=ant_sync(sd, cl, index + 1, time_three);
+				}
+				md.feat.sync_time[index][3]/=10;
+			}
+		}
+
+		if (md.index==MUTANT_MESPAOVER){
+			if (index==3){
+				int time_one = anterior_time(sd, 60000+6000);
+				int time_one_end = anterior_time(sd, 60000+9000);
+				for (;time_one<time_one_end; time_one+=300){
+					
+					md.feat.amplitude_ant_time[index][1]+=avg_amp(sd,cl,index+1,time_one, 0.6*sd.width_total, sd.width_total);
+				}
+			}
+		}
+		
+		if (md.index==MUTANT_MESPBOVER){
+			if (index==2 || index == 3){
+				int time_one = anterior_time(sd, 60000+6000);
+				int time_one_end = anterior_time(sd, 60000+9000);
+				for (;time_one<time_one_end; time_one+=300){
+					
+					md.feat.amplitude_ant_time[index][1]+=avg_amp(sd,cl,index+1,time_one, 0.6*sd.width_total, sd.width_total);
+				}
+			}
+		}
 
 		// for sync take 5 snapshots and average sync scores and count waves of mespa and mespb	for wildtype
-		double sync_avg = 0;
+		/*double sync_avg = 0;
 	    int time_full = anterior_time(sd, sd.steps_til_growth + (sd.width_total - sd.width_initial - 1) * sd.steps_split);
 	    for (int time = time_full; time < sd.time_end; time += (sd.time_end - 1 - time_full) / 4) {
 		    sync_avg += ant_sync(sd, cl, index + 1, time);
@@ -411,7 +576,7 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
                     half_hour_index += 0.5;
                 }
             }
-        }
+        }*/
 		if (ip.ant_features) {
 			int time_start = anterior_time(sd, sd.steps_til_growth + (sd.width_total - sd.width_initial - 1) * sd.steps_split);
 			for (int col = start_col; col < end_col; col++) {
@@ -581,14 +746,33 @@ void osc_features_post (sim_data& sd, input_params& ip, con_levels& cl, features
 		peaktotrough_mid /= cells;
 		num_good_somites /= cells;
 
-		feat.period_post[index] = period_tot;
+		//feat.period_post[index] = period_tot;
 		feat.amplitude_post[index] = amplitude;
 		feat.peaktotrough_end[index] = peaktotrough_end;
 		feat.peaktotrough_mid[index] = peaktotrough_mid;
 		feat.num_good_somites[index] = num_good_somites;
 		
-		feat.sync_score_post[index] = post_sync(sd, cl, mr, (start + end) / 2, end);
+		//feat.sync_score_post[index] = post_sync(sd, cl, mr, (start + end) / 2, end);
 	}
+}
+
+double avg_amp (sim_data& sd, con_levels& cl, int con, int time, int start , int end){
+	int pos_start = cl.active_start_record[time];
+	int pos_cur = 0;
+	double conslevel = 0;
+
+	for (int x = 0; x < sd.height; x++) {
+		for (int y=start; y <end; y++){
+			if (pos_start - y <= 0){
+				pos_cur = pos_start -2*y + sd.width_total;
+			} else {
+				pos_cur = pos_start -2*y;
+			}
+			int cell = x * sd.width_total + y + pos_cur;
+			conslevel += cl.cons[con][time][cell];
+		}
+	}
+	return conslevel / (sd.height*(end-start));
 }
 
 double ant_sync (sim_data& sd, con_levels& cl, int con, int time) {  //JY WT.1. compare every column and take average

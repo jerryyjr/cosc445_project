@@ -23,11 +23,10 @@ tests.cpp contains test functions for every mutant.
 #include "tests.hpp" // Function declarations
 
 double test_wildtype_post (mutant_data& md, features& wtfeat) {
-	md.conds_passed[SEC_POST][0] = 28 < md.feat.period_post[IMH1] && md.feat.period_post[IMH1] < 32;  // ***29 30
-	md.conds_passed[SEC_POST][1] = md.feat.sync_score_post[IMH1] > 0.8;
+	
 	md.conds_passed[SEC_POST][2] = md.feat.peaktotrough_end[IMH1] >= 1.5 && md.feat.peaktotrough_mid[IMH1] >= 1.5 && (md.feat.peaktotrough_mid[IMH1] / md.feat.peaktotrough_end[IMH1]) <= 1.5;
-	cout<<"p0: "<<md.conds_passed[SEC_POST][0]<<" p1: "<<md.conds_passed[SEC_POST][1]<<" p2: "<<md.conds_passed[SEC_POST][2]<<endl;
-	return (md.conds_passed[SEC_POST][0] * md.cond_scores[SEC_POST][0]) + (md.conds_passed[SEC_POST][1] * md.cond_scores[SEC_POST][1]) + (md.conds_passed[SEC_POST][2] * md.cond_scores[SEC_POST][2]);
+	cout<<" p2: "<<md.conds_passed[SEC_POST][2]<<endl;
+	return (md.conds_passed[SEC_POST][2] * md.cond_scores[SEC_POST][2]);
 }
 
 double test_her7_mutant_post (mutant_data& md, features& wtfeat) {
@@ -45,10 +44,8 @@ double test_her13_mutant_post (mutant_data& md, features& wtfeat) {
 }
 
 double test_delta_mutant_post (mutant_data& md, features& wtfeat) {
-	md.conds_passed[SEC_POST][0] = md.feat.sync_score_post[IMH1] < 0.7; //JY deltac.1.
-	md.conds_passed[SEC_POST][1] = 1.07 < (md.feat.period_post[IMH1] / wtfeat.period_post[IMH1]) && (md.feat.period_post[IMH1] / wtfeat.period_post[IMH1]) < 1.20;
-	md.conds_passed[SEC_POST][2] = 0.1 < (md.feat.amplitude_post[IMH1] / wtfeat.amplitude_post[IMH1]) && (md.feat.amplitude_post[IMH1] / wtfeat.amplitude_post[IMH1]) < 0.5;  //JY deltac.2.
-	return (md.conds_passed[SEC_POST][0] * md.cond_scores[SEC_POST][0]) + (md.conds_passed[SEC_POST][1] * md.cond_scores[SEC_POST][1]) + (md.conds_passed[SEC_POST][2] * md.cond_scores[SEC_POST][2]);
+	  //JY deltac.2.
+	return (0);
 }
 
 double test_her7her13_mutant_post (mutant_data& md, features& wtfeat) {
@@ -106,6 +103,9 @@ double test_MESPBOVER_mutant_post (mutant_data& md, features& wtfeat) {
 }
 
 double test_wildtype_ant (mutant_data& md, features& wtfeat) {
+	md.conds_passed[SEC_POST][0] = 28 < md.feat.period_post[IMH1] && md.feat.period_post[IMH1] < 32;  // ***29 30
+	md.conds_passed[SEC_POST][1] = md.feat.sync_score_post[IMH1] > 0.8;
+	cout<<"p0: "<<md.conds_passed[SEC_POST][0]<<endl;
 	cout<<"0: "<<md.conds_passed[SEC_ANT][0]<<endl;
 	md.conds_passed[SEC_ANT][1] = md.feat.sync_score_ant[IMH1] > 0.8;
 	cout<<"1: "<<md.conds_passed[SEC_ANT][1]<<endl;
@@ -120,7 +120,7 @@ double test_wildtype_ant (mutant_data& md, features& wtfeat) {
 	cout<<"10.a: "<<md.conds_passed[SEC_ANT][4]<<endl;
 	cout<<"10.b: "<<md.conds_passed[SEC_ANT][5]<<endl;
     //cout << md.feat.comp_score_ant_mespa << " " << md.conds_passed[SEC_ANT][4] << endl;
-	return (md.conds_passed[SEC_ANT][0] * md.cond_scores[SEC_ANT][0]) + (md.conds_passed[SEC_ANT][1] * md.cond_scores[SEC_ANT][1]) + (md.conds_passed[SEC_ANT][2] * md.cond_scores[SEC_ANT][2]) + (md.conds_passed[SEC_ANT][3] * md.cond_scores[SEC_ANT][3]) + (md.conds_passed[SEC_ANT][4] * md.cond_scores[SEC_ANT][4]) + (md.conds_passed[SEC_ANT][5] * md.cond_scores[SEC_ANT][5]) + (md.conds_passed[SEC_ANT][6] * md.cond_scores[SEC_ANT][6]) + (md.conds_passed[SEC_ANT][7] * md.cond_scores[SEC_ANT][7]);
+	return (md.conds_passed[SEC_POST][0] * md.cond_scores[SEC_POST][0] + (md.conds_passed[SEC_POST][1] * md.cond_scores[SEC_POST][1]) + md.conds_passed[SEC_ANT][0] * md.cond_scores[SEC_ANT][0]) + (md.conds_passed[SEC_ANT][1] * md.cond_scores[SEC_ANT][1]) + (md.conds_passed[SEC_ANT][2] * md.cond_scores[SEC_ANT][2]) + (md.conds_passed[SEC_ANT][3] * md.cond_scores[SEC_ANT][3]) + (md.conds_passed[SEC_ANT][4] * md.cond_scores[SEC_ANT][4]) + (md.conds_passed[SEC_ANT][5] * md.cond_scores[SEC_ANT][5]) + (md.conds_passed[SEC_ANT][6] * md.cond_scores[SEC_ANT][6]) + (md.conds_passed[SEC_ANT][7] * md.cond_scores[SEC_ANT][7]);
 }
 
 double test_her7_mutant_ant (mutant_data& md, features& wtfeat) {
@@ -137,12 +137,16 @@ double test_her13_mutant_ant (mutant_data& md, features& wtfeat) {
 }
 
 double test_delta_mutant_ant (mutant_data& md, features& wtfeat) {
+	md.conds_passed[SEC_POST][0] = md.feat.sync_score_post[IMH1] < 0.7; //JY deltac.1.
+	md.conds_passed[SEC_POST][1] = 1.07 < (md.feat.period_post[IMH1] / wtfeat.period_post[IMH1]) && (md.feat.period_post[IMH1] / wtfeat.period_post[IMH1]) < 1.20;
+	md.conds_passed[SEC_POST][2] = 0.1 < (md.feat.amplitude_post[IMH1] / wtfeat.amplitude_post[IMH1]) && (md.feat.amplitude_post[IMH1] / wtfeat.amplitude_post[IMH1]) < 0.5;
+	
 	md.conds_passed[SEC_ANT][0] = md.feat.sync_score_ant[IMH1] < 0.7;  //JY deltac.1.
 	md.conds_passed[SEC_ANT][1] = md.feat.amplitude_ant[IMH1] / wtfeat.amplitude_ant[IMH1] < 0.85;  //JY deltac.2.
     md.conds_passed[SEC_ANT][2] = md.feat.amplitude_ant[IMMESPA] / wtfeat.amplitude_ant[IMMESPA] < 0.2; // JY deltac.3.
     md.conds_passed[SEC_ANT][3] = md.feat.sync_score_ant[IMMESPB] < 0.7; //JY deltac.4.
 	//cout<< md.conds_passed[SEC_ANT][2] << " "<< md.conds_passed[SEC_ANT][3] << endl;	
-	return (md.conds_passed[SEC_ANT][0] * md.cond_scores[SEC_ANT][0]) + (md.conds_passed[SEC_ANT][1] * md.cond_scores[SEC_ANT][1]) + (md.conds_passed[SEC_ANT][2] * md.cond_scores[SEC_ANT][2]) + (md.conds_passed[SEC_ANT][3] * md.cond_scores[SEC_ANT][3]);
+	return (md.conds_passed[SEC_POST][0] * md.cond_scores[SEC_POST][0]) + (md.conds_passed[SEC_POST][1] * md.cond_scores[SEC_POST][1]) + (md.conds_passed[SEC_POST][2] * md.cond_scores[SEC_POST][2] + md.conds_passed[SEC_ANT][0] * md.cond_scores[SEC_ANT][0]) + (md.conds_passed[SEC_ANT][1] * md.cond_scores[SEC_ANT][1]) + (md.conds_passed[SEC_ANT][2] * md.cond_scores[SEC_ANT][2]) + (md.conds_passed[SEC_ANT][3] * md.cond_scores[SEC_ANT][3]);
 }
 
 double test_her7her13_mutant_ant (mutant_data& md, features& wtfeat) {

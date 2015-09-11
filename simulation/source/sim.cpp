@@ -417,6 +417,7 @@ bool model (sim_data& sd, rates& rs, con_levels& cl, con_levels& baby_cl, mutant
         
         if (!past_induction && !past_recovery && (j  > anterior_time(sd,md.induction))) {
     	    knockout(rs, md, 1); //knock down rates after the induction point
+			perturb_rates_all(rs);
             past_induction = true;
         }
         if (past_induction && (j + sd.steps_til_growth > md.recovery)) {
