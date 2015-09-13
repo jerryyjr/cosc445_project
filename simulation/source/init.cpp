@@ -1010,7 +1010,7 @@ mutant_data* create_mutant_data (sim_data& sd, input_params& ip) {
 	mds[MUTANT_DELTA].cond_scores[SEC_ANT][0] = CW_A;
 	mds[MUTANT_DELTA].cond_scores[SEC_ANT][1] = CW_B;
     mds[MUTANT_DELTA].cond_scores[SEC_ANT][2] = CW_A;
-    mds[MUTANT_DELTA].cond_scores[SEC_ANT][3] = CW_A;
+    mds[MUTANT_DELTA].cond_scores[SEC_ANT][3] = CW_B;
 	mds[MUTANT_DELTA].num_conditions[SEC_WAVE] = 0;
 	mds[MUTANT_DELTA].calc_max_scores();
 	
@@ -1124,7 +1124,7 @@ mutant_data* create_mutant_data (sim_data& sd, input_params& ip) {
 	mds[MUTANT_HER7OVER].cond_scores[SEC_ANT][4] = CW_B;
 	mds[MUTANT_HER7OVER].cond_scores[SEC_ANT][5] = CW_A;
 	mds[MUTANT_HER7OVER].cond_scores[SEC_ANT][6] = CW_B;
-	mds[MUTANT_HER7OVER].cond_scores[SEC_ANT][7] = CW_A;
+	mds[MUTANT_HER7OVER].cond_scores[SEC_ANT][7] = CW_B;
 	mds[MUTANT_HER7OVER].num_conditions[SEC_WAVE] = 0;
 	mds[MUTANT_HER7OVER].calc_max_scores();
 	
@@ -1214,7 +1214,7 @@ mutant_data* create_mutant_data (sim_data& sd, input_params& ip) {
 	mds[MUTANT_DAPT].cond_scores[SEC_ANT][2] = CW_A;
 	mds[MUTANT_DAPT].cond_scores[SEC_ANT][3] = CW_B;
 	mds[MUTANT_DAPT].cond_scores[SEC_ANT][4] = CW_A;
-	mds[MUTANT_DAPT].cond_scores[SEC_ANT][5] = CW_A;
+	mds[MUTANT_DAPT].cond_scores[SEC_ANT][5] = CW_B;
 	mds[MUTANT_DAPT].num_conditions[SEC_WAVE] = 0;
 	mds[MUTANT_DAPT].calc_max_scores();
 	
