@@ -91,15 +91,15 @@ double test_her1her7_mutant_post (mutant_data& md, features& wtfeat) {
 }
 
 double test_DAPT_mutant_post (mutant_data& md, features& wtfeat) {
-    return 1;
+    return 0;
 }
 
 double test_MESPAOVER_mutant_post (mutant_data& md, features& wtfeat) {
-    return 1;
+    return 0;
 }
 
 double test_MESPBOVER_mutant_post (mutant_data& md, features& wtfeat) {
-    return 1;
+    return 0;
 }
 
 double test_wildtype_ant (mutant_data& md, features& wtfeat) {

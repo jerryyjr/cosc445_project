@@ -754,6 +754,7 @@ void osc_features_post (sim_data& sd, input_params& ip, con_levels& cl, features
 		
 		//feat.sync_score_post[index] = post_sync(sd, cl, mr, (start + end) / 2, end);
 	}
+	mfree(str_set_num);
 }
 
 double avg_amp (sim_data& sd, con_levels& cl, int con, int time, int start , int end){
