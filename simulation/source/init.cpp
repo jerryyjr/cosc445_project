@@ -910,6 +910,7 @@ mutant_data* create_mutant_data (sim_data& sd, input_params& ip) {
 	
 	// Index each mutant and initialize its concentration levels based on the maximum delay size
 	for (int i = 0; i < sd.num_active_mutants; i++) {
+		
 		mds[i].index = i;
 		mds[i].cl.initialize(NUM_CON_LEVELS, sd.max_delay_size, sd.cells_total, sd.active_start);
 	}

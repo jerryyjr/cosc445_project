@@ -117,6 +117,7 @@ void* operator new[] (size_t size) {
 	return mallocate(size);
 }
 
+
 /* delete overloads the usual delete with mfree instead of free
 	parameters:
 		mem: a pointer to the block of memory to free

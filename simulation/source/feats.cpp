@@ -409,7 +409,7 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 				int time_three = anterior_time(sd, 60000+18000);
 				int time_three_end = anterior_time(sd, 60000+21000);
 				for (;time_three<time_three_end; time_three+=300){
-					md.feat.amplitude_post_time[index][3]+=avg_amp(sd,cl,index+1,time_three, 0, sd.width_total);
+					md.feat.amplitude_post_time[index][3]+= 0;//avg_amp(sd,cl,index+1,time_three, 0, sd.width_total);
 					//md.feat.amplitude_ant_time[index][3]+=avg_amp(sd,cl,index+1,time_three, 0.6*sd.width_total, sd.width_total);
 				}
 
@@ -427,7 +427,7 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 				int time_two_end = anterior_time(sd, 60000+15000);
 				for (;time_two<time_two_end; time_two+=300){
 					
-					md.feat.amplitude_ant_time[index][2]+=avg_amp(sd,cl,index+1,time_two, 0.6*sd.width_total, sd.width_total);
+					md.feat.amplitude_ant_time[index][2]+= 0;//avg_amp(sd,cl,index+1,time_two, 0.6*sd.width_total, sd.width_total);
 				}
 			}
 
