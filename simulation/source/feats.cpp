@@ -400,7 +400,7 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 				md.feat.amplitude_ant_time[index][0.5]+=avg_amp(sd,cl,index+1,time_half, 0.6*sd.width_total, sd.width_total);
 				md.feat.amplitude_post[index] +=  avg_amp(sd,cl,index+1,time_half, 0, sd.width_initial);
 				//md.feat.sync_score_post[index]+=post_sync(sd,cl, index + 1, time_half);
-				md.feat.sync_score_ant[index]+=ant_sync(sd, cl, index + 1, time_half);
+				md.feat.sync_score_ant[index]+= 0;//ant_sync(sd, cl, index + 1, time_half);
 			}
 			
 			//md.feat.sync_score_post[index]/=10;
