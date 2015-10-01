@@ -113,9 +113,9 @@ void* operator new (size_t size) {
 		This function forces all memory allocation through mallocate, which allows custom error reporting and memory tracking.
 	todo:
 */
-void* operator new[] (size_t size) {
-	return mallocate(size);
-}
+//void* operator new[] (size_t size) {
+//	return mallocate(size);
+//}
 
 
 /* delete overloads the usual delete with mfree instead of free
