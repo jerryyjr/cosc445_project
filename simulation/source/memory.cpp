@@ -138,9 +138,9 @@ void operator delete (void* mem) {
 		This function forces all memory deallocation through mfree, which allows custom error reporting and memory tracking.
 	todo:
 */
-void operator delete[] (void* mem) {
-	mfree(mem);
-}
+//void operator delete[] (void* mem) {
+//	mfree(mem);
+//}
 
 #if defined(MEMTRACK)
 
