@@ -521,6 +521,7 @@ struct mutant_data {
 		this->wave_test = NULL;
 		memset(this->num_conditions, 0, sizeof(this->num_conditions));
 		memset(this->cond_scores, 0, sizeof(this->cond_scores));
+		memset(this->conds_passed, 0, sizeof(this->conds_passed));
 		memset(this->max_cond_scores, 0, sizeof(this->max_cond_scores));
 		memset(this->secs_passed, false, sizeof(this->secs_passed));
 		this->print_con = CMH1;
