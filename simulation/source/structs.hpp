@@ -463,6 +463,7 @@ struct features {
 		memset(peaktotrough_mid, 0, sizeof(peaktotrough_mid));
 		memset(peaktotrough_end, 0, sizeof(peaktotrough_end));
 		memset(sync_score_post, 0, sizeof(sync_score_post));
+		memset(sync_score_ant, 0, sizeof(sync_score_ant));
 		memset(num_good_somites, 0, sizeof(num_good_somites));
         comp_score_ant_mespa = 0;
         comp_score_ant_mespb = 0;
@@ -476,6 +477,7 @@ struct features {
 		memset(peaktotrough_mid, 0, sizeof(peaktotrough_mid));
 		memset(peaktotrough_end, 0, sizeof(peaktotrough_end));
 		memset(sync_score_post, 0, sizeof(sync_score_post));
+		memset(sync_score_ant, 0, sizeof(sync_score_ant));
 		memset(num_good_somites, 0, sizeof(num_good_somites));
         comp_score_ant_mespa = 0;
         comp_score_ant_mespb = 0;
