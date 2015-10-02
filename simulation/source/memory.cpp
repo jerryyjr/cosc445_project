@@ -101,9 +101,9 @@ void mfree (void* mem) {
 		This function forces all memory allocation through mallocate, which allows custom error reporting and memory tracking.
 	todo:
 */
-//void* operator new (size_t size) {
-	//return mallocate(size);
-//}
+void* operator new (size_t size) {
+	return mallocate(size);
+}
 
 /* new[] overloads the usual new[] with mallocate instead of malloc
 	parameters:
@@ -113,9 +113,9 @@ void mfree (void* mem) {
 		This function forces all memory allocation through mallocate, which allows custom error reporting and memory tracking.
 	todo:
 */
-//void* operator new[] (size_t size) {
-//	return mallocate(size);
-//}
+void* operator new[] (size_t size) {
+	return mallocate(size);
+}
 
 
 /* delete overloads the usual delete with mfree instead of free
@@ -126,9 +126,9 @@ void mfree (void* mem) {
 		This function forces all memory deallocation through mfree, which allows custom error reporting and memory tracking.
 	todo:
 */
-//void operator delete (void* mem) {
-//	mfree(mem);
-//}
+void operator delete (void* mem) {
+	mfree(mem);
+}
 
 /* delete[] overloads the usual delete[] with mfree instead of free
 	parameters:
@@ -138,9 +138,9 @@ void mfree (void* mem) {
 		This function forces all memory deallocation through mfree, which allows custom error reporting and memory tracking.
 	todo:
 */
-//void operator delete[] (void* mem) {
-//	mfree(mem);
-//}
+void operator delete[] (void* mem) {
+	mfree(mem);
+}
 
 #if defined(MEMTRACK)
 
