@@ -416,8 +416,8 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 			}
 
 			if (index == 2 || index ==3){
-				int time_one = anterior_time(sd, (600+60)+sd.step_size);
-				int time_one_end = anterior_time(sd, (600+90)+sd.step_size);
+				int time_one = anterior_time(sd, (600+60)/sd.step_size);
+				int time_one_end = anterior_time(sd, (600+90)/sd.step_size);
 				for (;time_one<time_one_end; time_one+=(3/sd.step_size)){
 					
 					md.feat.amplitude_ant_time[index][1]+=avg_amp(sd,cl,index+1,time_one, 0.6*sd.width_total, sd.width_total);
