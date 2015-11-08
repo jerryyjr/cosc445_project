@@ -471,7 +471,7 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 
 			if (index == 0 || index ==2){
 				int time_half = anterior_time(sd,(600+30)/sd.step_size);
-				int time_half_end = anterior_time(sd,(600+60)sd.step_size);
+				int time_half_end = anterior_time(sd,(600+60)/sd.step_size);
 				for (;time_half<time_half_end; time_half+=(3/sd.step_size)){
 					//cout<<md.feat.amplitude_ant_time[0][0.5]<<endl;
 					md.feat.amplitude_ant_time[index][0.5]+=avg_amp(sd,cl,index+1,time_half, 0.6*sd.width_total, sd.width_total);

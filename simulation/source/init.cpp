@@ -1111,7 +1111,7 @@ mutant_data* create_mutant_data (sim_data& sd, input_params& ip) {
 	mds[MUTANT_HER7OVER].num_knockouts = 0;
 	//mds[MUTANT_HER7OVER].induction = ip.her7_induction / ip.small_gran;
 	mds[MUTANT_HER7OVER].induction = ip.her7_induction / ip.step_size;
-    mds[MUTANT_HER7OVER].recovery = ip.her7_induction / ip.step_size + 6000;
+    mds[MUTANT_HER7OVER].recovery = ip.her7_induction / ip.step_size + (60/sd.step_size);
     mds[MUTANT_HER7OVER].overexpression_rate = RMSH7;
     mds[MUTANT_HER7OVER].overexpression_factor = 2;
 	mds[MUTANT_HER7OVER].tests[SEC_POST] = test_her7over_mutant_post;
@@ -1228,7 +1228,7 @@ mutant_data* create_mutant_data (sim_data& sd, input_params& ip) {
 	
 	//mds[MUTANT_MESPAOVER].induction = ip.DAPT_induction / ip.small_gran;
 	mds[MUTANT_MESPAOVER].induction = ip.mespa_induction / ip.step_size;
-    mds[MUTANT_MESPAOVER].recovery = ip.mespa_induction / ip.step_size + 3000;
+    mds[MUTANT_MESPAOVER].recovery = ip.mespa_induction / ip.step_size + (30/sd.step_size);
     mds[MUTANT_MESPAOVER].overexpression_rate = RMSMESPA ;
     mds[MUTANT_MESPAOVER].overexpression_factor = 2;
 	mds[MUTANT_MESPAOVER].tests[SEC_POST] = test_MESPAOVER_mutant_post;
@@ -1250,7 +1250,7 @@ mutant_data* create_mutant_data (sim_data& sd, input_params& ip) {
 	
 	//mds[MUTANT_MESPBOVER].induction = ip.DAPT_induction / ip.small_gran;
 	mds[MUTANT_MESPBOVER].induction = ip.mespb_induction / ip.step_size;
-    mds[MUTANT_MESPBOVER].recovery = ip.mespb_induction / ip.step_size +3000;
+    mds[MUTANT_MESPBOVER].recovery = ip.mespb_induction / ip.step_size + (30/sd.step_size);
     mds[MUTANT_MESPBOVER].overexpression_rate = RMSMESPB;
     mds[MUTANT_MESPBOVER].overexpression_factor = 2;
 	mds[MUTANT_MESPBOVER].tests[SEC_POST] = test_MESPBOVER_mutant_post;
