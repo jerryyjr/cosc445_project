@@ -90,8 +90,7 @@ int get_peaks_and_troughs1 (sim_data& sd, con_levels& cl, int actual_cell, int t
 
 int get_peaks_and_troughs2 (sim_data& sd, con_levels& cl, int actual_cell, int time_start, growin_array& crit_points, growin_array& type, growin_array& position, int mr, double* mh1_comp, double* mespa_comp, double* mespb_comp) {
 	/*
-	Calculates all the peaks and troughs for the her1 mRNA oscillations in a cell within a time range. The cell number is given as a
-	number relative to the entire PSM.
+	record the concentration value of mh1, mespa, mespb in the time specified in order to calculate the complementary expression score of mespa and mespb. 
 	*/
 	int num_points = 0;
 	int col = actual_cell % sd.width_total;
@@ -101,9 +100,9 @@ int get_peaks_and_troughs2 (sim_data& sd, con_levels& cl, int actual_cell, int t
 	for (int j = time_start + 1; j < sd.time_end - 1 && cl.cons[BIRTH][j][actual_cell] == cl.cons[BIRTH][j - 1][actual_cell] && cl.cons[BIRTH][j][actual_cell] == cl.cons[BIRTH][j + 1][actual_cell]; j++) {
 		// calculate position in the PSM of the cell
 		
-		mh1_comp[compl_count]=cl.cons[CMH1][j][actual_cell];
-		mespa_comp[compl_count]=cl.cons[CMMESPA][j][actual_cell];
-		mespb_comp[compl_count]=cl.cons[CMMESPB][j][actual_cell];
+		mh1_comp[compl_count]=cl.cons[CMH1][j][actual_cell];                 //record concentration value of mh1
+		mespa_comp[compl_count]=cl.cons[CMMESPA][j][actual_cell];           //record concentration value of mespa
+		mespb_comp[compl_count]=cl.cons[CMMESPB][j][actual_cell];             //record concentration value of mespb
 		compl_count++;
 		
 		int pos = 0;
@@ -146,7 +145,7 @@ int get_peaks_and_troughs2 (sim_data& sd, con_levels& cl, int actual_cell, int t
 	return num_points;
 }
 
-double test_complementary (sim_data& sd, con_levels& cl, int time, int con1, int con2) {
+double test_complementary (sim_data& sd, con_levels& cl, int time, int con1, int con2) {   // calculate the complementary expression score of mespa and mespb. not used
 	double avg_row_con1[sd.width_total];
     double avg_row_con2[sd.width_total];
 	memset(avg_row_con1, 0, sizeof(double) * sd.width_total);
@@ -163,13 +162,13 @@ double test_complementary (sim_data& sd, con_levels& cl, int time, int con1, int
         avg_row_con2[y] /= sd.height;
 	}
 
-	return pearson_correlation(avg_row_con1, avg_row_con2, 30, sd.width_total);  //JY WT.10 rounding?
+	return pearson_correlation(avg_row_con1, avg_row_con2, 0.6*sd.width_total, sd.width_total);  //JY WT.10 rounding?
 }
 
-double test_compl(sim_data& sd, double* con1, double* con2) {
+double test_compl(sim_data& sd, double* con1, double* con2) {  // calculate the complementary expression score of mespa and mespb
 	//int count=sd.width_total*sd.steps_split - 2;
 	
-	return pearson_correlation(con1, con2, (int)(0.6*(sd.width_total*sd.steps_split - 2)),sd.width_total*sd.steps_split - 2);
+	return pearson_correlation(con1, con2, (int)(0.6*(sd.width_total*sd.steps_split - 2)),sd.width_total*sd.steps_split - 2);   
 }
 
 
