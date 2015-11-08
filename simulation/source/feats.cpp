@@ -181,9 +181,9 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 	static const char* feat_names[NUM_FEATURES] = {"period", "amplitude", "sync"};
 	static double curve[101] = {1, 1.003367003, 1.003367003, 1.003367003, 1.004713805, 1.004713805, 1.007407407, 1.015488215, 1.015488215, 1.020875421, 1.023569024, 1.023569024, 1.026262626, 1.028956229, 1.037037037, 1.037037037, 1.03973064, 1.042424242, 1.047811448, 1.050505051, 1.055892256, 1.058585859, 1.061279461, 1.066666667, 1.069360269, 1.072053872, 1.077441077, 1.082828283, 1.088215488, 1.090909091, 1.096296296, 1.098989899, 1.104377104, 1.10976431, 1.115151515, 1.115151515, 1.120538721, 1.125925926, 1.128619529, 1.139393939, 1.142087542, 1.15016835, 1.155555556, 1.160942761, 1.169023569, 1.174410774, 1.182491582, 1.187878788, 1.195959596, 1.201346801, 1.212121212, 1.22020202, 1.228282828, 1.239057239, 1.247138047, 1.255218855, 1.268686869, 1.276767677, 1.287542088, 1.301010101, 1.314478114, 1.325252525, 1.336026936, 1.352188552, 1.368350168, 1.381818182, 1.397979798, 1.414141414, 1.432996633, 1.454545455, 1.476094276, 1.492255892, 1.519191919, 1.546127946, 1.573063973, 1.6, 1.632323232, 1.672727273, 1.705050505, 1.742760943, 1.785858586, 1.837037037, 1.896296296, 1.955555556, 2.025589226, 2.106397306, 2.195286195, 2.303030303, 2.418855219, 2.572390572, 2.725925926, 2.941414141, 3.208080808, 3.574410774, 4, 8.399297321, 12.79859464, 17.19789196, 21.59718928, 25.99648661, 30.39578393};
 	
-	growin_array crit_points(sd.steps_total / 2000); // Array that will hold all the critical points in the graph
-	growin_array type(sd.steps_total / 2000); // Array that will specify whether each critical point is a peak or a trough (-1 for trough, 1 for peak)
-	growin_array position(sd.steps_total / 2000); // Array that will hold the position in the PSM of the critical points
+	growin_array crit_points(sd.steps_total / (20/sd.step_size)); // Array that will hold all the critical points in the graph
+	growin_array type(sd.steps_total / (20/sd.step_size)); // Array that will specify whether each critical point is a peak or a trough (-1 for trough, 1 for peak)
+	growin_array position(sd.steps_total / (20/sd.step_size)); // Array that will hold the position in the PSM of the critical points
 	
 	int strlen_set_num = INT_STRLEN(set_num); // How many bytes the ASCII representation of set_num takes
 	char* str_set_num = (char*)mallocate(sizeof(char) * (strlen_set_num + 1));
@@ -369,8 +369,8 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 					}
                 }*/
 
-				type.reset(sd.steps_total / 2000);
-				crit_points.reset(sd.steps_total / 2000);
+				type.reset(sd.steps_total / (20/sd.step_size));
+				crit_points.reset(sd.steps_total / (20/sd.step_size));
 			}		
 			time_start += sd.steps_split / sd.big_gran; // skip in time until a new column of cells has been formed
 		}
@@ -393,9 +393,9 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 		
 		if (md.index == MUTANT_WILDTYPE) {
 			
-			int time_half = anterior_time(sd,60000+3000);
-			int time_half_end = anterior_time(sd,60000+6000);
-			for (;time_half<time_half_end; time_half+=300){
+			int time_half = anterior_time(sd,(600+30)/sd.step_size);
+			int time_half_end = anterior_time(sd,(600+60)/sd.step_size);
+			for (;time_half<time_half_end; time_half+=(3/sd.step_size)){
 				md.feat.amplitude_post_time[index][0.5]+=avg_amp(sd,cl,index+1,time_half, 0, sd.width_initial);
 				md.feat.amplitude_ant_time[index][0.5]+=avg_amp(sd,cl,index+1,time_half, 0.6*sd.width_total, sd.width_total);
 				md.feat.amplitude_post[index] +=  avg_amp(sd,cl,index+1,time_half, 0, sd.width_initial);
@@ -406,9 +406,9 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 			//md.feat.sync_score_post[index]/=10;
 			md.feat.sync_score_ant[index]/=10;
 			if (index == 0) {
-				int time_three = anterior_time(sd, 60000+18000);
-				int time_three_end = anterior_time(sd, 60000+21000);
-				for (;time_three<time_three_end; time_three+=300){
+				int time_three = anterior_time(sd, (600+180)/sd.step_size);
+				int time_three_end = anterior_time(sd, (600+210)/sd.step_size);
+				for (;time_three<time_three_end; time_three+=(3/sd.step_size)){
 					md.feat.amplitude_post_time[index][3]+= avg_amp(sd,cl,index+1,time_three, 0, sd.width_total);
 					//md.feat.amplitude_ant_time[index][3]+=avg_amp(sd,cl,index+1,time_three, 0.6*sd.width_total, sd.width_total);
 				}
@@ -416,16 +416,16 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 			}
 
 			if (index == 2 || index ==3){
-				int time_one = anterior_time(sd, 60000+6000);
-				int time_one_end = anterior_time(sd, 60000+9000);
-				for (;time_one<time_one_end; time_one+=300){
+				int time_one = anterior_time(sd, (600+60)+sd.step_size);
+				int time_one_end = anterior_time(sd, (600+90)+sd.step_size);
+				for (;time_one<time_one_end; time_one+=(3/sd.step_size)){
 					
 					md.feat.amplitude_ant_time[index][1]+=avg_amp(sd,cl,index+1,time_one, 0.6*sd.width_total, sd.width_total);
 				}
 
-				int time_two = anterior_time(sd, 60000+12000);
-				int time_two_end = anterior_time(sd, 60000+15000);
-				for (;time_two<time_two_end; time_two+=300){
+				int time_two = anterior_time(sd, (600+120)/sd.step_size);
+				int time_two_end = anterior_time(sd, (600+150)/sd.step_size);
+				for (;time_two<time_two_end; time_two+=(3/sd.step_size)){
 					
 					md.feat.amplitude_ant_time[index][2]+= avg_amp(sd,cl,index+1,time_two, 0.6*sd.width_total, sd.width_total);
 				}
@@ -439,9 +439,9 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 
 			if (index==2){
 				
-				int time_half = anterior_time(sd,60000+3000);
-				int time_half_end = anterior_time(sd,60000+6000);
-				for (;time_half<time_half_end; time_half+=300){
+				int time_half = anterior_time(sd,(600+30)/sd.step_size);
+				int time_half_end = anterior_time(sd,(600+60)/sd.step_size);
+				for (;time_half<time_half_end; time_half+=(3/sd.step_size)){
 					md.feat.sync_score_ant[0]+=ant_sync(sd, cl, 0 + 1, time_half);
 					md.feat.sync_score_ant[3]+=ant_sync(sd, cl, 3 + 1, time_half);
 					//md.feat.sync_score_post[0]+=post_sync(sd,cl, 0 + 1, time_half);
@@ -461,27 +461,27 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 		if (md.index==MUTANT_HER7OVER){
 
 			if (index == 0 || index ==5){
-				int time_half = anterior_time(sd,60000+3000);
-				int time_half_end = anterior_time(sd,60000+6000);
-				for (;time_half<time_half_end; time_half+=300){
+				int time_half = anterior_time(sd,(600+30)/sd.step_size);
+				int time_half_end = anterior_time(sd,(600+60)/sd.step_size);
+				for (;time_half<time_half_end; time_half+=(3/sd.step_size)){
 					md.feat.amplitude_post_time[index][0.5]+=avg_amp(sd,cl,index+1,time_half, 0, sd.width_initial);
 					
 				}
 			}
 
 			if (index == 0 || index ==2){
-				int time_half = anterior_time(sd,60000+3000);
-				int time_half_end = anterior_time(sd,60000+6000);
-				for (;time_half<time_half_end; time_half+=300){
+				int time_half = anterior_time(sd,(600+30)/sd.step_size);
+				int time_half_end = anterior_time(sd,(600+60)sd.step_size);
+				for (;time_half<time_half_end; time_half+=(3/sd.step_size)){
 					//cout<<md.feat.amplitude_ant_time[0][0.5]<<endl;
 					md.feat.amplitude_ant_time[index][0.5]+=avg_amp(sd,cl,index+1,time_half, 0.6*sd.width_total, sd.width_total);
 				}
 			}
 
 			if (index == 3) {
-				int time_onehalf = anterior_time(sd,60000+9000);
-				int time_onehalf_end = anterior_time(sd,60000+12000);
-				for (;time_onehalf<time_onehalf_end; time_onehalf+=300){
+				int time_onehalf = anterior_time(sd,(600+90)/sd.step_size);
+				int time_onehalf_end = anterior_time(sd,(600+120)/sd.step_size);
+				for (;time_onehalf<time_onehalf_end; time_onehalf+=(3/sd.step_size)){
 					md.feat.sync_time[index][1.5]+=ant_sync(sd, cl, index + 1, time_onehalf);
 					
 				}
@@ -491,9 +491,9 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 
 		if (md.index==MUTANT_HER1OVER){
 			if (index == 1 || index ==5){
-				int time_half = anterior_time(sd,60000+3000);
-				int time_half_end = anterior_time(sd,60000+6000);
-				for (;time_half<time_half_end; time_half+=300){
+				int time_half = anterior_time(sd,(600+30)/sd.step_size);
+				int time_half_end = anterior_time(sd,(600+60)/sd.step_size);
+				for (;time_half<time_half_end; time_half+=(3/sd.step_size)){
 					md.feat.amplitude_post_time[index][0.5]+=avg_amp(sd,cl,index+1,time_half, 0, sd.width_initial);
 					md.feat.amplitude_ant_time[index][0.5]+=avg_amp(sd,cl,index+1,time_half, 0.6*sd.width_total, sd.width_total);
 				}
@@ -502,9 +502,9 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 
 		if (md.index==MUTANT_DAPT){
 			if (index == 0){
-				int time_three = anterior_time(sd, 60000+18000);
-				int time_three_end = anterior_time(sd, 60000+21000);
-				for (;time_three<time_three_end; time_three+=300){
+				int time_three = anterior_time(sd, (600+180)/sd.step_size);
+				int time_three_end = anterior_time(sd, (600+210)/sd.step_size);
+				for (;time_three<time_three_end; time_three+=(3/sd.step_size)){
 					md.feat.amplitude_post_time[index][3]+=avg_amp(sd,cl,index+1,time_three, 0, sd.width_total);
 					md.feat.sync_time[index][3]+=ant_sync(sd, cl, index + 1, time_three);
 					//md.feat.amplitude_ant_time[index][3]+=avg_amp(sd,cl,index+1,time_three, 0.6*sd.width_total, sd.width_total);
@@ -515,18 +515,18 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 			}
 
 			if (index==2) {
-				int time_two = anterior_time(sd, 60000+12000);
-				int time_two_end = anterior_time(sd, 60000+15000);
-				for (;time_two<time_two_end; time_two+=300){
+				int time_two = anterior_time(sd, (600+120)/sd.step_size);
+				int time_two_end = anterior_time(sd, (600+150)/sd.step_size);
+				for (;time_two<time_two_end; time_two+=(3/sd.step_size)){
 					
 					md.feat.amplitude_ant_time[index][2]+=avg_amp(sd,cl,index+1,time_two, 0.6*sd.width_total, sd.width_total);
 				}
 			}
 
 			if (index==3) {
-				int time_three = anterior_time(sd, 60000+18000);
-				int time_three_end = anterior_time(sd, 60000+21000);
-				for (;time_three<time_three_end; time_three+=300){
+				int time_three = anterior_time(sd, (600+180)/sd.step_size);
+				int time_three_end = anterior_time(sd, (600+210)/sd.step_size);
+				for (;time_three<time_three_end; time_three+=(3/sd.step_size)){
 					md.feat.sync_time[index][3]+=ant_sync(sd, cl, index + 1, time_three);
 				}
 				md.feat.sync_time[index][3]/=10;
@@ -535,9 +535,9 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 
 		if (md.index==MUTANT_MESPAOVER){
 			if (index==3){
-				int time_one = anterior_time(sd, 60000+6000);
-				int time_one_end = anterior_time(sd, 60000+9000);
-				for (;time_one<time_one_end; time_one+=300){
+				int time_one = anterior_time(sd, (600+60)/sd.step_size);
+				int time_one_end = anterior_time(sd, (600+90)/sd.step_size);
+				for (;time_one<time_one_end; time_one+=(3/sd.step_size)){
 					
 					md.feat.amplitude_ant_time[index][1]+=avg_amp(sd,cl,index+1,time_one, 0.6*sd.width_total, sd.width_total);
 				}
@@ -546,9 +546,9 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 		
 		if (md.index==MUTANT_MESPBOVER){
 			if (index==2 || index == 3){
-				int time_one = anterior_time(sd, 60000+6000);
-				int time_one_end = anterior_time(sd, 60000+9000);
-				for (;time_one<time_one_end; time_one+=300){
+				int time_one = anterior_time(sd, (600+60)/sd.step_size);
+				int time_one_end = anterior_time(sd, (600+90)/sd.step_size);
+				for (;time_one<time_one_end; time_one+=(3/sd.step_size)){
 					
 					md.feat.amplitude_ant_time[index][1]+=avg_amp(sd,cl,index+1,time_one, 0.6*sd.width_total, sd.width_total);
 				}
@@ -655,8 +655,8 @@ void osc_features_post (sim_data& sd, input_params& ip, con_levels& cl, features
 		for (int x = 0; x < sd.height; x++) {
 			for (int y = 0; y < sd.width_current; y++) {
 				int cell = x * sd.width_total + y;
-				growin_array peaks(sd.steps_total / 2000); 
-				growin_array troughs(sd.steps_total / 2000);
+				growin_array peaks(sd.steps_total / (20/sd.step_size)); 
+				growin_array troughs(sd.steps_total / (20/sd.step_size));
 				int num_peaks = 0;
 				int num_troughs = 0;
 				int peaks_period = 0;
