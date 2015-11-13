@@ -386,7 +386,7 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
         md.feat.period_ant[index] = period_avg;
 		md.feat.amplitude_ant[index] = amp_avg;  //JY WT.3.  take average of all amplitude for all cell
 		if (md.index == MUTANT_WILDTYPE && mr == CMH1) {
-			int threshold = 0.8 * (end_line - start_line) * (end_col - start_col);
+			int threshold = 0.7 * (end_line - start_line) * (end_col - start_col);
 			md.conds_passed[SEC_ANT][0] = (num_cells_passed >= threshold);
 		}
 		
