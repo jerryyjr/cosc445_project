@@ -285,6 +285,7 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 						passed = false;
 					} else {
 						int first_fit = per_pos[0] * 100 / (sd.width_total - 1); // Find the place on the curve of the first period for comparison purposes
+						if (mr == CMH1){cout<<1<<" "<<1<<endl;}
 						for (int i = 1; i < pers; i++) {
 							if (per_pos[i] > 0.85 * (sd.width_total - 1)) {
  								break;
@@ -292,6 +293,7 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 
 							int percentage = per_pos[i] * 100 / (sd.width_total - 1); // Find the place on the curve of the current period
 							double ratio = periods[i] / periods[0]; // The ratio between the current period and the first period
+							if (mr==CMH1){cout<<ratio<<" "<<curve[percentage] / curve[first_fit]<<endl;}
 							if (!( (0.9 * curve[percentage] / curve[first_fit]) < ratio && ratio < (1.1 * curve[percentage] / curve[first_fit]))) {   //JY WT.2. checking every period for every cell
 								passed = false;
 								break;
