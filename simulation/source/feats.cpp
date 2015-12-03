@@ -162,13 +162,13 @@ double test_complementary (sim_data& sd, con_levels& cl, int time, int con1, int
         avg_row_con2[y] /= sd.height;
 	}
 
-	return pearson_correlation(avg_row_con1, avg_row_con2, 0.6*sd.width_total, sd.width_total);  //JY WT.10 rounding?
+	return pearson_correlation(avg_row_con1, avg_row_con2, 0.5*sd.width_total, sd.width_total);  //JY WT.10 rounding?
 }
 
 double test_compl(sim_data& sd, double* con1, double* con2) {  // calculate the complementary expression score of mespa and mespb
 	//int count=sd.width_total*sd.steps_split - 2;
 	
-	return pearson_correlation(con1, con2, (int)(0.6*(sd.width_total*sd.steps_split - 2)),sd.width_total*sd.steps_split - 2);   
+	return pearson_correlation(con1, con2, (int)(0.5*(sd.width_total*sd.steps_split - 2)),sd.width_total*sd.steps_split - 2);   
 }
 
 
@@ -398,7 +398,7 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 			int time_half_end = anterior_time(sd,(600+60)/sd.step_size);
 			for (;time_half<time_half_end; time_half+=(3/sd.step_size)){
 				md.feat.amplitude_post_time[index][0.5]+=avg_amp(sd,cl,index+1,time_half, 0, sd.width_initial);
-				md.feat.amplitude_ant_time[index][0.5]+=avg_amp(sd,cl,index+1,time_half, 0.6*sd.width_total, sd.width_total);
+				md.feat.amplitude_ant_time[index][0.5]+=avg_amp(sd,cl,index+1,time_half, 0.5*sd.width_total, sd.width_total);
 				md.feat.amplitude_post[index] +=  avg_amp(sd,cl,index+1,time_half, 0, sd.width_initial);
 				//md.feat.sync_score_post[index]+=post_sync(sd,cl, index + 1, time_half);
 				md.feat.sync_score_ant[index]+= ant_sync(sd, cl, index + 1, time_half);
@@ -411,7 +411,7 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 				int time_three_end = anterior_time(sd, (600+210)/sd.step_size);
 				for (;time_three<time_three_end; time_three+=(3/sd.step_size)){
 					md.feat.amplitude_post_time[index][3]+= avg_amp(sd,cl,index+1,time_three, 0, sd.width_total);
-					//md.feat.amplitude_ant_time[index][3]+=avg_amp(sd,cl,index+1,time_three, 0.6*sd.width_total, sd.width_total);
+					//md.feat.amplitude_ant_time[index][3]+=avg_amp(sd,cl,index+1,time_three, 0.5*sd.width_total, sd.width_total);
 				}
 
 			}
@@ -421,14 +421,14 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 				int time_one_end = anterior_time(sd, (600+90)/sd.step_size);
 				for (;time_one<time_one_end; time_one+=(3/sd.step_size)){
 					
-					md.feat.amplitude_ant_time[index][1]+=avg_amp(sd,cl,index+1,time_one, 0.6*sd.width_total, sd.width_total);
+					md.feat.amplitude_ant_time[index][1]+=avg_amp(sd,cl,index+1,time_one, 0.5*sd.width_total, sd.width_total);
 				}
 
 				int time_two = anterior_time(sd, (600+120)/sd.step_size);            //two hours after induction, 10 snapshot in 30 minutes
 				int time_two_end = anterior_time(sd, (600+150)/sd.step_size);            
 				for (;time_two<time_two_end; time_two+=(3/sd.step_size)){
 					
-					md.feat.amplitude_ant_time[index][2]+= avg_amp(sd,cl,index+1,time_two, 0.6*sd.width_total, sd.width_total);
+					md.feat.amplitude_ant_time[index][2]+= avg_amp(sd,cl,index+1,time_two, 0.5*sd.width_total, sd.width_total);
 				}
 			}
 
@@ -447,7 +447,7 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 					md.feat.sync_score_ant[3]+=ant_sync(sd, cl, 3 + 1, time_half);
 					//md.feat.sync_score_post[0]+=post_sync(sd,cl, 0 + 1, time_half);
 					md.feat.amplitude_post[0] +=  avg_amp(sd,cl,0+1,time_half, 0, sd.width_initial);
-					md.feat.amplitude_ant_time[index][0.5]+=avg_amp(sd,cl,index+1,time_half, 0.6*sd.width_total, sd.width_total);
+					md.feat.amplitude_ant_time[index][0.5]+=avg_amp(sd,cl,index+1,time_half, 0.5*sd.width_total, sd.width_total);
 				}
 				
 				
@@ -475,7 +475,7 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 				int time_half_end = anterior_time(sd,(600+60)/sd.step_size);
 				for (;time_half<time_half_end; time_half+=(3/sd.step_size)){
 					//cout<<md.feat.amplitude_ant_time[0][0.5]<<endl;
-					md.feat.amplitude_ant_time[index][0.5]+=avg_amp(sd,cl,index+1,time_half, 0.6*sd.width_total, sd.width_total);
+					md.feat.amplitude_ant_time[index][0.5]+=avg_amp(sd,cl,index+1,time_half, 0.5*sd.width_total, sd.width_total);
 				}
 			}
 
@@ -496,7 +496,7 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 				int time_half_end = anterior_time(sd,(600+60)/sd.step_size);
 				for (;time_half<time_half_end; time_half+=(3/sd.step_size)){
 					md.feat.amplitude_post_time[index][0.5]+=avg_amp(sd,cl,index+1,time_half, 0, sd.width_initial);
-					md.feat.amplitude_ant_time[index][0.5]+=avg_amp(sd,cl,index+1,time_half, 0.6*sd.width_total, sd.width_total);
+					md.feat.amplitude_ant_time[index][0.5]+=avg_amp(sd,cl,index+1,time_half, 0.5*sd.width_total, sd.width_total);
 				}
 			}
 		}
@@ -508,7 +508,7 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 				for (;time_three<time_three_end; time_three+=(3/sd.step_size)){
 					md.feat.amplitude_post_time[index][3]+=avg_amp(sd,cl,index+1,time_three, 0, sd.width_total);
 					md.feat.sync_time[index][3]+=ant_sync(sd, cl, index + 1, time_three);
-					//md.feat.amplitude_ant_time[index][3]+=avg_amp(sd,cl,index+1,time_three, 0.6*sd.width_total, sd.width_total);
+					//md.feat.amplitude_ant_time[index][3]+=avg_amp(sd,cl,index+1,time_three, 0.5*sd.width_total, sd.width_total);
 				}
 
 				
@@ -520,7 +520,7 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 				int time_two_end = anterior_time(sd, (600+150)/sd.step_size);
 				for (;time_two<time_two_end; time_two+=(3/sd.step_size)){
 					
-					md.feat.amplitude_ant_time[index][2]+=avg_amp(sd,cl,index+1,time_two, 0.6*sd.width_total, sd.width_total);
+					md.feat.amplitude_ant_time[index][2]+=avg_amp(sd,cl,index+1,time_two, 0.5*sd.width_total, sd.width_total);
 				}
 			}
 
@@ -540,7 +540,7 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 				int time_one_end = anterior_time(sd, (600+90)/sd.step_size);
 				for (;time_one<time_one_end; time_one+=(3/sd.step_size)){
 					
-					md.feat.amplitude_ant_time[index][1]+=avg_amp(sd,cl,index+1,time_one, 0.6*sd.width_total, sd.width_total);
+					md.feat.amplitude_ant_time[index][1]+=avg_amp(sd,cl,index+1,time_one, 0.5*sd.width_total, sd.width_total);
 				}
 			}
 		}
@@ -551,7 +551,7 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 				int time_one_end = anterior_time(sd, (600+90)/sd.step_size);
 				for (;time_one<time_one_end; time_one+=(3/sd.step_size)){
 					
-					md.feat.amplitude_ant_time[index][1]+=avg_amp(sd,cl,index+1,time_one, 0.6*sd.width_total, sd.width_total);
+					md.feat.amplitude_ant_time[index][1]+=avg_amp(sd,cl,index+1,time_one, 0.5*sd.width_total, sd.width_total);
 				}
 			}
 		}
@@ -814,7 +814,7 @@ double ant_sync (sim_data& sd, con_levels& cl, int con, int time) {  // calculat
 		}
 		if (con == 3 || con ==4){
 			
-			pearson_sum += pearson_correlation(first_row, cur_row, (int)(0.6*sd.width_total), sd.width_total );   //mespa and mespb only express in anterior
+			pearson_sum += pearson_correlation(first_row, cur_row, (int)(0.5*sd.width_total), sd.width_total );   //mespa and mespb only express in anterior
 		} else {
 			
 			pearson_sum += pearson_correlation(first_row, cur_row, 0, sd.width_total);
