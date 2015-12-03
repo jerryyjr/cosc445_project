@@ -237,7 +237,7 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 				    num_points = get_peaks_and_troughs1(sd, cl, cell, time_start, crit_points, type, position, mr);
                 } else {
 					
-					num_points = get_peaks_and_troughs2(sd, cl, cell, time_start, crit_points, type, position, mr, mh1_comp, mespa_comp, mespb_comp);
+					num_points = get_peaks_and_troughs2(sd, cl, cell, time_start, crit_points, type, position, mr, mh1_comp, mespa_comp, mespb_comp);  //get_peaks_and_troughs2 records the concentration value of mh1, mespa and mespb and store them in mh1_comp, mespa_comp, mespb_comp
 					comp_score_a+=test_compl(sd, mh1_comp, mespa_comp);
 					comp_score_b+=test_compl(sd, mh1_comp, mespb_comp);
 				} 
@@ -247,7 +247,7 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
                 double per_time[num_points];
 				double amplitudes[num_points];
 				double amp_pos[num_points];
-                //double amp_time[num_points];
+                //double amp_time[num_points]; // amp_time is not used in the new calculation methods
 				memset(periods, 0, sizeof(double) * num_points);
 				memset(amplitudes, 0, sizeof(double) * num_points);
 				memset(per_pos, 0, sizeof(double) * num_points);
@@ -349,13 +349,13 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 				}
 
                 // Updating mutant data
-                for (int j = 0; j < pers; j++) {
+                for (int j = 0; j < pers; j++) {                                                    // may not be used any more
 					if (per_time[j] >= anterior_time(sd, md.induction)) {
                     	double half_hour_index = 0.5 * (((int)(per_time[j] - anterior_time(sd, md.induction)) * sd.big_gran / 3000) + 1);
                    		if (per_pos[j] < sd.width_initial) {
                    		    md.feat.period_post_time[index][half_hour_index] = periods[j];   //JY WT.2.
                     	} else {
-                    	    md.feat.period_ant_time[index][half_hour_index] = periods[j];
+                    	    md.feat.period_ant_time[index][half_hour_index] = periods[j];    
                     	}
 					}
                 }
@@ -392,9 +392,9 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 			md.conds_passed[SEC_ANT][0] = (num_cells_passed >= threshold);
 		}
 		
-		if (md.index == MUTANT_WILDTYPE) {
+		if (md.index == MUTANT_WILDTYPE) {                                           //calculate oscillation features for wildtype, including posterior amplitude, anterior amplitude and syncrony score for different species
 			
-			int time_half = anterior_time(sd,(600+30)/sd.step_size);
+			int time_half = anterior_time(sd,(600+30)/sd.step_size);         //half hours after induction, 10 snapshot in 30 minutes
 			int time_half_end = anterior_time(sd,(600+60)/sd.step_size);
 			for (;time_half<time_half_end; time_half+=(3/sd.step_size)){
 				md.feat.amplitude_post_time[index][0.5]+=avg_amp(sd,cl,index+1,time_half, 0, sd.width_initial);
@@ -407,7 +407,7 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 			//md.feat.sync_score_post[index]/=10;
 			md.feat.sync_score_ant[index]/=10;
 			if (index == 0) {
-				int time_three = anterior_time(sd, (600+180)/sd.step_size);
+				int time_three = anterior_time(sd, (600+180)/sd.step_size);          //three hours after induction, 10 snapshot in 30 minutes
 				int time_three_end = anterior_time(sd, (600+210)/sd.step_size);
 				for (;time_three<time_three_end; time_three+=(3/sd.step_size)){
 					md.feat.amplitude_post_time[index][3]+= avg_amp(sd,cl,index+1,time_three, 0, sd.width_total);
@@ -417,15 +417,15 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 			}
 
 			if (index == 2 || index ==3){
-				int time_one = anterior_time(sd, (600+60)/sd.step_size);
+				int time_one = anterior_time(sd, (600+60)/sd.step_size);             //one hour after induction, 10 snapshot in 30 minutes
 				int time_one_end = anterior_time(sd, (600+90)/sd.step_size);
 				for (;time_one<time_one_end; time_one+=(3/sd.step_size)){
 					
 					md.feat.amplitude_ant_time[index][1]+=avg_amp(sd,cl,index+1,time_one, 0.6*sd.width_total, sd.width_total);
 				}
 
-				int time_two = anterior_time(sd, (600+120)/sd.step_size);
-				int time_two_end = anterior_time(sd, (600+150)/sd.step_size);
+				int time_two = anterior_time(sd, (600+120)/sd.step_size);            //two hours after induction, 10 snapshot in 30 minutes
+				int time_two_end = anterior_time(sd, (600+150)/sd.step_size);            
 				for (;time_two<time_two_end; time_two+=(3/sd.step_size)){
 					
 					md.feat.amplitude_ant_time[index][2]+= avg_amp(sd,cl,index+1,time_two, 0.6*sd.width_total, sd.width_total);
@@ -434,13 +434,13 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 
 		}
 
-		if (md.index==MUTANT_DELTA){
+		if (md.index==MUTANT_DELTA){  //calculate oscillation features for delta mutant, including posterior amplitude, anterior amplitude and syncrony score for different species
 						
 
 
 			if (index==2){
 				
-				int time_half = anterior_time(sd,(600+30)/sd.step_size);
+				int time_half = anterior_time(sd,(600+30)/sd.step_size);         //half hours after induction, 10 snapshot in 30 minutes
 				int time_half_end = anterior_time(sd,(600+60)/sd.step_size);
 				for (;time_half<time_half_end; time_half+=(3/sd.step_size)){
 					md.feat.sync_score_ant[0]+=ant_sync(sd, cl, 0 + 1, time_half);
@@ -459,10 +459,10 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 			
 		}
 
-		if (md.index==MUTANT_HER7OVER){
+		if (md.index==MUTANT_HER7OVER){    //calculate oscillation features for her7-overexpression mutant, including posterior amplitude, anterior amplitude and syncrony score for different species
 
 			if (index == 0 || index ==5){
-				int time_half = anterior_time(sd,(600+30)/sd.step_size);
+				int time_half = anterior_time(sd,(600+30)/sd.step_size);                    //half hours after induction, 10 snapshot in 30 minutes
 				int time_half_end = anterior_time(sd,(600+60)/sd.step_size);
 				for (;time_half<time_half_end; time_half+=(3/sd.step_size)){
 					md.feat.amplitude_post_time[index][0.5]+=avg_amp(sd,cl,index+1,time_half, 0, sd.width_initial);
@@ -471,7 +471,7 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 			}
 
 			if (index == 0 || index ==2){
-				int time_half = anterior_time(sd,(600+30)/sd.step_size);
+				int time_half = anterior_time(sd,(600+30)/sd.step_size);                       //half hours after induction, 10 snapshot in 30 minutes
 				int time_half_end = anterior_time(sd,(600+60)/sd.step_size);
 				for (;time_half<time_half_end; time_half+=(3/sd.step_size)){
 					//cout<<md.feat.amplitude_ant_time[0][0.5]<<endl;
@@ -480,7 +480,7 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 			}
 
 			if (index == 3) {
-				int time_onehalf = anterior_time(sd,(600+90)/sd.step_size);
+				int time_onehalf = anterior_time(sd,(600+90)/sd.step_size);                 //one and a half hours after induction, 10 snapshot in 30 minutes
 				int time_onehalf_end = anterior_time(sd,(600+120)/sd.step_size);
 				for (;time_onehalf<time_onehalf_end; time_onehalf+=(3/sd.step_size)){
 					md.feat.sync_time[index][1.5]+=ant_sync(sd, cl, index + 1, time_onehalf);
@@ -490,9 +490,9 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 			}
 		}
 
-		if (md.index==MUTANT_HER1OVER){
+		if (md.index==MUTANT_HER1OVER){       //calculate oscillation features for her1-overexpression mutant, including posterior amplitude, anterior amplitude and syncrony score for different species
 			if (index == 1 || index ==5){
-				int time_half = anterior_time(sd,(600+30)/sd.step_size);
+				int time_half = anterior_time(sd,(600+30)/sd.step_size);           //half hours after induction, 10 snapshot in 30 minutes
 				int time_half_end = anterior_time(sd,(600+60)/sd.step_size);
 				for (;time_half<time_half_end; time_half+=(3/sd.step_size)){
 					md.feat.amplitude_post_time[index][0.5]+=avg_amp(sd,cl,index+1,time_half, 0, sd.width_initial);
@@ -501,9 +501,9 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 			}
 		}
 
-		if (md.index==MUTANT_DAPT){
+		if (md.index==MUTANT_DAPT){                       //calculate oscillation features for dapt mutant, including posterior amplitude, anterior amplitude and syncrony score for different species
 			if (index == 0){
-				int time_three = anterior_time(sd, (600+180)/sd.step_size);
+				int time_three = anterior_time(sd, (600+180)/sd.step_size);          //three hours after induction, 10 snapshot in 30 minutes
 				int time_three_end = anterior_time(sd, (600+210)/sd.step_size);
 				for (;time_three<time_three_end; time_three+=(3/sd.step_size)){
 					md.feat.amplitude_post_time[index][3]+=avg_amp(sd,cl,index+1,time_three, 0, sd.width_total);
@@ -516,7 +516,7 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 			}
 
 			if (index==2) {
-				int time_two = anterior_time(sd, (600+120)/sd.step_size);
+				int time_two = anterior_time(sd, (600+120)/sd.step_size);         //two hours after induction, 10 snapshot in 30 minutes
 				int time_two_end = anterior_time(sd, (600+150)/sd.step_size);
 				for (;time_two<time_two_end; time_two+=(3/sd.step_size)){
 					
@@ -525,7 +525,7 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 			}
 
 			if (index==3) {
-				int time_three = anterior_time(sd, (600+180)/sd.step_size);
+				int time_three = anterior_time(sd, (600+180)/sd.step_size);        //three hours after induction, 10 snapshot in 30 minutes
 				int time_three_end = anterior_time(sd, (600+210)/sd.step_size);
 				for (;time_three<time_three_end; time_three+=(3/sd.step_size)){
 					md.feat.sync_time[index][3]+=ant_sync(sd, cl, index + 1, time_three);
@@ -534,9 +534,9 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 			}
 		}
 
-		if (md.index==MUTANT_MESPAOVER){
+		if (md.index==MUTANT_MESPAOVER){                     //calculate oscillation features for mespa mutant, including posterior amplitude, anterior amplitude and syncrony score for different species
 			if (index==3){
-				int time_one = anterior_time(sd, (600+60)/sd.step_size);
+				int time_one = anterior_time(sd, (600+60)/sd.step_size);         //one hour after induction, 10 snapshot in 30 minutes
 				int time_one_end = anterior_time(sd, (600+90)/sd.step_size);
 				for (;time_one<time_one_end; time_one+=(3/sd.step_size)){
 					
@@ -545,9 +545,9 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 			}
 		}
 		
-		if (md.index==MUTANT_MESPBOVER){
+		if (md.index==MUTANT_MESPBOVER){                    //calculate oscillation features for mespb mutant, including posterior amplitude, anterior amplitude and syncrony score for different species
 			if (index==2 || index == 3){
-				int time_one = anterior_time(sd, (600+60)/sd.step_size);
+				int time_one = anterior_time(sd, (600+60)/sd.step_size);            //one hours after induction, 10 snapshot in 30 minutes
 				int time_one_end = anterior_time(sd, (600+90)/sd.step_size);
 				for (;time_one<time_one_end; time_one+=(3/sd.step_size)){
 					
@@ -758,7 +758,7 @@ void osc_features_post (sim_data& sd, input_params& ip, con_levels& cl, features
 	mfree(str_set_num);
 }
 
-double avg_amp (sim_data& sd, con_levels& cl, int con, int time, int start , int end){
+double avg_amp (sim_data& sd, con_levels& cl, int con, int time, int start , int end){              //calculate the average concentration value, and use it as amplitude
 	int pos_start = cl.active_start_record[time];
 	int pos_cur = 0;
 	double conslevel = 0;
@@ -777,7 +777,7 @@ double avg_amp (sim_data& sd, con_levels& cl, int con, int time, int start , int
 	return conslevel / (sd.height*(end-start));
 }
 
-double ant_sync (sim_data& sd, con_levels& cl, int con, int time) {  //JY WT.1. compare every column and take average
+double ant_sync (sim_data& sd, con_levels& cl, int con, int time) {  // calculate syncronization score
 	if (sd.height == 1) {
 		return 1; // for 1d arrays there is no synchronization between rows 
 	}
@@ -814,7 +814,7 @@ double ant_sync (sim_data& sd, con_levels& cl, int con, int time) {  //JY WT.1. 
 		}
 		if (con == 3 || con ==4){
 			
-			pearson_sum += pearson_correlation(first_row, cur_row, (int)(0.6*sd.width_total), sd.width_total );
+			pearson_sum += pearson_correlation(first_row, cur_row, (int)(0.6*sd.width_total), sd.width_total );   //mespa and mespb only express in anterior
 		} else {
 			
 			pearson_sum += pearson_correlation(first_row, cur_row, 0, sd.width_total);
@@ -866,7 +866,7 @@ void plot_ant_sync (sim_data& sd, con_levels& cl, int time_start, ofstream* file
 }
 
 
-double post_sync (sim_data& sd, con_levels& cl, int con, int start, int end) {
+double post_sync (sim_data& sd, con_levels& cl, int con, int start, int end) {  // not used
 	double comp_cell[end - start + 1];
 	double cur_cell[end - start + 1];
 	
