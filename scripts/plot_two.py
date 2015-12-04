@@ -119,7 +119,7 @@ def main():
 	pl.close()
 
 def usage():
-	print "Usage: python plot.py [-c|--no-color] <file with concentration levels> <directory to store plots> <what it's measuring> <mutation name>"
+	print "Usage: python plot.py [-c|--no-color] <file1 with concentration levels> <file2 with concentration levels> <directory to store plots> <what it's measuring> <mutation name>"
 	exit(0)
 
 main()

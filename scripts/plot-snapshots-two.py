@@ -300,7 +300,7 @@ class hexagon():
 		return lines
 
 def usage():
-	print 'Usage: python plot-tissue-snapshots.py <file with concentration levels> <directory to store images>'
+	print 'Usage: python plot-tissue-snapshots.py <file1 with concentration levels> <file2 with concentration levels> <directory to store images>'
 	exit(0)
 
 main()
