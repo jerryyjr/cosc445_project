@@ -611,7 +611,7 @@ void osc_features_ant (sim_data& sd, input_params& ip, features& wtfeat, char* f
 	mfree(str_set_num);
 }
 
-void osc_features_post (sim_data& sd, input_params& ip, con_levels& cl, features& feat, features& wtfeat, char* filename_feats, int start, int end, int set_num) {
+void osc_features_post (sim_data& sd, input_params& ip, con_levels& cl, features& feat, features& wtfeat, char* filename_feats, int start, int end, int set_num) {   // we are only using the this for the peaktotrough condition in wildtype mutant
 	/*
 	 Calculates the oscillation features: period, amplitude, and peak to trough ratio for a set of concentration levels.
 	 The values are calculated using the last peak and trough of the oscillations, since the amplitude of the first few oscillations can be slightly unstable.
@@ -999,7 +999,7 @@ int wave_testing (sim_data& sd, con_levels& cl, mutant_data& md, int time, int c
 }
 
 
-int wave_testing_her1 (sim_data& sd, con_levels& cl, mutant_data& md, int time, int active_start) { //JY WT.4.5.6.7
+int wave_testing_her1 (sim_data& sd, con_levels& cl, mutant_data& md, int time, int active_start) { // counting number of waves of her1 expression
 	// average the rows to create one array
 	double conc[sd.width_total];
 	memset(conc, 0, sizeof(double) * sd.width_total);
@@ -1061,7 +1061,7 @@ int wave_testing_her1 (sim_data& sd, con_levels& cl, mutant_data& md, int time, 
 	return cur_score;
 }
 
-void wave_testing_mesp (sim_data& sd, con_levels& cl, mutant_data& md, int time, int active_start) { //JY WT.4.5.6.7
+void wave_testing_mesp (sim_data& sd, con_levels& cl, mutant_data& md, int time, int active_start) { //counting the number of waves of mesp gene expression
 	// average the rows to create one array
 	double conc[sd.width_total];
 	memset(conc, 0, sizeof(double) * sd.width_total);
