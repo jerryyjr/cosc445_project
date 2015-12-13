@@ -59,42 +59,45 @@ ESSRSort(double *f, double *phi, double pf, int eslambda, int N, int *I)
   int nSwap;
   int tmp;
 
+  #pragma omp parallel for
   for(i=0; i<N; i++)
   {
     nSwap = 0;
-    for(j=0; j<eslambda-1; j++)
+    for(j=0; j<eslambda-1; j+=2)
     {
-      u = ShareRand(0,1);
+      for(jj=j; jj<j+2; jj++) {
+        u = ShareRand(0,1);
 /*********************************************************************
  ** it's difficult to test if a double value is zero or not         **
  ** for example, a variable 'x',                                    **
  ** if 'x < double precision', then 'x==0' is true                  **
  *********************************************************************/
-      if( (ShareIsZero(phi[I[j]]-phi[I[j+1]]) ==shareDefTrue  \
-                     && ShareIsZero(phi[I[j]])==shareDefTrue)  \
-          || u < pf )
-      {
-        if( f[I[j]] > f[I[j+1]] )
+        if( (ShareIsZero(phi[I[jj]]-phi[I[jj+1]]) ==shareDefTrue  \
+                       && ShareIsZero(phi[I[jj]])==shareDefTrue)  \
+            || u < pf )
         {
-          tmp = I[j];
-          I[j] = I[j+1];
-          I[j+1] = tmp;
-          nSwap++;
+          if( f[I[jj]] > f[I[jj+1]] )
+          {
+            tmp = I[jj];
+            I[jj] = I[jj+1];
+            I[jj+1] = tmp;
+            nSwap++;
+          }
+        }
+        else
+        {
+          if( phi[I[jj]] > phi[I[jj+1]]  )
+          {
+            tmp = I[jj];
+            I[jj] = I[jj+1];
+            I[jj+1] = tmp;
+            nSwap++;
+          }
         }
       }
-      else
-      {
-        if( phi[I[j]] > phi[I[j+1]]  )
-        {
-          tmp = I[j];
-          I[j] = I[j+1];
-          I[j+1] = tmp;
-          nSwap++;
-        }
-      }
+      if(nSwap <=0)
+        break;
     }
-    if(nSwap <=0)
-      break;
   }
 
   return;
