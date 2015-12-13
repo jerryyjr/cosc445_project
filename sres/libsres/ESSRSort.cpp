@@ -65,7 +65,7 @@ ESSRSort(double *f, double *phi, double pf, int eslambda, int N, int *I)
     nSwap = 0;
     for(j=0; j<eslambda-1; j+=2)
     {
-      for(jj=j; jj<j+2; jj++) {
+      for(int jj=j; jj<j+2; jj++) {
         u = ShareRand(0,1);
 /*********************************************************************
  ** it's difficult to test if a double value is zero or not         **
