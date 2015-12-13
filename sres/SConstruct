@@ -22,7 +22,7 @@ else:
 	compiler = 'g++'
 
 compile_flags = '-Wall -O2 -fopenmp'
-link_flags = ''
+link_flags = '-fopenmp'
 if ARGUMENTS.get('profiling', 0):
 	compile_flags += '-pg '
 	link_flags += '-pg'
