@@ -21,7 +21,7 @@ if ARGUMENTS.get('mpi', 0):
 else:
 	compiler = 'g++'
 
-compile_flags = '-Wall -O2 '
+compile_flags = '-Wall -O2 -fopenmp'
 link_flags = ''
 if ARGUMENTS.get('profiling', 0):
 	compile_flags += '-pg '

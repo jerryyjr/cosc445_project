@@ -39,6 +39,7 @@
 #include "sharefunc.hpp"
 #include "ESSRSort.hpp"
 #include "ESES.hpp"
+#include "omp.h"
 
 #include "../source/io.hpp"
 
@@ -152,6 +153,8 @@ void ESInitialParam(ESParameter **param,ESfcnTrsfm *trsfm,  \
   (*param)->spb = NULL;
 
   (*param)->spb = ShareMallocM1d(dim);
+
+  #pragma omp parallel for
   for(i=0; i<dim; i++)
     (*param)->spb[i] = (ub[i] - lb[i])/sqrt(dim);
 
@@ -228,7 +231,8 @@ void ESInitialPopulation(ESPopulation **population, ESParameter *param)
   (*population)->phi = ShareMallocM1d(eslambda);
 
   (*population)->index = ShareMallocM1i(eslambda);
-
+  
+  #pragma omp parallel for
   for(i=0; i<eslambda; i++)
   {
     (*population)->member[i] = NULL;
@@ -247,6 +251,7 @@ void ESDeInitialPopulation(ESPopulation *population, ESParameter *param)
 
   eslambda = param->eslambda;
 
+  #pragma omp parallel for 
   for(i=0; i<eslambda; i++)
     ESDeInitialIndividual(population->member[i]);
   ShareFreeM1c((char *)(population->member));
@@ -305,7 +310,7 @@ void ESInitialIndividual(ESIndividual **indvdl, ESParameter *param)
   } else {
     (*indvdl)->g = NULL;
   }
-
+  #pragma omp parallel for
   for(i=0; i<dim; i++)
   {
     (*indvdl)->op[i] = ShareRand(lb[i], ub[i]);
@@ -314,7 +319,9 @@ void ESInitialIndividual(ESIndividual **indvdl, ESParameter *param)
 
   fg((*indvdl)->op, &((*indvdl)->f), (*indvdl)->g);
   (*indvdl)->phi = 0.0;
-  for(i=0; i<constraint; i++)
+  
+#pragma omp parallel for
+for(i=0; i<constraint; i++)
   {
     if((*indvdl)->g[i] > 0.0)
       (*indvdl)->phi += ((*indvdl)->g[i])*((*indvdl)->g[i]);
@@ -347,6 +354,7 @@ void ESPrintOp(ESIndividual *indvdl, ESParameter *param)
 
   if (trsfm == NULL) {
     printf("%.*f", printing_precision, indvdl->op[0]);
+    #pragma omp parallel for
     for (i=1; i<dim; i++) {
       printf(",%.*f", printing_precision, indvdl->op[i]);
     }
@@ -356,6 +364,7 @@ void ESPrintOp(ESIndividual *indvdl, ESParameter *param)
     } else {
       printf("%.*f", printing_precision, indvdl->op[0]);
     }
+    #pragma omp parallel for 
     for (i=1; i<dim; i++) {
       if (trsfm[i] == NULL) {
         printf(",%.*f", printing_precision, indvdl->op[i]);
@@ -376,9 +385,12 @@ void ESPrintSp(ESIndividual *indvdl, ESParameter *param)
   trsfm = param->trsfm;
   dim = param->dim;
   if(trsfm == NULL)
+
+    #pragma omp parallel for
     for(i=0; i<dim; i++)
       printf("\t%f", indvdl->sp[i]);
   else
+    #pragma omp parallel for
     for(i=0; i<dim; i++)
       if(trsfm[i] == NULL)
         printf("\t%f", indvdl->sp[i]);
@@ -400,12 +412,13 @@ void ESCopyIndividual(ESIndividual *from, ESIndividual *to, ESParameter *param)
 
   dim = param->dim;
   constraint = param->constraint;
-
+  #pragma omp parallel for
   for(i=0; i<dim; i++)
   {
     to->op[i] = from->op[i];
     to->sp[i] = from->sp[i];
   }
+  #pragma omp parallel for
   for(i=0; i<constraint; i++)
     to->g[i] = from->g[i];
   to->f = from->f;
